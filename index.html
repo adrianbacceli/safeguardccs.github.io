@@ -2,10 +2,194 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <title>SafeGuard CCS Landing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/icons/site.webmanifest" />
+
+    <!-- Theme colors -->
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
+
+    <!-- SERP -->
+    <title>SafeGuard CCS - Cybersecurity Consulting in Panama</title>
+    <meta
+      name="description"
+      content="SafeGuard CCS helps small and mid-size firms in Panama reduce cybersecurity risk with practical assessments, hardening, backups, and clear next steps."
+    />
+    <meta name="author" content="SafeGuard CCS" />
+    <meta
+      name="keywords"
+      content="SafeGuard CCS, cybersecurity consulting Panama, IT security Panama, small business cybersecurity, infrastructure security, Windows server hardening, backup security"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://safeguardccs.com/" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SafeGuard CCS" />
+    <meta property="og:title" content="SafeGuard CCS - Cybersecurity Consulting in Panama" />
+    <meta
+      property="og:description"
+      content="Practical cybersecurity consulting for small and mid-size firms: assessments, server hardening, backup planning, and clear written next steps."
+    />
+    <meta property="og:url" content="https://safeguardccs.com/" />
+    <meta property="og:image" content="https://safeguardccs.com/og/profile-420x420.jpg" />
+    <meta property="og:image:width" content="420" />
+    <meta property="og:image:height" content="420" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SafeGuard CCS - Cybersecurity Consulting in Panama" />
+    <meta
+      name="twitter:description"
+      content="Cybersecurity consulting for small and mid-size firms in Panama. Security-focused guidance, regional threat context, and practical risk roadmaps."
+    />
+    <meta name="twitter:image" content="https://safeguardccs.com/og/profile-420x420.jpg" />
+
+    <!-- JSON-LD: Organization, LocalBusiness, ProfessionalService, WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": ["Organization", "LocalBusiness", "ProfessionalService"],
+        "name": "SafeGuard CCS",
+        "alternateName": "SafeGuard Cybersecurity Consulting Services",
+        "url": "https://safeguardccs.com/",
+        "logo": "https://safeguardccs.com/logo.svg",
+        "image": "https://safeguardccs.com/og/profile-420x420.jpg",
+        "email": "consulting@safeguardccs.com",
+        "telephone": "+50769722528",
+        "areaServed": [
+          {
+            "@type": "Country",
+            "name": "Panama"
+          }
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "PA"
+        },
+        "description": "Cybersecurity consulting for small and mid-size companies, including security assessments, infrastructure hardening, backup planning, and practical risk reduction.",
+        "sameAs": [
+          "https://x.com/SafeguardCCCS",
+          "https://www.instagram.com/safeguardccs",
+          "https://www.facebook.com/people/Safeguardccs/61584112651947/"
+        ],
+        "knowsAbout": [
+          "Cybersecurity consulting",
+          "Infrastructure security",
+          "Windows server hardening",
+          "Linux security",
+          "Backup and recovery planning",
+          "Small business cybersecurity"
+        ]
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://safeguardccs.com/",
+        "name": "SafeGuard CCS",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://safeguardccs.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <!-- Optional: add after Search Console verification -->
+    <!-- <meta name="google-site-verification" content="PASTE_TOKEN_HERE" /> -->
   </head>
   <body class="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
+    <noscript id="fallback-site">
+      <style>
+        #fallback-site { all: initial; }
+        #fallback-site main, #fallback-site header, #fallback-site footer, #fallback-site section { display: block; }
+        #fallback-site .wrap { max-width: 860px; margin: 0 auto; padding: 24px; color: #111; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.6; }
+        #fallback-site nav ul { display: flex; flex-wrap: wrap; gap: 16px; list-style: none; margin: 0; padding: 0; }
+        #fallback-site a { color: #047857; text-decoration: none; }
+        #fallback-site a:hover { text-decoration: underline; }
+        #fallback-site h1 { margin: 12px 0 8px; font-size: 2rem; }
+        #fallback-site h2 { margin: 28px 0 8px; font-size: 1.35rem; }
+        #fallback-site .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+        #fallback-site .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; }
+        #fallback-site .cta { display: inline-block; margin: 8px 12px 0 0; padding: 8px 14px; border: 1px solid #047857; border-radius: 8px; }
+        #fallback-site .muted { color: #4b5563; }
+      </style>
+
+      <header class="wrap" aria-label="Site header">
+        <nav aria-label="Primary">
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">How we work</a></li>
+            <li><a href="#approach">Why trust us</a></li>
+            <li><a href="#threats">Emerging threats</a></li>
+            <li><a href="#clients">Who we work with</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main class="wrap" id="home">
+        <h1>SafeGuard Cybersecurity Consulting Services</h1>
+        <p class="muted">Cybersecurity consulting for small and mid-size firms in Panama.</p>
+        <p>
+          SafeGuard CCS helps accounting, legal, healthcare, and professional services firms reduce real-world risks:
+          downtime, data loss, account compromise, and loss of client trust.
+        </p>
+        <p>
+          <a class="cta" href="#contact">Talk about your environment</a>
+          <a class="cta" href="https://wa.me/50769722528">WhatsApp +507 6972-2528</a>
+        </p>
+
+        <section id="services">
+          <h2>How we work</h2>
+          <div class="grid">
+            <div class="card"><strong>Assess</strong><br />We map business systems, data, people, access, vendors, and operational constraints.</div>
+            <div class="card"><strong>Align</strong><br />We use NIST Cybersecurity Framework and ISO 27000 principles as a practical baseline.</div>
+            <div class="card"><strong>Roadmap</strong><br />We translate risk into executive summaries, priorities, and budget-aware action plans.</div>
+          </div>
+        </section>
+
+        <section id="approach">
+          <h2>Why trust SafeGuard CCS</h2>
+          <p>Founder-led cybersecurity consulting with practical, written recommendations for small and mid-size companies.</p>
+        </section>
+
+        <section id="threats">
+          <h2>Emerging threats in Panama and Latin America</h2>
+          <p>
+            Regional reporting from FortiGuard Labs, Check Point Research, and Kaspersky shows that Panama and Latin America
+            are already part of the global threat environment. SafeGuard CCS uses that context to help companies prioritize
+            access, resilience, fraud prevention, and data protection.
+          </p>
+          <div class="grid">
+            <div class="card"><strong>4.0B</strong><br />Attack attempts reported for Panama in 2023 by local reporting citing FortiGuard Labs.</div>
+            <div class="card"><strong>+97%</strong><br />Reported weekly attack growth against Panamanian organizations, citing Check Point threat intelligence.</div>
+            <div class="card"><strong>1.1T+</strong><br />Malware attacks blocked in Latin America in regional Kaspersky threat reporting.</div>
+          </div>
+        </section>
+
+        <section id="clients">
+          <h2>Who we work with</h2>
+          <p>Organizations that handle sensitive data, depend on uptime, and need security depth without enterprise bureaucracy.</p>
+        </section>
+
+        <section id="contact">
+          <h2>Contact SafeGuard CCS</h2>
+          <p>Email: <a href="mailto:consulting@safeguardccs.com">consulting@safeguardccs.com</a></p>
+          <p>Phone / WhatsApp: <a href="https://wa.me/50769722528">+507 6972-2528</a></p>
+        </section>
+      </main>
+
+      <footer class="wrap">
+        <p class="muted">© SafeGuard CCS • <a href="https://safeguardccs.com/">safeguardccs.com</a></p>
+      </footer>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
