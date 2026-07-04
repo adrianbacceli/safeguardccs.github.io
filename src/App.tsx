@@ -34,6 +34,7 @@ type RedirectTarget = {
 };
 
 const SECTION_IDS: SectionId[] = ["home", "services", "approach", "threats", "contact"];
+const MOBILE_SECTION_IDS: SectionId[] = ["home", "threats", "approach", "services", "contact"];
 const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
 const CONTACT_EMAIL = "consulting@safeguardccs.com";
 const MESSAGE_WORD_LIMIT = 120;
@@ -790,7 +791,7 @@ const MobileSectionIndicator: React.FC<MobileSectionIndicatorProps> = ({
       aria-label={isEn ? "Mobile section navigation" : "Navegación móvil por secciones"}
       className="fixed right-2 top-1/2 z-40 flex -translate-y-1/2 flex-col gap-2 rounded-full border border-neutral-200/80 bg-white/75 p-1.5 shadow-sm backdrop-blur md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/75"
     >
-      {SECTION_IDS.map((section) => {
+      {MOBILE_SECTION_IDS.map((section) => {
         const isActive = activeSection === section;
         const label = sectionLabels[section][language];
 
@@ -979,7 +980,7 @@ const App: React.FC = () => {
       animationFrame = 0;
       if (!mobileQuery.matches) return;
 
-      const sections = SECTION_IDS
+      const sections = MOBILE_SECTION_IDS
         .map((section) => document.getElementById(`mobile-${section}`))
         .filter((section): section is HTMLElement => Boolean(section));
 
@@ -1119,11 +1120,11 @@ const App: React.FC = () => {
             />
           </section>
           <section
-            id="mobile-services"
-            data-section="services"
+            id="mobile-threats"
+            data-section="threats"
             className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
-            <ServicesSection language={language} />
+            <ThreatsSection language={language} isActive={true} />
           </section>
           <section
             id="mobile-approach"
@@ -1133,11 +1134,11 @@ const App: React.FC = () => {
             <ApproachSection language={language} />
           </section>
           <section
-            id="mobile-threats"
-            data-section="threats"
+            id="mobile-services"
+            data-section="services"
             className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
-            <ThreatsSection language={language} isActive={true} />
+            <ServicesSection language={language} />
           </section>
           <section
             id="mobile-contact"
@@ -1529,7 +1530,7 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
             </AnimatePresence>
           </CardInner>
         </Card>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="hidden gap-3 sm:grid sm:grid-cols-3">
           {(isEn
             ? [
                 ["Infrastructure", "Server, storage, networking and platform depth."],
