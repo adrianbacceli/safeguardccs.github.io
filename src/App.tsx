@@ -6,6 +6,20 @@ import { SiX, SiInstagram, SiFacebook } from "react-icons/si";
 type SectionId = "home" | "services" | "approach" | "clients" | "contact";
 type Theme = "light" | "dark";
 type Language = "en" | "es";
+type SubmitStatus = "idle" | "sending" | "success" | "error";
+
+const SECTION_IDS: SectionId[] = ["home", "services", "approach", "clients", "contact"];
+const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
+
+function isSectionId(value: string): value is SectionId {
+  return SECTION_IDS.includes(value as SectionId);
+}
+
+function getHashSection(): SectionId {
+  if (typeof window === "undefined") return "home";
+  const hash = window.location.hash.replace("#", "").toLowerCase();
+  return isSectionId(hash) ? hash : "home";
+}
 
 function useTheme(): { theme: Theme; toggleTheme: () => void } {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -37,9 +51,6 @@ const certLogoModules = import.meta.glob(
   { eager: true, as: "url" }
 ) as Record<string, string>;
 
-const linkBase =
-  "relative text-[11px] sm:text-xs rounded-full px-3 py-1 transition-all duration-150 whitespace-nowrap";
-  
 const certLogos = Object.entries(certLogoModules).map(([path, url]) => {
   const filename = path.split("/").pop() || "certification";
   const baseName = filename.split(".")[0];
@@ -85,20 +96,6 @@ const CardInner: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className =
     className={`h-full rounded-[1.35rem] bg-gradient-to-br from-white/90 via-white/60 to-emerald-50/30 p-5 text-sm dark:from-neutral-950/90 dark:via-neutral-950/60 dark:to-emerald-950/20 ${className}`}
     {...props}
   />
-);
-
-const Stat: React.FC<{ value: number; label: string; suffix?: string }> = ({ value, label, suffix }) => (
-  <div className="rounded-2xl border border-emerald-100/70 bg-emerald-50/60 px-4 py-3 text-left text-xs shadow-sm backdrop-blur-sm dark:border-emerald-900/70 dark:bg-emerald-950/40">
-    <div className="text-2xl font-semibold leading-none text-emerald-800 dark:text-emerald-200">
-      {value}
-      {suffix && (
-        <span className="ml-0.5 text-base font-normal text-emerald-500 dark:text-emerald-300">
-          {suffix}
-        </span>
-      )}
-    </div>
-    <p className="mt-1 text-[11px] text-emerald-900/80 dark:text-emerald-100/80">{label}</p>
-  </div>
 );
 
 interface NavbarProps {
@@ -312,11 +309,33 @@ interface SectionProps {
 const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [language, setLanguage] = useState<Language>("en");
-  const [activeSection, setActiveSection] = useState<SectionId>("home");
+  const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
+
+  useEffect(() => {
+    const syncSectionFromHash = () => {
+      const section = getHashSection();
+      setActiveSection(section);
+
+      if (window.location.hash !== `#${section}`) {
+        window.history.replaceState(null, "", `#${section}`);
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    syncSectionFromHash();
+    window.addEventListener("hashchange", syncSectionFromHash);
+    return () => window.removeEventListener("hashchange", syncSectionFromHash);
+  }, []);
 
   const handleNavigate = (section: SectionId) => {
-    setActiveSection(section);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.location.hash === `#${section}`) {
+      setActiveSection(section);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    window.location.hash = section;
   };
 
   const toggleLanguage = () =>
@@ -411,129 +430,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
             {isEn ? "See what we do" : "Ver qué hacemos"}
           </Button>
         </div>
-
-        <div className="mt-6 flex flex-wrap items-center gap-4 text-[11px] text-neutral-500 dark:text-neutral-400">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span>
-              {isEn ? "Founder-led, no call center." : "Liderado por el fundador, sin call center."}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-sky-500" />
-            <span>
-              {isEn ? "Clear, written next steps." : "Siguientes pasos claros y por escrito."}
-            </span>
-          </div>
-        </div>
-        
-        <div className="mt-8 grid max-w-md grid-cols-3 gap-3">
-          <Stat
-            value={5}
-            suffix="+"
-            label={
-              isEn ? "Years in infrastructure & security" : "Años en infraestructura y seguridad"
-            }
-          />
-          <Stat
-            value={40}
-            suffix="+"
-            label={
-              isEn
-                ? "Infrastructure projects"
-                : "Proyectos de infraestructura"
-            }
-          />
-          <Stat
-            value={1}
-            label={isEn ? "Clear roadmap per client" : "Hoja de ruta clara por cliente"}
-          />
-        </div>
-        {/* Small visual feature badges */}
-<div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 dark:text-neutral-400">
-  <span className="rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1 dark:border-neutral-700/70 dark:bg-neutral-900/70">
-    Windows & Linux support
-  </span>
-  <span className="rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1 dark:border-neutral-700/70 dark:bg-neutral-900/70">
-    On-site & remote
-  </span>
-  <span className="rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1 dark:border-neutral-700/70 dark:bg-neutral-900/70">
-    English & Spanish
-  </span>
-</div>
       </div>
-
-      <Card>
-        <CardInner>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
-            {isEn ? "IN PRACTICAL TERMS" : "EN LA PRÁCTICA"}
-          </p>
-
-          {/* 3 compact rows instead of one text block */}
-          <div className="mt-3 space-y-3 text-xs text-neutral-700 dark:text-neutral-200">
-            <div className="flex gap-3">
-              <span className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-[10px] font-semibold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-200">
-                1
-              </span>
-              <div>
-                <p className="font-medium">
-                  {isEn ? "We map how you work today" : "Mapeamos cómo trabajas hoy"}
-                </p>
-                <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
-                  {isEn
-                    ? "Servers, users, remote access and backups in one clear picture."
-                    : "Servidores, usuarios, accesos remotos y respaldos en una sola imagen clara."}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <span className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-[10px] font-semibold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-200">
-                2
-              </span>
-              <div>
-                <p className="font-medium">
-                  {isEn ? "We highlight the main weak spots" : "Señalamos los puntos débiles"}
-                </p>
-                <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
-                  {isEn
-                    ? "In plain language: what could go wrong and how it would affect you."
-                    : "En lenguaje sencillo: qué podría fallar y cómo te afectaría."}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <span className="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-[10px] font-semibold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-200">
-                3
-              </span>
-              <div>
-                <p className="font-medium">
-                  {isEn ? "We give you a short, concrete plan" : "Te damos un plan corto y concreto"}
-                </p>
-                <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
-                  {isEn
-                    ? "A handful of prioritized changes you can approve and track."
-                    : "Un puñado de cambios priorizados que puedes aprobar y seguir."}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Little chips at the bottom to fill space nicely */}
-          <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-neutral-500 dark:text-neutral-400">
-            <span className="rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1 dark:border-neutral-800/70 dark:bg-neutral-950/60">
-              {isEn ? "Scheduled services" : "Servicios Programados"}
-            </span>
-            <span className="rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1 dark:border-neutral-800/70 dark:bg-neutral-950/60">
-              {isEn ? "Change control" : "Control de cambios"}
-            </span>
-            <span className="rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1 dark:border-neutral-800/70 dark:bg-neutral-950/60">
-              {isEn ? "Written reports" : "Reportes escritos"}
-            </span>
-          </div>
-        </CardInner>
-      </Card>
     </div>
   );
 };
@@ -653,47 +550,6 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
           <h2 className="text-3xl font-semibold tracking-tight">
             {isEn ? "Why trust SafeGuard CCS" : "Por qué confiar en SafeGuard CCS"}
           </h2>
-          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-            {isEn
-              ? "You don’t need a big security department. You need someone who understands enterprise standards but can sit down with the owner of a small or mid-size firm and talk clearly about risk."
-              : "No necesitas un gran departamento de seguridad. Necesitas alguien que entienda los estándares empresariales pero pueda sentarse con el dueño de una pequeña o mediana firma y hablar claro sobre riesgo."}
-          </p>
-
-          <div className="mt-5 grid gap-3 text-sm text-neutral-700 dark:text-neutral-200">
-            <div className="flex gap-3">
-              <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500" />
-              <p>
-                <span className="font-semibold">
-                  {isEn ? "Real-world projects · " : "Proyectos reales · "}
-                </span>
-                {isEn
-                  ? "years working with servers, networks and security in demanding environments."
-                  : "años trabajando con servidores, redes y seguridad en entornos exigentes."}
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500" />
-              <p>
-                <span className="font-semibold">
-                  {isEn ? "Practical risk focus · " : "Enfoque práctico · "}
-                </span>
-                {isEn
-                  ? "we prioritize the few changes that clearly reduce risk instead of endless checklists."
-                  : "priorizamos los pocos cambios que reducen claramente el riesgo en lugar de listas infinitas."}
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500" />
-              <p>
-                <span className="font-semibold">
-                  {isEn ? "Clear communication · " : "Comunicación clara · "}
-                </span>
-                {isEn
-                  ? "you get simple explanations of what is happening, why it matters and what your options are."
-                  : "recibes explicaciones sencillas de qué pasa, por qué importa y cuáles son tus opciones."}
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Right: two compact cards */}
@@ -1024,35 +880,50 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
   const [company, setCompany] = React.useState("");
   const [employees, setEmployees] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>("idle");
+  const [successPopupOpen, setSuccessPopupOpen] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitStatus("sending");
 
     const subject = isEn
       ? `SafeGuard CCS – Inquiry from ${name || "Potential client"}`
       : `SafeGuard CCS – Consulta de ${name || "Cliente potencial"}`;
 
-    const bodyLines = [
-      isEn ? "Hi SafeGuard CCS," : "Hola SafeGuard CCS,",
-      "",
-      isEn ? "Here are my details:" : "Estos son mis datos:",
-      `Name / Nombre: ${name || "-"}`,
-      `Email: ${email || "-"}`,
-      `Company / Empresa: ${company || "-"}`,
-      `Employees / Empleados: ${employees || "-"}`,
-      "",
-      isEn ? "What I need help with:" : "En qué necesito ayuda:",
-      message || "-",
-      "",
-      isEn ? "Best regards," : "Saludos,",
-      name || "",
-    ];
+    const formData = new FormData(e.currentTarget);
+    if (formData.get("botcheck")) {
+      setSubmitStatus("idle");
+      return;
+    }
 
-    const mailto = `mailto:consulting@safeguardccs.com?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+    formData.set("subject", subject);
+    formData.set("from_name", "SafeGuard CCS Website");
+    formData.set("language", language);
 
-    window.location.href = mailto;
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const result = (await response.json().catch(() => null)) as
+        | { success?: boolean }
+        | null;
+
+      if (!response.ok || result?.success === false) {
+        throw new Error("Web3Forms submission failed");
+      }
+
+      setSubmitStatus("success");
+      setName("");
+      setEmail("");
+      setCompany("");
+      setEmployees("");
+      setMessage("");
+      setSuccessPopupOpen(true);
+    } catch {
+      setSubmitStatus("error");
+    }
   };
 
   return (
@@ -1077,6 +948,15 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
         <Card interactive={false}>
           <CardInner className="space-y-3 text-xs text-neutral-700 dark:text-neutral-200">
             <form onSubmit={handleSubmit} className="space-y-3">
+              <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
+              <input
+                type="checkbox"
+                name="botcheck"
+                tabIndex={-1}
+                autoComplete="off"
+                className="hidden"
+                aria-hidden="true"
+              />
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1 block text-[11px] font-medium">
@@ -1084,6 +964,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                   </label>
                   <input
                     type="text"
+                    name="name"
+                    required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full rounded-xl border border-neutral-200/70 bg-white/80 px-3 py-2 text-xs outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 dark:border-neutral-700/70 dark:bg-neutral-950/70"
@@ -1095,6 +977,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-xl border border-neutral-200/70 bg-white/80 px-3 py-2 text-xs outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 dark:border-neutral-700/70 dark:bg-neutral-950/70"
@@ -1108,6 +992,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </label>
                 <input
                   type="text"
+                  name="company"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   className="w-full rounded-xl border border-neutral-200/70 bg-white/80 px-3 py-2 text-xs outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 dark:border-neutral-700/70 dark:bg-neutral-950/70"
@@ -1120,6 +1005,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </label>
                 <input
                   type="text"
+                  name="employees"
                   value={employees}
                   onChange={(e) => setEmployees(e.target.value)}
                   className="w-full rounded-xl border border-neutral-200/70 bg-white/80 px-3 py-2 text-xs outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 dark:border-neutral-700/70 dark:bg-neutral-950/70"
@@ -1134,6 +1020,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </label>
                 <textarea
                   rows={4}
+                  name="message"
+                  required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="w-full rounded-xl border border-neutral-200/70 bg-white/80 px-3 py-2 text-xs outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 dark:border-neutral-700/70 dark:bg-neutral-950/70"
@@ -1143,28 +1031,72 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
               <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
                 <Button
                   type="submit"
+                  disabled={submitStatus === "sending"}
                   className="text-xs whitespace-nowrap"
                 >
-                  {isEn ? "Open email with this info" : "Abrir correo con esta información"}
+                  {submitStatus === "sending"
+                    ? isEn
+                      ? "Sending..."
+                      : "Enviando..."
+                    : isEn
+                      ? "Send message"
+                      : "Enviar mensaje"}
                 </Button>
 
                 <span className="text-[10px] text-neutral-500 dark:text-neutral-400 max-w-xs leading-tight">
-                  {isEn
-                    ? "Your email app will open to send it."
-                    : "Se abrirá tu app de correo para enviarlo."}
+                  {submitStatus === "success"
+                    ? isEn
+                      ? "Message sent. We’ll reply soon."
+                      : "Mensaje enviado. Te responderemos pronto."
+                    : submitStatus === "error"
+                      ? isEn
+                        ? "Something went wrong. Please try again."
+                        : "Algo salió mal. Intenta nuevamente."
+                      : isEn
+                        ? "Your message goes directly to our inbox."
+                        : "Tu mensaje llega directo a nuestra bandeja."}
                 </span>
               </div>
             </form>
           </CardInner>
         </Card>
       </div>
+
+      {successPopupOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-neutral-950/40 px-4 backdrop-blur-sm">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="contact-success-title"
+            className="w-full max-w-sm rounded-2xl border border-neutral-200/70 bg-white p-5 text-neutral-900 shadow-xl dark:border-neutral-800/70 dark:bg-neutral-950 dark:text-neutral-50"
+          >
+            <h3 id="contact-success-title" className="text-base font-semibold">
+              {isEn ? "Message sent" : "Mensaje enviado"}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+              {isEn
+                ? "Thanks for reaching out. We’ll try to get back to you within 24-72 hours, although we usually respond fairly quickly."
+                : "Gracias por escribirnos. Intentaremos responderte dentro de 24-72 horas, aunque normalmente respondemos bastante rápido."}
+            </p>
+            <div className="mt-4 flex justify-end">
+              <Button
+                type="button"
+                onClick={() => setSuccessPopupOpen(false)}
+                className="px-4 py-2 text-xs"
+              >
+                {isEn ? "Close" : "Cerrar"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // WhatsApp link constant must be defined before using it
 const WHATSAPP_LINK =
-  "https://wa.me/50765125606?text=Hi%20SafeGuard%20CCS%2C%20I%27d%20like%20to%20talk%20about%20my%20company%27s%20security.";
+  "https://wa.me/50769722528?text=Hi%20SafeGuard%20CCS%2C%20I%27d%20like%20to%20talk%20about%20my%20company%27s%20security.";
 
 interface WhatsAppButtonProps {
   language: Language;
