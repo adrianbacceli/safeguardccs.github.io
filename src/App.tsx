@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { LayoutGroup, motion } from "motion/react";
 import {
   Activity,
@@ -81,6 +81,10 @@ const certLogos = Object.entries(certLogoModules).map(([path, url]) => {
 
 interface ThreatStat {
   value: string;
+  animatedValue?: number;
+  format?: "compact" | "percent";
+  durationMs?: number;
+  precision?: number;
   label: {
     en: string;
     es: string;
@@ -97,6 +101,9 @@ interface ThreatStat {
 const threatStats: ThreatStat[] = [
   {
     value: "4.0B",
+    animatedValue: 4000000000,
+    format: "compact",
+    durationMs: 1500,
     label: {
       en: "Attack attempts reported for Panama",
       es: "Intentos de ataque reportados para Panamá",
@@ -110,21 +117,27 @@ const threatStats: ThreatStat[] = [
     year: "2023",
   },
   {
-    value: "+97%",
+    value: "1.3B",
+    animatedValue: 1291000000,
+    format: "compact",
+    durationMs: 1500,
     label: {
-      en: "Weekly attack growth against Panamanian organizations",
-      es: "Crecimiento semanal de ataques contra organizaciones panameñas",
+      en: "Phishing blocks in Latin America",
+      es: "Bloqueos de phishing en Latinoamérica",
     },
     context: {
-      en: "Local financial press cited Check Point threat intelligence showing sharp year-over-year growth, with banking and finance seeing heavier pressure.",
-      es: "Prensa financiera local citó inteligencia de Check Point con fuerte crecimiento interanual y mayor presión en banca y finanzas.",
+      en: "Kaspersky reported 1.291 billion phishing blocks in Latin America over 12 months, up 85%, averaging more than 2,400 attacks per minute.",
+      es: "Kaspersky reportó 1.291 mil millones de bloqueos de phishing en Latinoamérica en 12 meses, un aumento de 85%, con más de 2,400 ataques por minuto en promedio.",
     },
-    sourceName: "Check Point Research / El Capital Financiero",
-    sourceUrl: "https://research.checkpoint.com/",
-    year: "2024",
+    sourceName: "Kaspersky Threat Panorama",
+    sourceUrl: "https://latam.kaspersky.com/about/press-releases/ataques-con-mensajes-falsos-aumentan-85-en-america-latina-mas-de-12-mil-millones-de-casos-detectados-kaspersky",
+    year: "2025",
   },
   {
     value: "1.1T+",
+    animatedValue: 1100000000000,
+    format: "compact",
+    durationMs: 1600,
     label: {
       en: "Malware attacks blocked in Latin America",
       es: "Ataques de malware bloqueados en Latinoamérica",
@@ -139,6 +152,9 @@ const threatStats: ThreatStat[] = [
   },
   {
     value: "1.1M+",
+    animatedValue: 1100000,
+    format: "compact",
+    durationMs: 1400,
     label: {
       en: "Ransomware attempts in Latin America",
       es: "Intentos de ransomware en Latinoamérica",
@@ -152,6 +168,85 @@ const threatStats: ThreatStat[] = [
     year: "2025",
   },
 ];
+
+function formatCompactNumber(value: number, precision?: number): string {
+  const units = [
+    { threshold: 1_000_000_000_000, suffix: "T" },
+    { threshold: 1_000_000_000, suffix: "B" },
+    { threshold: 1_000_000, suffix: "M" },
+    { threshold: 1_000, suffix: "K" },
+  ];
+  const unit = units.find((item) => value >= item.threshold);
+
+  if (!unit) return Math.round(value).toLocaleString("en-US");
+
+  const scaled = value / unit.threshold;
+  const decimals = precision ?? (scaled >= 100 ? 0 : scaled >= 10 ? 1 : 1);
+  return `${scaled.toFixed(decimals).replace(/\.0$/, "")}${unit.suffix}`;
+}
+
+function easeOutCubic(value: number): number {
+  return 1 - Math.pow(1 - value, 3);
+}
+
+function useCountUp(target: number, durationMs: number, isActive: boolean): number {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      setValue(0);
+      return;
+    }
+
+    let animationFrame = 0;
+    const startedAt = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startedAt) / durationMs, 1);
+      setValue(target * easeOutCubic(progress));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(tick);
+      } else {
+        setValue(target);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [durationMs, isActive, target]);
+
+  return value;
+}
+
+interface CountUpValueProps {
+  target: number;
+  durationMs: number;
+  isActive: boolean;
+  format?: "compact" | "percent";
+  precision?: number;
+  prefix?: string;
+  suffix?: string;
+}
+
+const CountUpValue: React.FC<CountUpValueProps> = ({
+  target,
+  durationMs,
+  isActive,
+  format = "compact",
+  precision,
+  prefix = "",
+  suffix = "",
+}) => {
+  const value = useCountUp(target, durationMs, isActive);
+  const roundedValue = Math.round(value);
+  const formatted =
+    format === "percent"
+      ? `${roundedValue}%`
+      : formatCompactNumber(roundedValue, precision);
+
+  return <>{`${prefix}${formatted}${suffix}`}</>;
+};
 
 const Button: React.FC<ButtonProps> = ({ variant = "solid", className = "", ...props }) => {
   const base =
@@ -429,6 +524,10 @@ interface SectionProps {
   language: Language;
 }
 
+interface ActiveSectionProps extends SectionProps {
+  isActive: boolean;
+}
+
 const BackgroundSystem: React.FC = () => (
   <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
     <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.055)_1px,transparent_1px)] bg-[size:44px_44px] opacity-70 dark:bg-[linear-gradient(to_right,rgba(148,163,184,0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.075)_1px,transparent_1px)]" />
@@ -499,7 +598,11 @@ const App: React.FC = () => {
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
         <div className="relative w-full">
           <AnimatedSection isActive={activeSection === "home"}>
-            <HeroSection language={language} onNavigate={handleNavigate} />
+            <HeroSection
+              language={language}
+              isActive={activeSection === "home"}
+              onNavigate={handleNavigate}
+            />
           </AnimatedSection>
           <AnimatedSection isActive={activeSection === "services"}>
             <ServicesSection language={language} />
@@ -508,7 +611,10 @@ const App: React.FC = () => {
             <ApproachSection language={language} />
           </AnimatedSection>
           <AnimatedSection isActive={activeSection === "threats"}>
-            <ThreatsSection language={language} />
+            <ThreatsSection
+              language={language}
+              isActive={activeSection === "threats"}
+            />
           </AnimatedSection>
           <AnimatedSection isActive={activeSection === "clients"}>
             <ClientsSection language={language} />
@@ -527,11 +633,38 @@ const App: React.FC = () => {
 
 interface HeroSectionProps {
   language: Language;
+  isActive: boolean;
   onNavigate: (section: SectionId) => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigate }) => {
   const isEn = language === "en";
+  const consoleStats = useMemo(
+    () => [
+      threatStats[0],
+      {
+        value: "2.40K",
+        animatedValue: 2400,
+        format: "compact" as const,
+        durationMs: 60000,
+        precision: 2,
+        label: {
+          en: "Attacks right now in Latin America",
+          es: "Ataques ahora mismo en Latinoamérica",
+        },
+        context: {
+          en: "Kaspersky reported more than 2,400 phishing attacks per minute in Latin America.",
+          es: "Kaspersky reportó más de 2,400 ataques de phishing por minuto en Latinoamérica.",
+        },
+        sourceName: "Kaspersky Threat Panorama",
+        sourceUrl: "https://latam.kaspersky.com/about/press-releases/ataques-con-mensajes-falsos-aumentan-85-en-america-latina-mas-de-12-mil-millones-de-casos-detectados-kaspersky",
+        year: "2025",
+      },
+      threatStats[2],
+      threatStats[3],
+    ],
+    []
+  );
   const heroPoints = [
     {
       icon: LockKeyhole,
@@ -594,10 +727,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
           <Activity className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
         </div>
         <div className="space-y-3">
-          {threatStats.slice(0, 3).map((stat) => (
+          {consoleStats.map((stat) => (
             <div key={stat.value} className="grid grid-cols-[4.5rem_1fr] items-start gap-4 rounded-md border border-neutral-200 bg-neutral-50 p-3 dark:border-white/10 dark:bg-white/[0.025]">
               <div className="font-mono text-lg font-semibold text-emerald-700 dark:text-emerald-300">
-                {stat.value}
+                {stat.animatedValue ? (
+                  <CountUpValue
+                    target={stat.animatedValue}
+                    durationMs={stat.durationMs || 1400}
+                    isActive={isActive}
+                    format={stat.format}
+                    precision={stat.precision}
+                  />
+                ) : (
+                  stat.value
+                )}
               </div>
               <div>
                 <p className="text-xs font-medium leading-snug text-neutral-800 dark:text-neutral-100">
@@ -914,7 +1057,7 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
 
 
 
-const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
+const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) => {
   const isEn = language === "en";
   const takeaways = isEn
     ? [
@@ -969,7 +1112,18 @@ const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="font-mono text-3xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
-                      {stat.value}
+                      {stat.animatedValue ? (
+                        <CountUpValue
+                          target={stat.animatedValue}
+                          durationMs={stat.durationMs || 1400}
+                          isActive={isActive}
+                          format={stat.format}
+                          prefix={stat.value.startsWith("+") ? "+" : ""}
+                          suffix={stat.value.endsWith("+") ? "+" : ""}
+                        />
+                      ) : (
+                        stat.value
+                      )}
                     </div>
                     <p className="mt-2 text-sm font-semibold leading-snug text-neutral-900 dark:text-neutral-100">
                       {isEn ? stat.label.en : stat.label.es}
