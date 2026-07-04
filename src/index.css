@@ -42,6 +42,33 @@ body {
   }
 }
 
+@keyframes node-float-a {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(18px, -12px, 0);
+  }
+}
+
+@keyframes node-float-b {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-14px, 16px, 0);
+  }
+}
+
+@keyframes link-breathe {
+  0%, 100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.22;
+  }
+}
+
 @keyframes console-meter {
   0%, 100% {
     opacity: 0.72;
@@ -65,6 +92,95 @@ body {
 
 .console-meter {
   animation: console-meter 4s ease-in-out infinite;
+}
+
+.section-transition {
+  transition-property: opacity, transform;
+  transition-duration: 700ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.threat-node,
+.threat-link {
+  position: absolute;
+  display: block;
+}
+
+.threat-node {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: rgba(4, 120, 87, 0.42);
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.28);
+}
+
+.dark .threat-node {
+  background: rgba(110, 231, 183, 0.36);
+  box-shadow: 0 0 24px rgba(110, 231, 183, 0.22);
+}
+
+.threat-link {
+  height: 1px;
+  transform-origin: left center;
+  background: linear-gradient(to right, transparent, rgba(4, 120, 87, 0.26), transparent);
+  animation: link-breathe 11s ease-in-out infinite;
+}
+
+.dark .threat-link {
+  background: linear-gradient(to right, transparent, rgba(110, 231, 183, 0.2), transparent);
+}
+
+.threat-node-a {
+  left: 12%;
+  top: 28%;
+  animation: node-float-a 24s ease-in-out infinite;
+}
+
+.threat-node-b {
+  left: 29%;
+  top: 17%;
+  animation: node-float-b 28s ease-in-out infinite;
+}
+
+.threat-node-c {
+  right: 23%;
+  top: 24%;
+  animation: node-float-a 31s ease-in-out infinite reverse;
+}
+
+.threat-node-d {
+  right: 13%;
+  bottom: 30%;
+  animation: node-float-b 26s ease-in-out infinite reverse;
+}
+
+.threat-node-e {
+  left: 21%;
+  bottom: 22%;
+  animation: node-float-a 34s ease-in-out infinite;
+}
+
+.threat-link-a {
+  left: 12%;
+  top: 29%;
+  width: 18%;
+  transform: rotate(-12deg);
+}
+
+.threat-link-b {
+  right: 23%;
+  top: 25%;
+  width: 16%;
+  transform: rotate(18deg);
+  animation-delay: -4s;
+}
+
+.threat-link-c {
+  left: 21%;
+  bottom: 23%;
+  width: 26%;
+  transform: rotate(-8deg);
+  animation-delay: -7s;
 }
 
 .security-console::before {
