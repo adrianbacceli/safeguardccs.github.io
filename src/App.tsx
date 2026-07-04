@@ -699,15 +699,25 @@ const BackgroundSystem: React.FC = () => {
     const root = rootRef.current;
     if (!root) return;
 
+    let animationFrame = 0;
+    let lastFrame = performance.now();
+    let phase = 0;
+    const current = {
+      gridPointerX: 0,
+      gridPointerY: 0,
+      nodePointerX: 0,
+      nodePointerY: 0,
+      gridScrollShift: 0,
+      nodeScrollShift: 0,
+      speed: 1,
+    };
+    const target = { ...current };
+
     const setSpeed = (speed: number) => {
-      root.style.setProperty("--ambient-duration", `${18 * speed}s`);
-      root.style.setProperty("--grid-duration", `${34 * speed}s`);
-      root.style.setProperty("--node-field-duration", `${42 * speed}s`);
+      target.speed = speed;
       window.clearTimeout(speedResetRef.current);
       speedResetRef.current = window.setTimeout(() => {
-        root.style.setProperty("--ambient-duration", "18s");
-        root.style.setProperty("--grid-duration", "34s");
-        root.style.setProperty("--node-field-duration", "42s");
+        target.speed = 1;
       }, 220);
     };
 
@@ -715,11 +725,11 @@ const BackgroundSystem: React.FC = () => {
       const x = (event.clientX / window.innerWidth - 0.5) * 2;
       const y = (event.clientY / window.innerHeight - 0.5) * 2;
 
-      root.style.setProperty("--grid-pointer-x", `${(-18 * x).toFixed(1)}px`);
-      root.style.setProperty("--grid-pointer-y", `${(-14 * y).toFixed(1)}px`);
-      root.style.setProperty("--node-pointer-x", `${(26 * x).toFixed(1)}px`);
-      root.style.setProperty("--node-pointer-y", `${(22 * y).toFixed(1)}px`);
-      setSpeed(0.35);
+      target.gridPointerX = -18 * x;
+      target.gridPointerY = -14 * y;
+      target.nodePointerX = 26 * x;
+      target.nodePointerY = 22 * y;
+      setSpeed(3);
     };
 
     const handleScroll = () => {
@@ -727,19 +737,55 @@ const BackgroundSystem: React.FC = () => {
         window.scrollY /
         Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
 
-      root.style.setProperty("--grid-scroll-shift", `${(scrollProgress * 120).toFixed(1)}px`);
-      root.style.setProperty("--node-scroll-shift", `${(scrollProgress * -40).toFixed(1)}px`);
-      setSpeed(0.28);
+      target.gridScrollShift = scrollProgress * 120;
+      target.nodeScrollShift = scrollProgress * -40;
+      setSpeed(3.6);
+    };
+
+    const tick = (now: number) => {
+      const delta = Math.min(now - lastFrame, 48) / 1000;
+      lastFrame = now;
+
+      current.speed += (target.speed - current.speed) * 0.08;
+      current.gridPointerX += (target.gridPointerX - current.gridPointerX) * 0.1;
+      current.gridPointerY += (target.gridPointerY - current.gridPointerY) * 0.1;
+      current.nodePointerX += (target.nodePointerX - current.nodePointerX) * 0.1;
+      current.nodePointerY += (target.nodePointerY - current.nodePointerY) * 0.1;
+      current.gridScrollShift += (target.gridScrollShift - current.gridScrollShift) * 0.08;
+      current.nodeScrollShift += (target.nodeScrollShift - current.nodeScrollShift) * 0.08;
+
+      phase += delta * current.speed;
+      const gridX = (phase * 5.5) % 88;
+      const gridY = (phase * 2.75) % 44;
+      const nodeX = Math.sin(phase * 0.22) * 26;
+      const nodeY = Math.cos(phase * 0.19) * 20;
+      const nodeRotate = Math.sin(phase * 0.16) * 0.8;
+
+      root.style.setProperty("--grid-bg-x", `${gridX.toFixed(2)}px`);
+      root.style.setProperty("--grid-bg-y", `${gridY.toFixed(2)}px`);
+      root.style.setProperty("--grid-pointer-x", `${current.gridPointerX.toFixed(2)}px`);
+      root.style.setProperty("--grid-pointer-y", `${current.gridPointerY.toFixed(2)}px`);
+      root.style.setProperty("--grid-scroll-shift", `${current.gridScrollShift.toFixed(2)}px`);
+      root.style.setProperty("--node-auto-x", `${nodeX.toFixed(2)}px`);
+      root.style.setProperty("--node-auto-y", `${nodeY.toFixed(2)}px`);
+      root.style.setProperty("--node-rotate", `${nodeRotate.toFixed(3)}deg`);
+      root.style.setProperty("--node-pointer-x", `${current.nodePointerX.toFixed(2)}px`);
+      root.style.setProperty("--node-pointer-y", `${current.nodePointerY.toFixed(2)}px`);
+      root.style.setProperty("--node-scroll-shift", `${current.nodeScrollShift.toFixed(2)}px`);
+
+      animationFrame = window.requestAnimationFrame(tick);
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
+    animationFrame = window.requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("scroll", handleScroll);
       window.clearTimeout(speedResetRef.current);
+      window.cancelAnimationFrame(animationFrame);
     };
   }, []);
 

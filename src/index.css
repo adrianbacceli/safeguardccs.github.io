@@ -42,32 +42,6 @@ body {
   }
 }
 
-@keyframes background-grid-position {
-  0%, 100% {
-    background-position: 0 0, 0 0;
-  }
-  50% {
-    background-position: 88px 44px, 88px 44px;
-  }
-}
-
-@keyframes background-node-field-drift {
-  0%, 100% {
-    transform: translate3d(
-      var(--node-pointer-x, 0px),
-      calc(var(--node-pointer-y, 0px) + var(--node-scroll-shift, 0px)),
-      0
-    ) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(
-      calc(38px + var(--node-pointer-x, 0px)),
-      calc(-32px + var(--node-pointer-y, 0px) + var(--node-scroll-shift, 0px)),
-      0
-    ) rotate(1.2deg);
-  }
-}
-
 @keyframes node-float-a {
   0%, 100% {
     transform: translate3d(0, 0, 0);
@@ -118,13 +92,12 @@ body {
 }
 
 .background-grid {
-  animation: background-grid-position var(--grid-duration, 18s) linear infinite;
+  background-position: var(--grid-bg-x, 0px) var(--grid-bg-y, 0px), var(--grid-bg-x, 0px) var(--grid-bg-y, 0px);
   transform: translate3d(
     var(--grid-pointer-x, 0px),
     calc(var(--grid-pointer-y, 0px) + var(--grid-scroll-shift, 0px)),
     0
   );
-  transition: transform 160ms ease-out;
   will-change: transform, background-position;
 }
 
@@ -134,11 +107,14 @@ body {
     calc(var(--node-pointer-y, 0px) + var(--node-scroll-shift, 0px)),
     0
   );
-  transition: transform 180ms ease-out;
 }
 
 .background-node-field {
-  animation: background-node-field-drift var(--node-field-duration, 42s) ease-in-out infinite;
+  transform: translate3d(
+    calc(var(--node-auto-x, 0px) + var(--node-pointer-x, 0px)),
+    calc(var(--node-auto-y, 0px) + var(--node-pointer-y, 0px) + var(--node-scroll-shift, 0px)),
+    0
+  ) rotate(var(--node-rotate, 0deg));
   transform-origin: center;
   will-change: transform;
 }
@@ -271,17 +247,6 @@ body {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
-  }
-
-  .background-system .background-grid {
-    animation-duration: var(--grid-duration, 18s) !important;
-    animation-iteration-count: infinite !important;
-    transition-duration: 160ms !important;
-  }
-
-  .background-system .background-node-field {
-    animation-duration: var(--node-field-duration, 42s) !important;
-    animation-iteration-count: infinite !important;
   }
 
   .background-system .ambient-sweep,
