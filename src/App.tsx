@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
   Activity,
@@ -8,27 +9,45 @@ import {
   CheckCircle2,
   ExternalLink,
   FileCheck2,
-  HeartPulse,
-  Landmark,
   LockKeyhole,
+  Mail,
   Menu,
   Moon,
+  MessageCircle,
   Network,
-  Scale,
+  Send,
   Sun,
-  TerminalSquare,
   X,
 } from "lucide-react";
 import { SiX, SiInstagram, SiFacebook, SiWhatsapp } from "react-icons/si";
 
 
-type SectionId = "home" | "services" | "approach" | "threats" | "clients" | "contact";
+type SectionId = "home" | "services" | "approach" | "threats" | "contact";
 type Theme = "light" | "dark";
 type Language = "en" | "es";
 type SubmitStatus = "idle" | "sending" | "success" | "error";
+type ContactMode = "methods" | "form";
+type RedirectTarget = {
+  label: string;
+  href: string;
+  kind: "whatsapp" | "email";
+};
 
-const SECTION_IDS: SectionId[] = ["home", "services", "approach", "threats", "clients", "contact"];
+const SECTION_IDS: SectionId[] = ["home", "services", "approach", "threats", "contact"];
 const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
+const CONTACT_EMAIL = "consulting@safeguardccs.com";
+const MESSAGE_WORD_LIMIT = 120;
+
+function getWordCount(value: string): number {
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  return words.length;
+}
+
+function limitWords(value: string, limit: number): string {
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= limit) return value;
+  return words.slice(0, limit).join(" ");
+}
 
 function isSectionId(value: string): value is SectionId {
   return SECTION_IDS.includes(value as SectionId);
@@ -473,7 +492,6 @@ const Navbar: React.FC<NavbarProps> = ({
     { section: "services", label: isEn ? "How we work" : "Cómo trabajamos" },
     { section: "approach", label: isEn ? "Why trust us" : "Por qué confiar" },
     { section: "threats", label: isEn ? "Emerging threats" : "Amenazas actuales" },
-    { section: "clients", label: isEn ? "Who we work with" : "Con quién trabajamos" },
     { section: "contact", label: isEn ? "Contact" : "Contacto" },
   ];
 
@@ -636,15 +654,6 @@ const Navbar: React.FC<NavbarProps> = ({
               className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
             >
               {isEn ? "Emerging threats" : "Amenazas actuales"}
-            </button>
-            <button
-              onClick={() => {
-                onNavigate("clients");
-                setMobileOpen(false);
-              }}
-              className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
-            >
-              {isEn ? "Who we work with" : "Con quién trabajamos"}
             </button>
             <button
               onClick={() => {
@@ -880,9 +889,6 @@ const App: React.FC = () => {
               language={language}
               isActive={activeSection === "threats"}
             />
-          </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "clients"}>
-            <ClientsSection language={language} />
           </AnimatedSection>
           <AnimatedSection isActive={activeSection === "contact"}>
             <ContactSection language={language} />
@@ -1387,121 +1393,6 @@ const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) =>
 
 
 
-const ClientsSection: React.FC<SectionProps> = ({ language }) => {
-  const isEn = language === "en";
-
-  const industries = isEn
-    ? [
-        {
-          icon: Landmark,
-          title: "Accounting & tax firms",
-          desc: "Teams that handle sensitive financial reports and client records.",
-        },
-        {
-          icon: Scale,
-          title: "Legal & compliance practices",
-          desc: "Boutiques and independent professionals managing confidential cases.",
-        },
-        {
-          icon: Building2,
-          title: "Professional services",
-          desc: "Consultants, advisors and service firms with client-facing workloads.",
-        },
-        {
-          icon: HeartPulse,
-          title: "Health & wellness clinics",
-          desc: "Small clinics or providers who store basic patient data.",
-        },
-        {
-          icon: TerminalSquare,
-          title: "Small retail & local businesses",
-          desc: "Shops that rely on POS systems, WiFi networks or cloud tools.",
-        },
-        {
-          icon: Network,
-          title: "Other businesses",
-          desc: "Any business that needs clarity, protection, and budget-aware guidance.",
-        },
-      ]
-    : [
-        {
-          icon: Landmark,
-          title: "Firmas contables y fiscales",
-          desc: "Equipos que manejan reportes financieros y datos sensibles de clientes.",
-        },
-        {
-          icon: Scale,
-          title: "Firmas legales y de cumplimiento",
-          desc: "Pequeños bufetes que gestionan casos confidenciales.",
-        },
-        {
-          icon: Building2,
-          title: "Servicios profesionales",
-          desc: "Consultores, asesores y firmas que dependen del manejo de clientes.",
-        },
-        {
-          icon: HeartPulse,
-          title: "Clínicas de salud y bienestar",
-          desc: "Pequeñas clínicas que almacenan datos básicos de pacientes.",
-        },
-        {
-          icon: TerminalSquare,
-          title: "Pequeños comercios",
-          desc: "Negocios que dependen de POS, redes WiFi o herramientas en la nube.",
-        },
-        {
-          icon: Network,
-          title: "Otros negocios",
-          desc: "Cualquier empresa que necesite claridad, protección y guía consciente del presupuesto.",
-        },
-      ];
-
-  return (
-    <div className="py-4 sm:py-6">
-      <div className="max-w-4xl">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
-            {isEn ? "Client fit" : "Encaje"}
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            {isEn ? "Everyone deserves security that respects the budget" : "Todos merecen seguridad que respete el presupuesto"}
-          </h2>
-          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-            {isEn
-              ? "We have experience across small, medium, and large businesses, and we are especially equipped to protect business owners’ pockets while improving security."
-              : "Tenemos experiencia en empresas pequeñas, medianas y grandes, y estamos especialmente preparados para proteger el bolsillo del dueño mientras mejora su seguridad."}
-          </p>
-        </div>
-      </div>
-      <div className="my-6 flex items-center justify-center">
-        <span className="text-center text-sm font-medium text-neutral-600 dark:text-neutral-300">
-          {isEn
-            ? "We adapt the engagement to the company, not the other way around."
-            : "Adaptamos el servicio a la empresa, no al revés."}
-        </span>
-      </div>
-      <div className="mt-10">
-        <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {industries.map((item) => (
-            <Card key={item.title}>
-              <CardInner className="flex h-full flex-col items-start p-5 text-neutral-700 dark:text-neutral-200">
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-800 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <h3 className="text-sm font-semibold">{item.title}</h3>
-                <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
-                  {item.desc}
-                </p>
-              </CardInner>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
 const ContactSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
 
@@ -1511,7 +1402,88 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
   const [employees, setEmployees] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>("idle");
+  const [contactMode, setContactMode] = React.useState<ContactMode>("methods");
   const [successPopupOpen, setSuccessPopupOpen] = React.useState(false);
+  const [redirectTarget, setRedirectTarget] = React.useState<RedirectTarget | null>(null);
+  const messageWordCount = getWordCount(message);
+
+  const mailLink = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+    isEn ? "SafeGuard CCS security consultation" : "Consulta de seguridad SafeGuard CCS"
+  )}`;
+
+  React.useEffect(() => {
+    if (!redirectTarget) return;
+
+    const redirectTimer = window.setTimeout(() => {
+      if (redirectTarget.kind === "whatsapp") {
+        window.open(redirectTarget.href, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      window.location.href = redirectTarget.href;
+    }, 900);
+
+    return () => window.clearTimeout(redirectTimer);
+  }, [redirectTarget]);
+
+  const openRedirectModal = (target: RedirectTarget) => {
+    setRedirectTarget(target);
+  };
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(limitWords(e.target.value, MESSAGE_WORD_LIMIT));
+  };
+
+  const contactMethods = [
+    {
+      kind: "whatsapp" as const,
+      icon: SiWhatsapp,
+      label: "WhatsApp",
+      title: isEn ? "Message us on WhatsApp" : "Escríbenos por WhatsApp",
+      description: isEn
+        ? "Best for quick questions and immediate direction."
+        : "Ideal para preguntas rápidas y orientación inmediata.",
+      href: WHATSAPP_LINK,
+    },
+    {
+      kind: "email" as const,
+      icon: Mail,
+      label: isEn ? "Email" : "Correo",
+      title: isEn ? "Send an email" : "Enviar correo",
+      description: isEn
+        ? "Use email if you already have details, context, or documents to reference."
+        : "Usa el correo si ya tienes detalles, contexto o documentos para referencia.",
+      href: mailLink,
+    },
+    {
+      kind: "form" as const,
+      icon: Send,
+      label: isEn ? "Form" : "Formulario",
+      title: isEn ? "Use the contact form" : "Usar el formulario",
+      description: isEn
+        ? "Structured and direct. It goes to our inbox, not a marketing list."
+        : "Estructurado y directo. Llega a nuestra bandeja, no a una lista de marketing.",
+      href: "#contact-form",
+    },
+  ];
+
+  const clientFit = isEn
+    ? [
+        "Accounting & tax firms",
+        "Legal & compliance practices",
+        "Professional services",
+        "Health & wellness clinics",
+        "Small retail & local businesses",
+        "Budget-aware guidance for businesses",
+      ]
+    : [
+        "Firmas contables y fiscales",
+        "Firmas legales y de cumplimiento",
+        "Servicios profesionales",
+        "Clínicas de salud y bienestar",
+        "Pequeños comercios y negocios locales",
+        "Guía ajustada al presupuesto",
+      ];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -1558,10 +1530,111 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
 
   return (
     <div className="py-4 sm:py-6">
-      <div className="grid gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-start">
-        <div>
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
+        <div className="space-y-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
+              {isEn ? "Contact" : "Contacto"}
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+              {isEn
+                ? "Everyone deserves security that respects the budget"
+                : "Todos merecen seguridad que respete el presupuesto"}
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+              {isEn
+                ? "We have experience across small, medium, and large businesses, and we are especially equipped to protect business owners’ pockets while improving security."
+                : "Tenemos experiencia en empresas pequeñas, medianas y grandes, y estamos especialmente preparados para proteger el bolsillo del dueño mientras mejora su seguridad."}
+            </p>
+            <p className="mt-3 text-sm font-medium text-neutral-700 dark:text-neutral-200">
+              {isEn
+                ? "We adapt the engagement to the company, not the other way around."
+                : "Adaptamos el servicio a la empresa, no al revés."}
+            </p>
+          </div>
+
+          <div className="grid gap-2 text-xs text-neutral-600 sm:grid-cols-2 dark:text-neutral-300">
+            {clientFit.map((item) => (
+              <div
+                key={item}
+                className="flex min-h-10 items-start gap-2 rounded-lg border border-neutral-200 bg-white/70 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-950/60"
+              >
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        <div className="scroll-mt-24">
+          <AnimatePresence mode="wait" initial={false}>
+            {contactMode === "methods" ? (
+              <motion.div
+                key="contact-methods"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+                className="space-y-3"
+              >
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+              {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
+            </p>
+            <div className="grid gap-3">
+              {contactMethods.map((method) => (
+                <button
+                  key={method.label}
+                  type="button"
+                  onClick={() => {
+                    if (method.kind === "form") {
+                      setContactMode("form");
+                      return;
+                    }
+
+                    openRedirectModal({
+                      label: method.label,
+                      href: method.href,
+                      kind: method.kind,
+                    });
+                  }}
+                  className="group flex w-full items-start gap-3 rounded-lg border border-neutral-200 bg-white/85 p-4 text-left shadow-sm transition-all duration-300 hover:border-emerald-500/60 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/75"
+                >
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+                    <method.icon className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+                      {method.title}
+                    </span>
+                    <span className="mt-1 block text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
+                      {method.description}
+                    </span>
+                  </span>
+                  <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300" />
+                </button>
+              ))}
+            </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="contact-form"
+                id="contact-form"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+              >
+          <button
+            type="button"
+            onClick={() => setContactMode("methods")}
+            className="mb-4 inline-flex items-center gap-2 text-xs font-semibold text-neutral-600 transition hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-neutral-50"
+          >
+            <ArrowRight className="h-3.5 w-3.5 rotate-180" />
+            {isEn ? "Back to contact options" : "Volver a opciones de contacto"}
+          </button>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
-            {isEn ? "Contact" : "Contacto"}
+            {isEn ? "Tell us where to begin" : "Cuéntanos por dónde empezar"}
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             {isEn ? "Tell us about your environment" : "Cuéntanos sobre tu entorno"}
@@ -1571,22 +1644,24 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
               ? "Share a short description and we’ll reply with whether we’re a good fit and what a first engagement could look like."
               : "Cuéntanos brevemente tu situación y te responderemos indicando si somos un buen ajuste y cómo podría verse un primer servicio."}
           </p>
-          <div className="mt-6 grid gap-3 text-xs text-neutral-600 dark:text-neutral-300 sm:grid-cols-2 md:grid-cols-1">
-            {(isEn
-              ? ["Direct inbox, no newsletter list.", "Typical response: fast, with a 24-72 hour commitment."]
-              : ["Bandeja directa, sin lista de boletines.", "Respuesta típica: rápida, con compromiso de 24-72 horas."]
-            ).map((item) => (
-              <div key={item} className="flex gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <Card interactive={false}>
-          <CardInner className="space-y-3 text-xs text-neutral-700 dark:text-neutral-200">
-            <form onSubmit={handleSubmit} className="space-y-3">
+          <Card interactive={false} className="mt-5">
+            <CardInner className="space-y-4 text-xs text-neutral-700 dark:text-neutral-200">
+              <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3 text-emerald-950 dark:border-emerald-900/70 dark:bg-emerald-950/25 dark:text-emerald-100">
+                <MessageCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">
+                    {isEn ? "Direct inbox, no newsletter list." : "Bandeja directa, sin lista de boletines."}
+                  </p>
+                  <p className="mt-1 leading-relaxed text-emerald-900/80 dark:text-emerald-100/80">
+                    {isEn
+                      ? "Typical response: fast, with a 24-72 hour commitment."
+                      : "Respuesta típica: rápida, con compromiso de 24-72 horas."}
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-3">
               <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
               <input
                 type="checkbox"
@@ -1699,6 +1774,10 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             </form>
           </CardInner>
         </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
+      </div>
       </div>
 
       {successPopupOpen && (
@@ -1714,16 +1793,85 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
               {isEn
-                ? "Thanks for reaching out. We’ll try to get back to you within 24-72 hours, although we usually respond fairly quickly."
-                : "Gracias por escribirnos. Intentaremos responderte dentro de 24-72 horas, aunque normalmente respondemos bastante rápido."}
+                ? "Your message has been sent. Response time might take up to 72 hours, but we usually respond within a few hours."
+                : "Tu mensaje fue enviado. La respuesta puede tomar hasta 72 horas, pero normalmente respondemos en pocas horas."}
             </p>
-            <div className="mt-4 flex justify-end">
+            <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+              {isEn
+                ? "Want an immediate answer? Send us a message via WhatsApp."
+                : "¿Quieres una respuesta inmediata? Escríbenos por WhatsApp."}
+            </p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  openRedirectModal({
+                    label: "WhatsApp",
+                    href: WHATSAPP_LINK,
+                    kind: "whatsapp",
+                  })
+                }
+                className="px-4 py-2 text-xs"
+              >
+                <SiWhatsapp className="h-4 w-4" />
+                WhatsApp
+              </Button>
               <Button
                 type="button"
                 onClick={() => setSuccessPopupOpen(false)}
                 className="px-4 py-2 text-xs"
               >
                 {isEn ? "Close" : "Cerrar"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {redirectTarget && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-neutral-950/40 px-4 backdrop-blur-sm">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="redirect-title"
+            className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-5 text-neutral-900 shadow-xl dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 id="redirect-title" className="text-base font-semibold">
+                  {isEn ? "Redirecting you" : "Redirigiéndote"}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                  {isEn
+                    ? `You are being redirected to ${redirectTarget.label}. If it does not happen automatically, click here.`
+                    : `Te estamos redirigiendo a ${redirectTarget.label}. Si no ocurre automáticamente, haz clic aquí.`}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRedirectTarget(null)}
+                aria-label={isEn ? "Close" : "Cerrar"}
+                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md border border-neutral-200 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <a
+                href={redirectTarget.href}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+              >
+                {isEn ? "Click here" : "Haz clic aquí"}
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRedirectTarget(null)}
+                className="px-4 py-2 text-xs"
+              >
+                {isEn ? "Stay here" : "Permanecer aquí"}
               </Button>
             </div>
           </div>
