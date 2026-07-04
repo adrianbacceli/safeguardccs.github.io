@@ -155,11 +155,11 @@ const threatStats: ThreatStat[] = [
 
 const Button: React.FC<ButtonProps> = ({ variant = "solid", className = "", ...props }) => {
   const base =
-    "group inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:translate-x-1";
+    "group inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:translate-x-1";
   const styles =
     variant === "solid"
-      ? "bg-neutral-950 text-white shadow-sm hover:rounded-xl hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-      : "border border-neutral-300 bg-white/80 text-neutral-900 hover:rounded-xl hover:border-neutral-900 hover:bg-white dark:border-neutral-700 dark:bg-neutral-950/70 dark:text-neutral-100 dark:hover:border-neutral-200 dark:hover:bg-neutral-900";
+      ? "bg-neutral-950 text-white shadow-sm hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+      : "border border-neutral-300 bg-white/80 text-neutral-900 hover:border-neutral-900 hover:bg-white dark:border-neutral-700 dark:bg-neutral-950/70 dark:text-neutral-100 dark:hover:border-neutral-200 dark:hover:bg-neutral-900";
   return <button className={`${base} ${styles} ${className}`} {...props} />;
 };
 
@@ -173,12 +173,12 @@ const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const interactiveClasses = interactive
-    ? "group hover:rounded-xl hover:border-emerald-400/60 hover:shadow-lg"
+    ? "group hover:border-emerald-400/60 hover:shadow-lg"
     : "";
 
   return (
     <div
-      className={`rounded-lg border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-500 ease-out dark:border-neutral-800 dark:bg-neutral-950/80 ${interactiveClasses} ${className}`}
+      className={`rounded-xl border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-500 ease-out dark:border-neutral-800 dark:bg-neutral-950/80 ${interactiveClasses} ${className}`}
       {...props}
     />
   );
@@ -317,7 +317,7 @@ const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={onToggleTheme}
               aria-label="Toggle theme"
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 active:scale-[0.98] dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out hover:bg-neutral-100 active:scale-[0.98] dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -331,7 +331,7 @@ const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setMobileOpen((o) => !o)}
               aria-label="Menu"
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out hover:rounded-xl active:scale-[0.98] md:hidden dark:border-neutral-700/70 dark:bg-neutral-900/80"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out active:scale-[0.98] md:hidden dark:border-neutral-700/70 dark:bg-neutral-900/80"
             >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
@@ -963,7 +963,7 @@ const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
               href={stat.sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="group rounded-lg border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-500 ease-out hover:rounded-xl hover:border-emerald-400/60 hover:bg-white hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-neutral-800 dark:bg-neutral-950/80 dark:hover:bg-neutral-950"
+              className="group rounded-xl border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-500 ease-out hover:border-emerald-400/60 hover:bg-white hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-neutral-800 dark:bg-neutral-950/80 dark:hover:bg-neutral-950"
             >
               <div className="flex min-h-[15rem] flex-col p-5 text-sm">
                 <div className="flex items-start justify-between gap-4">
@@ -1382,7 +1382,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href="https://x.com/SafeguardCCCS"
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-xl border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
           >
             <SiX className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
           </a>
@@ -1391,7 +1391,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href="https://www.instagram.com/safeguardccs"
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-xl border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
           >
             <SiInstagram className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
           </a>
@@ -1400,7 +1400,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href="https://www.facebook.com/people/Safeguardccs/61584112651947/"
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-xl border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
           >
             <SiFacebook className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
           </a>
@@ -1410,7 +1410,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-md bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+            className="inline-flex items-center gap-2 rounded-xl bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-300 ease-out hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             <SiWhatsapp className="h-4 w-4" />
             <span>WhatsApp</span>
@@ -1451,9 +1451,9 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ language }) => {
       target="_blank"
       rel="noreferrer"
       className={`
-        fixed bottom-5 right-4 z-50 inline-flex items-center gap-2 rounded-md
+        fixed bottom-5 right-4 z-50 inline-flex items-center gap-2 rounded-xl
         bg-neutral-950 px-4 py-2 text-xs font-medium text-white shadow-lg transition-all duration-300
-        hover:rounded-xl hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200
+        hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200
         ${shouldHide ? "opacity-0 translate-y-3 pointer-events-none" : "opacity-100"}
       `}
     >
