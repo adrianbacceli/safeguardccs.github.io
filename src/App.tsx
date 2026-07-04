@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Moon, Sun} from "lucide-react";
+import { Building2, ClipboardCheck, Moon, ShieldCheck, Sun } from "lucide-react";
 import { SiX, SiInstagram, SiFacebook } from "react-icons/si";
 
 
@@ -359,8 +359,8 @@ const App: React.FC = () => {
       />
 
       {/* main takes remaining height */}
-      <main className="relative mx-auto flex-1 max-w-6xl px-4 py-10 sm:px-6 sm:py-14 overflow-hidden">
-        <div className="relative">
+      <main className="relative mx-auto flex w-full max-w-6xl flex-1 items-center overflow-hidden px-4 py-10 sm:px-6 sm:py-14">
+        <div className="relative w-full">
           <AnimatedSection isActive={activeSection === "home"}>
             <HeroSection language={language} onNavigate={handleNavigate} />
           </AnimatedSection>
@@ -392,12 +392,32 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
   const isEn = language === "en";
+  const heroPoints = [
+    {
+      icon: ShieldCheck,
+      label: isEn
+        ? "Work directly with founder-led engineers who understand business risk"
+        : "Trabaja directamente con ingenieros fundadores que entienden el riesgo del negocio",
+    },
+    {
+      icon: Building2,
+      label: isEn
+        ? "Get cybersecurity guidance designed for small and mid-size companies"
+        : "Recibe guía de ciberseguridad diseñada para pequeñas y medianas empresas",
+    },
+    {
+      icon: ClipboardCheck,
+      label: isEn
+        ? "Rely on engineers with 7+ years across Latin America and 1,000+ successful career cases"
+        : "Confía en ingenieros con más de 7 años en Latinoamérica y más de 1,000 casos exitosos en sus carreras",
+    },
+  ];
 
   return (
-    <div className="grid gap-10 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:items-center">
-      <div>
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50/70 px-3 py-1 text-[11px] font-medium text-emerald-800 shadow-sm backdrop-blur-sm dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-100">
-          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/90 text-[10px] text-white">
+    <div className="w-full">
+      <div className="max-w-5xl">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50/70 px-3 py-1 text-[11px] font-medium text-emerald-800 shadow-sm backdrop-blur-sm dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-100 lg:px-4 lg:py-1.5 lg:text-xs">
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/90 text-[10px] text-white lg:h-5 lg:w-5 lg:text-xs">
             ✓
           </span>
           <span>
@@ -407,7 +427,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
           </span>
         </div>
 
-        <h1 className="mt-5 pb-1 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[2.9rem]">
+        <h1 className="mt-5 pb-1 text-4xl font-semibold tracking-tight sm:text-5xl lg:mt-7 lg:text-7xl xl:text-[4.5rem]">
           <span className="block">
             {isEn ? "Make your IT" : "Haz que tu TI"}
           </span>
@@ -416,17 +436,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
           </span>
         </h1>
 
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-[15px]">
-          {isEn
-            ? "SafeGuard Cybersecurity Consulting Services helps accounting, legal and service firms reduce real-world risks: downtime, data loss and loss of client trust. We look at how you work today and improve it step by step."
-            : "SafeGuard Cybersecurity Consulting Services ayuda a firmas contables, legales y de servicios a reducir riesgos reales: caídas, pérdida de datos y pérdida de confianza de los clientes. Vemos cómo trabajas hoy y mejoramos paso a paso."}
-        </p>
+        <ul className="mt-5 max-w-3xl space-y-3 text-sm text-neutral-700 dark:text-neutral-200 lg:mt-7 lg:text-base">
+          {heroPoints.map(({ icon: Icon, label }) => (
+            <li
+              key={label}
+              className="flex items-center gap-3"
+            >
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center text-emerald-600 dark:text-emerald-300">
+                <Icon className="h-4 w-4" />
+              </span>
+              <span className="font-medium">{label}</span>
+            </li>
+          ))}
+        </ul>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <Button onClick={() => onNavigate("contact")}>
+        <div className="mt-6 flex flex-wrap items-center gap-3 lg:mt-8 lg:gap-4">
+          <Button onClick={() => onNavigate("contact")} className="lg:px-6 lg:py-3 lg:text-base">
             {isEn ? "Talk about your environment" : "Hablar de tu entorno"}
           </Button>
-          <Button variant="outline" onClick={() => onNavigate("services")}>
+          <Button variant="outline" onClick={() => onNavigate("services")} className="lg:px-6 lg:py-3 lg:text-base">
             {isEn ? "See what we do" : "Ver qué hacemos"}
           </Button>
         </div>
