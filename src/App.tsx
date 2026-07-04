@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
   Activity,
@@ -691,23 +691,79 @@ interface ActiveSectionProps extends SectionProps {
   isActive: boolean;
 }
 
-const BackgroundSystem: React.FC = () => (
-  <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.055)_1px,transparent_1px)] bg-[size:44px_44px] opacity-70 dark:bg-[linear-gradient(to_right,rgba(148,163,184,0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.075)_1px,transparent_1px)]" />
-    <div className="ambient-sweep absolute left-1/2 top-0 h-[42rem] w-[42rem] -translate-x-1/2 rounded-full border border-emerald-500/10 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.12),rgba(14,165,233,0.05)_36%,transparent_68%)] blur-sm dark:border-emerald-300/10 dark:bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.13),rgba(14,165,233,0.06)_36%,transparent_68%)]" />
-    <div className="node-field absolute inset-0 opacity-60 dark:opacity-50">
-      <span className="threat-node threat-node-a" />
-      <span className="threat-node threat-node-b" />
-      <span className="threat-node threat-node-c" />
-      <span className="threat-node threat-node-d" />
-      <span className="threat-node threat-node-e" />
-      <span className="threat-link threat-link-a" />
-      <span className="threat-link threat-link-b" />
-      <span className="threat-link threat-link-c" />
+const BackgroundSystem: React.FC = () => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const speedResetRef = useRef<number>();
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const setSpeed = (speed: number) => {
+      root.style.setProperty("--ambient-duration", `${18 * speed}s`);
+      root.style.setProperty("--grid-duration", `${34 * speed}s`);
+      root.style.setProperty("--node-field-duration", `${42 * speed}s`);
+      window.clearTimeout(speedResetRef.current);
+      speedResetRef.current = window.setTimeout(() => {
+        root.style.setProperty("--ambient-duration", "18s");
+        root.style.setProperty("--grid-duration", "34s");
+        root.style.setProperty("--node-field-duration", "42s");
+      }, 220);
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 2;
+      const y = (event.clientY / window.innerHeight - 0.5) * 2;
+
+      root.style.setProperty("--grid-pointer-x", `${(-18 * x).toFixed(1)}px`);
+      root.style.setProperty("--grid-pointer-y", `${(-14 * y).toFixed(1)}px`);
+      root.style.setProperty("--node-pointer-x", `${(26 * x).toFixed(1)}px`);
+      root.style.setProperty("--node-pointer-y", `${(22 * y).toFixed(1)}px`);
+      setSpeed(0.35);
+    };
+
+    const handleScroll = () => {
+      const scrollProgress =
+        window.scrollY /
+        Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+
+      root.style.setProperty("--grid-scroll-shift", `${(scrollProgress * 120).toFixed(1)}px`);
+      root.style.setProperty("--node-scroll-shift", `${(scrollProgress * -40).toFixed(1)}px`);
+      setSpeed(0.28);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("scroll", handleScroll);
+      window.clearTimeout(speedResetRef.current);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={rootRef}
+      className="background-system pointer-events-none fixed inset-0 z-0 overflow-hidden"
+    >
+      <div className="background-grid absolute inset-[-5rem] bg-[linear-gradient(to_right,rgba(15,23,42,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.07)_1px,transparent_1px)] bg-[size:44px_44px] opacity-80 dark:bg-[linear-gradient(to_right,rgba(148,163,184,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.1)_1px,transparent_1px)]" />
+      <div className="ambient-sweep background-ambient absolute left-1/2 top-0 h-[42rem] w-[42rem] -translate-x-1/2 rounded-full border border-emerald-500/10 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.12),rgba(14,165,233,0.05)_36%,transparent_68%)] blur-sm dark:border-emerald-300/10 dark:bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.13),rgba(14,165,233,0.06)_36%,transparent_68%)]" />
+      <div className="node-field background-node-field absolute inset-[-4rem] opacity-60 dark:opacity-50">
+        <span className="threat-node threat-node-a" />
+        <span className="threat-node threat-node-b" />
+        <span className="threat-node threat-node-c" />
+        <span className="threat-node threat-node-d" />
+        <span className="threat-node threat-node-e" />
+        <span className="threat-link threat-link-a" />
+        <span className="threat-link threat-link-b" />
+        <span className="threat-link threat-link-c" />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#f7f8f5] to-transparent dark:from-[#050706]" />
     </div>
-    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#f7f8f5] to-transparent dark:from-[#050706]" />
-  </div>
-);
+  );
+};
 
 const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
