@@ -700,6 +700,125 @@ interface ActiveSectionProps extends SectionProps {
   isActive: boolean;
 }
 
+interface MobileTopBarProps {
+  theme: Theme;
+  language: Language;
+  onToggleTheme: () => void;
+  onToggleLanguage: () => void;
+}
+
+interface MobileSectionIndicatorProps {
+  language: Language;
+  activeSection: SectionId;
+  onNavigate: (section: SectionId) => void;
+}
+
+const sectionLabels: Record<SectionId, { en: string; es: string }> = {
+  home: { en: "Home", es: "Inicio" },
+  services: { en: "How we work", es: "Cómo trabajamos" },
+  approach: { en: "Why trust us", es: "Por qué confiar" },
+  threats: { en: "Emerging threats", es: "Amenazas actuales" },
+  contact: { en: "Contact", es: "Contacto" },
+};
+
+const MobileTopBar: React.FC<MobileTopBarProps> = ({
+  theme,
+  language,
+  onToggleTheme,
+  onToggleLanguage,
+}) => (
+  <div className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/88 px-4 py-3 backdrop-blur-xl md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/88">
+    <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+      <img
+        src={theme === "dark" ? "/logo_white.svg" : "/logo.svg"}
+        alt="SafeGuard CCS logo"
+        className="h-7 w-auto"
+      />
+      <div className="flex items-center gap-2">
+        <div className="flex h-9 items-center rounded-md border border-neutral-300/70 bg-white/80 p-0.5 text-[11px] shadow-sm dark:border-neutral-700/70 dark:bg-neutral-900/80">
+          <button
+            type="button"
+            onClick={onToggleLanguage}
+            className={
+              "flex h-7 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
+              (language === "en"
+                ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
+                : "text-neutral-600 dark:text-neutral-300")
+            }
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={onToggleLanguage}
+            className={
+              "flex h-7 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
+              (language === "es"
+                ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
+                : "text-neutral-600 dark:text-neutral-300")
+            }
+          >
+            ES
+          </button>
+        </div>
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          aria-label="Toggle theme"
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out hover:bg-neutral-100 active:scale-[0.98] dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-4 w-4" />
+          ) : (
+            <Moon className="h-4 w-4" />
+          )}
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const MobileSectionIndicator: React.FC<MobileSectionIndicatorProps> = ({
+  language,
+  activeSection,
+  onNavigate,
+}) => {
+  const isEn = language === "en";
+
+  return (
+    <nav
+      aria-label={isEn ? "Mobile section navigation" : "Navegación móvil por secciones"}
+      className="fixed right-2 top-1/2 z-40 flex -translate-y-1/2 flex-col gap-2 rounded-full border border-neutral-200/80 bg-white/75 p-1.5 shadow-sm backdrop-blur md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/75"
+    >
+      {SECTION_IDS.map((section) => {
+        const isActive = activeSection === section;
+        const label = sectionLabels[section][language];
+
+        return (
+          <motion.button
+            key={section}
+            type="button"
+            onClick={() => onNavigate(section)}
+            aria-label={isEn ? `Go to ${label}` : `Ir a ${label}`}
+            aria-current={isActive ? "true" : undefined}
+            initial={false}
+            animate={{
+              opacity: isActive ? 1 : 0.42,
+              scale: isActive ? 1.35 : 1,
+            }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className={`h-2.5 w-2.5 rounded-full ${
+              isActive
+                ? "bg-emerald-700 shadow-[0_0_0_4px_rgba(4,120,87,0.12)] dark:bg-emerald-300 dark:shadow-[0_0_0_4px_rgba(110,231,183,0.12)]"
+                : "bg-neutral-300 hover:bg-neutral-500 dark:bg-neutral-700 dark:hover:bg-neutral-500"
+            }`}
+          />
+        );
+      })}
+    </nav>
+  );
+};
+
 const BackgroundSystem: React.FC = () => {
   const rootRef = useRef<HTMLDivElement>(null);
   const speedResetRef = useRef<number>();
@@ -824,6 +943,7 @@ const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
+  const [mobileActiveSection, setMobileActiveSection] = useState<SectionId>("home");
 
   useEffect(() => {
     const syncSectionFromHash = () => {
@@ -842,6 +962,64 @@ const App: React.FC = () => {
     return () => window.removeEventListener("hashchange", syncSectionFromHash);
   }, []);
 
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+    let observer: IntersectionObserver | null = null;
+
+    const syncMobileSection = (section: SectionId) => {
+      setMobileActiveSection(section);
+      setActiveSection(section);
+
+      if (window.location.hash !== `#${section}`) {
+        window.history.replaceState(null, "", `#${section}`);
+      }
+    };
+
+    const disconnectObserver = () => {
+      observer?.disconnect();
+      observer = null;
+    };
+
+    const setupObserver = () => {
+      disconnectObserver();
+      if (!mobileQuery.matches) return;
+
+      const sections = SECTION_IDS
+        .map((section) => document.getElementById(`mobile-${section}`))
+        .filter((section): section is HTMLElement => Boolean(section));
+
+      if (!sections.length) return;
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+          const section = visible?.target.getAttribute("data-section");
+          if (section && isSectionId(section)) {
+            syncMobileSection(section);
+          }
+        },
+        {
+          root: null,
+          rootMargin: "-28% 0px -52% 0px",
+          threshold: [0.12, 0.3, 0.55, 0.75],
+        }
+      );
+
+      sections.forEach((section) => observer?.observe(section));
+    };
+
+    setupObserver();
+    mobileQuery.addEventListener("change", setupObserver);
+
+    return () => {
+      disconnectObserver();
+      mobileQuery.removeEventListener("change", setupObserver);
+    };
+  }, []);
+
   const handleNavigate = (section: SectionId) => {
     if (window.location.hash === `#${section}`) {
       setActiveSection(section);
@@ -852,6 +1030,17 @@ const App: React.FC = () => {
     window.location.hash = section;
   };
 
+  const handleMobileNavigate = (section: SectionId) => {
+    const target = document.getElementById(`mobile-${section}`);
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMobileActiveSection(section);
+    setActiveSection(section);
+
+    if (window.location.hash !== `#${section}`) {
+      window.history.replaceState(null, "", `#${section}`);
+    }
+  };
+
   const toggleLanguage = () =>
     setLanguage((lang) => (lang === "en" ? "es" : "en"));
 
@@ -859,17 +1048,32 @@ const App: React.FC = () => {
     <div className="relative isolate flex min-h-screen flex-col overflow-hidden bg-[#f7f8f5] text-neutral-950 transition-colors duration-300 dark:bg-[#050706] dark:text-neutral-50">
       <BackgroundSystem />
 
-      <Navbar
+      <div className="hidden md:block">
+        <Navbar
         theme={theme}
         language={language}
         activeSection={activeSection}
         onNavigate={handleNavigate}
         onToggleTheme={toggleTheme}
         onToggleLanguage={toggleLanguage}
+        />
+      </div>
+
+      <MobileTopBar
+        theme={theme}
+        language={language}
+        onToggleTheme={toggleTheme}
+        onToggleLanguage={toggleLanguage}
+      />
+
+      <MobileSectionIndicator
+        language={language}
+        activeSection={mobileActiveSection}
+        onNavigate={handleMobileNavigate}
       />
 
       {/* main takes remaining height */}
-      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
+      <main className="relative z-10 mx-auto hidden w-full max-w-6xl flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 md:flex lg:py-16">
         <div className="relative w-full">
           <AnimatedSection isActive={activeSection === "home"}>
             <HeroSection
@@ -893,6 +1097,50 @@ const App: React.FC = () => {
           <AnimatedSection isActive={activeSection === "contact"}>
             <ContactSection language={language} />
           </AnimatedSection>
+        </div>
+      </main>
+
+      <main className="relative z-10 w-full px-4 pb-12 pt-8 md:hidden">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 pr-5">
+          <section
+            id="mobile-home"
+            data-section="home"
+            className="scroll-mt-20"
+          >
+            <HeroSection
+              language={language}
+              isActive={true}
+              onNavigate={handleMobileNavigate}
+            />
+          </section>
+          <section
+            id="mobile-services"
+            data-section="services"
+            className="scroll-mt-20"
+          >
+            <ServicesSection language={language} />
+          </section>
+          <section
+            id="mobile-approach"
+            data-section="approach"
+            className="scroll-mt-20"
+          >
+            <ApproachSection language={language} />
+          </section>
+          <section
+            id="mobile-threats"
+            data-section="threats"
+            className="scroll-mt-20"
+          >
+            <ThreatsSection language={language} isActive={true} />
+          </section>
+          <section
+            id="mobile-contact"
+            data-section="contact"
+            className="scroll-mt-20"
+          >
+            <ContactSection language={language} />
+          </section>
         </div>
       </main>
 
@@ -965,7 +1213,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
         </p>
 
         <h1 className="mt-5 max-w-[11ch] text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5rem]">
-          {isEn ? "All we do is security." : "Nos dedicamos a seguridad."}
+          {isEn ? "Security is all we do." : "Seguridad. Sin distracciones."}
         </h1>
 
         <ul className="mt-7 max-w-3xl space-y-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-200 lg:text-base">
