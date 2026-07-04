@@ -1530,8 +1530,12 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
 
   return (
     <div className="py-4 sm:py-6">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
-        <div className="space-y-6">
+      <motion.div
+        layout
+        transition={{ type: "spring", stiffness: 180, damping: 26, mass: 0.8 }}
+        className="grid min-w-0 gap-8 min-h-[32rem] lg:min-h-[33rem] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start"
+      >
+        <motion.div layout="position" className="min-w-0 space-y-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
               {isEn ? "Contact" : "Contacto"}
@@ -1565,9 +1569,9 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             ))}
           </div>
 
-        </div>
+        </motion.div>
 
-        <div className="scroll-mt-24">
+        <div className="min-w-0 scroll-mt-24 lg:min-h-[33rem]">
           <AnimatePresence mode="wait" initial={false}>
             {contactMode === "methods" ? (
               <motion.div
@@ -1576,7 +1580,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.24, ease: "easeOut" }}
-                className="space-y-3"
+                className="min-w-0 space-y-3"
               >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
               {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
@@ -1598,7 +1602,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                       kind: method.kind,
                     });
                   }}
-                  className="group flex w-full items-start gap-3 rounded-lg border border-neutral-200 bg-white/85 p-4 text-left shadow-sm transition-all duration-300 hover:border-emerald-500/60 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/75"
+                className="group flex w-full min-w-0 items-start gap-3 rounded-lg border border-neutral-200 bg-white/85 p-4 text-left shadow-sm transition-all duration-300 hover:border-emerald-500/60 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/75"
                 >
                   <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
                     <method.icon className="h-4 w-4" />
@@ -1624,6 +1628,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.24, ease: "easeOut" }}
+                className="min-w-0"
               >
           <button
             type="button"
@@ -1639,29 +1644,16 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             {isEn ? "Tell us about your environment" : "Cuéntanos sobre tu entorno"}
           </h2>
-          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-            {isEn
-              ? "Share a short description and we’ll reply with whether we’re a good fit and what a first engagement could look like."
-              : "Cuéntanos brevemente tu situación y te responderemos indicando si somos un buen ajuste y cómo podría verse un primer servicio."}
-          </p>
-
-          <Card interactive={false} className="mt-5">
-            <CardInner className="space-y-4 text-xs text-neutral-700 dark:text-neutral-200">
-              <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3 text-emerald-950 dark:border-emerald-900/70 dark:bg-emerald-950/25 dark:text-emerald-100">
-                <MessageCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">
-                    {isEn ? "Direct inbox, no newsletter list." : "Bandeja directa, sin lista de boletines."}
-                  </p>
-                  <p className="mt-1 leading-relaxed text-emerald-900/80 dark:text-emerald-100/80">
-                    {isEn
-                      ? "Typical response: fast, with a 24-72 hour commitment."
-                      : "Respuesta típica: rápida, con compromiso de 24-72 horas."}
-                  </p>
-                </div>
+          <Card interactive={false} className="mt-5 overflow-hidden">
+            <CardInner className="min-w-0 space-y-4 text-xs text-neutral-700 dark:text-neutral-200">
+              <div className="flex min-w-0 items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50/80 px-3 py-2 text-[11px] font-semibold text-emerald-950 dark:border-emerald-900/70 dark:bg-emerald-950/25 dark:text-emerald-100">
+                <MessageCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                <span className="min-w-0 truncate">
+                  {isEn ? "Direct inbox, no newsletter list." : "Bandeja directa, sin lista de boletines."}
+                </span>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="min-w-0 space-y-3">
               <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
               <input
                 type="checkbox"
@@ -1679,8 +1671,9 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                   <input
                     type="text"
                     name="name"
-                    required
-                    value={name}
+	                    required
+	                    placeholder={isEn ? "E.g. John Smith" : "Ej. Juan Perez"}
+	                    value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
                   />
@@ -1691,39 +1684,43 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                   </label>
                   <input
                     type="email"
-                    name="email"
-                    required
-                    value={email}
+	                    name="email"
+	                    required
+	                    placeholder="E.g. john.smith@company.com"
+	                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="mb-1 block text-[11px] font-medium">
-                  {isEn ? "Company" : "Empresa"}
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-[11px] font-medium">
-                  {isEn ? "Approximate number of employees" : "Número aproximado de empleados"}
-                </label>
-                <input
-                  type="text"
-                  name="employees"
-                  value={employees}
-                  onChange={(e) => setEmployees(e.target.value)}
-                  className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
-                />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-[11px] font-medium">
+                    {isEn ? "Company" : "Empresa"}
+                  </label>
+                  <input
+                    type="text"
+                    name="company"
+                    placeholder={isEn ? "Company S.A." : "Empresa S.A."}
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-[11px] font-medium">
+                    {isEn ? "Approximate number of employees" : "Número aproximado de empleados"}
+                  </label>
+                  <input
+                    type="text"
+                    name="employees"
+                    placeholder={isEn ? "E.g. 1-50" : "Ej. 1-50"}
+                    value={employees}
+                    onChange={(e) => setEmployees(e.target.value)}
+                    className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
+                  />
+                </div>
               </div>
 
               <div>
@@ -1734,27 +1731,35 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </label>
                 <textarea
                   rows={4}
-                  name="message"
-                  required
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="min-h-[7rem] w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
+	                  name="message"
+	                  required
+                  placeholder={
+                    isEn
+                      ? "Share a short description and we’ll reply with whether we’re a good fit and what a first engagement could look like."
+                      : "Comparte una breve descripción y responderemos si somos un buen ajuste y cómo podría verse un primer servicio."
+                  }
+	                  value={message}
+                  onChange={handleMessageChange}
+                  className="min-h-[7rem] max-h-40 w-full max-w-full resize-y rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
                 />
+                <div className="mt-1 flex justify-end text-[10px] text-neutral-500 dark:text-neutral-400">
+                  {messageWordCount}/{MESSAGE_WORD_LIMIT} {isEn ? "words" : "palabras"}
+                </div>
               </div>
 
               <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
-                <Button
-                  type="submit"
-                  disabled={submitStatus === "sending"}
-                  className="whitespace-nowrap text-xs"
-                >
-                  {submitStatus === "sending"
-                    ? isEn
-                      ? "Sending..."
-                      : "Enviando..."
-                    : isEn
-                      ? "Send message"
-                      : "Enviar mensaje"}
+	                <Button
+	                  type="submit"
+	                  disabled={submitStatus === "sending"}
+	                  className="w-fit whitespace-nowrap px-4 text-xs"
+	                >
+	                  {submitStatus === "sending"
+	                    ? isEn
+	                      ? "Sending..."
+	                      : "Enviando..."
+	                    : isEn
+	                      ? "Send"
+	                      : "Enviar"}
                 </Button>
 
                 <span className="text-[10px] text-neutral-500 dark:text-neutral-400 max-w-xs leading-tight">
@@ -1767,8 +1772,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                         ? "Something went wrong. Please try again."
                         : "Algo salió mal. Intenta nuevamente."
                       : isEn
-                        ? "Your message goes directly to our inbox."
-                        : "Tu mensaje llega directo a nuestra bandeja."}
+                        ? "Typical response: fast, with a 24-72 hour commitment."
+                        : "Respuesta típica: rápida, con compromiso de 24-72 horas."}
                 </span>
               </div>
             </form>
@@ -1778,10 +1783,12 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             )}
           </AnimatePresence>
       </div>
-      </div>
+      </motion.div>
 
-      {successPopupOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-neutral-950/40 px-4 backdrop-blur-sm">
+      {typeof document !== "undefined" && createPortal(
+        <>
+          {successPopupOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-neutral-950/40 px-4 backdrop-blur-md">
           <div
             role="dialog"
             aria-modal="true"
@@ -1827,10 +1834,10 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             </div>
           </div>
         </div>
-      )}
+          )}
 
-      {redirectTarget && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-neutral-950/40 px-4 backdrop-blur-sm">
+          {redirectTarget && (
+        <div className="fixed inset-0 z-[1010] flex items-center justify-center bg-neutral-950/40 px-4 backdrop-blur-md">
           <div
             role="dialog"
             aria-modal="true"
@@ -1842,11 +1849,26 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 <h3 id="redirect-title" className="text-base font-semibold">
                   {isEn ? "Redirecting you" : "Redirigiéndote"}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                  {isEn
-                    ? `You are being redirected to ${redirectTarget.label}. If it does not happen automatically, click here.`
-                    : `Te estamos redirigiendo a ${redirectTarget.label}. Si no ocurre automáticamente, haz clic aquí.`}
-                </p>
+                {redirectTarget.kind === "email" ? (
+                  <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                    {isEn
+                      ? "You are being redirected to Email. If it does not happen automatically, write us at "
+                      : "Te estamos redirigiendo al correo. Si no ocurre automáticamente, escríbenos a "}
+                    <a
+                      href={redirectTarget.href}
+                      className="font-semibold text-emerald-700 underline decoration-emerald-700/30 underline-offset-4 transition hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-100"
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
+                    .
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                    {isEn
+                      ? `You are being redirected to ${redirectTarget.label}. If it does not happen automatically, click here.`
+                      : `Te estamos redirigiendo a ${redirectTarget.label}. Si no ocurre automáticamente, haz clic aquí.`}
+                  </p>
+                )}
               </div>
               <button
                 type="button"
@@ -1860,9 +1882,17 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
               <a
                 href={redirectTarget.href}
+                target={redirectTarget.kind === "whatsapp" ? "_blank" : undefined}
+                rel={redirectTarget.kind === "whatsapp" ? "noreferrer" : undefined}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
               >
-                {isEn ? "Click here" : "Haz clic aquí"}
+                {redirectTarget.kind === "email"
+                  ? isEn
+                    ? "Open email app"
+                    : "Abrir correo"
+                  : isEn
+                    ? "Click here"
+                    : "Haz clic aquí"}
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
               <Button
@@ -1876,6 +1906,9 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             </div>
           </div>
         </div>
+          )}
+        </>,
+        document.body
       )}
     </div>
   );
