@@ -8,7 +8,6 @@ import {
   Building2,
   CheckCircle2,
   ExternalLink,
-  FileCheck2,
   LockKeyhole,
   Mail,
   Menu,
@@ -1308,201 +1307,24 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
 
 const ServicesSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
-  const [activeNist, setActiveNist] = useState(0);
-
-  const services = [
-    {
-      icon: Network,
-      tag: isEn ? "Assess" : "Evaluar",
-      title: isEn ? "Understand the environment" : "Entender el entorno",
-      description: isEn
-        ? "We map how your business works: systems, data, people, access, vendors, and operational constraints."
-        : "Mapeamos cómo trabaja tu negocio: sistemas, datos, personas, accesos, proveedores y limitaciones operativas.",
-      points: isEn
-        ? [
-            "Business and data flows",
-            "Critical systems and dependencies",
-            "Current exposure and weak spots",
-          ]
-        : [
-            "Flujos de negocio y datos",
-            "Sistemas críticos y dependencias",
-            "Exposición actual y puntos débiles",
-          ],
-    },
-    {
-      icon: LockKeyhole,
-      tag: isEn ? "Align" : "Alinear",
-      title: isEn ? "Use NIST and ISO 27000 as baseline" : "Usar NIST e ISO 27000 como base",
-      description: isEn
-        ? "We translate recognized security frameworks into controls that fit your size, budget, and team."
-        : "Traducimos marcos reconocidos de seguridad en controles que se ajustan a tu tamaño, presupuesto y equipo.",
-      points: isEn
-        ? [
-            "NIST Cybersecurity Framework principles",
-            "ISO 27000 information-security practices",
-            "Practical control gaps and priorities",
-          ]
-        : [
-            "Principios del marco NIST CSF",
-            "Prácticas de seguridad ISO 27000",
-            "Brechas de control y prioridades prácticas",
-          ],
-    },
-    {
-      icon: FileCheck2,
-      tag: isEn ? "Roadmap" : "Ruta",
-      title: isEn ? "Turn risk into an action plan" : "Convertir riesgo en plan de acción",
-      description: isEn
-        ? "You get executive summaries, technical detail, and a budget-aware roadmap your team can approve."
-        : "Recibes resúmenes ejecutivos, detalle técnico y una ruta consciente del presupuesto que tu equipo puede aprobar.",
-      points: isEn
-        ? [
-            "Executive-level explanation",
-            "Prioritized improvements",
-            "Support through implementation",
-          ]
-        : [
-            "Explicación para gerencia",
-            "Mejoras priorizadas",
-            "Acompañamiento en implementación",
-          ],
-    },
-  ];
-  const nistFunctions = isEn
-    ? [
-        ["Govern", "Set ownership, risk appetite, and security decisions."],
-        ["Identify", "Map assets, data, vendors, and exposure."],
-        ["Protect", "Prioritize access, hardening, backup, and resilience."],
-        ["Detect", "Clarify signals, monitoring, and alert handling."],
-        ["Respond", "Prepare decisions for incidents and business disruption."],
-        ["Recover", "Plan restoration, lessons learned, and continuity."],
-      ]
-    : [
-        ["Gobernar", "Definir responsables, apetito de riesgo y decisiones de seguridad."],
-        ["Identificar", "Mapear activos, datos, proveedores y exposición."],
-        ["Proteger", "Priorizar accesos, hardening, respaldo y resiliencia."],
-        ["Detectar", "Aclarar señales, monitoreo y manejo de alertas."],
-        ["Responder", "Preparar decisiones ante incidentes e interrupciones."],
-        ["Recuperar", "Planificar restauración, aprendizajes y continuidad."],
-      ];
 
   return (
-    <div className="py-4 sm:py-6">
-      <div className="mb-8 max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
-          {isEn ? "How we work" : "Cómo trabajamos"}
-        </p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          {isEn ? "Framework-led security, built for real businesses" : "Seguridad basada en marcos, diseñada para negocios reales"}
-        </h2>
-        <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-          {isEn
-            ? "We use NIST and ISO 27000 as a practical baseline, then adapt the plan to your operations instead of forcing a generic product stack."
-            : "Usamos NIST e ISO 27000 como una base práctica y adaptamos el plan a tus operaciones en lugar de imponer un paquete genérico de productos."}
-        </p>
-      </div>
-
-      <div className="mb-8 grid gap-5 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-center">
-        <Card interactive={false} className="overflow-hidden">
-          <CardInner className="p-4">
-            <div className="relative mx-auto aspect-square max-w-[17rem]">
-              <div className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full border border-neutral-200 bg-white/80 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-950/80">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                  NIST CSF
-                </span>
-                <span className="mt-1 text-sm font-semibold text-neutral-950 dark:text-neutral-50">
-                  {nistFunctions[activeNist][0]}
-                </span>
-              </div>
-              {nistFunctions.map(([title], index) => {
-                const angle = -90 + index * 60;
-                const radius = 40;
-                const x = 50 + radius * Math.cos((angle * Math.PI) / 180);
-                const y = 50 + radius * Math.sin((angle * Math.PI) / 180);
-                const isActive = activeNist === index;
-
-                return (
-                  <button
-                    key={title}
-                    type="button"
-                    onClick={() => setActiveNist(index)}
-                    onMouseEnter={() => setActiveNist(index)}
-                    className={`absolute flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border p-2 text-center text-[10px] font-semibold leading-tight shadow-sm transition-all duration-300 ${
-                      isActive
-                        ? "border-emerald-500 bg-emerald-700 text-white dark:border-emerald-300 dark:bg-emerald-300 dark:text-neutral-950"
-                        : "border-neutral-200 bg-white text-neutral-700 hover:border-emerald-400 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200"
-                    }`}
-                    style={{ left: `${x}%`, top: `${y}%` }}
-                    aria-pressed={isActive}
-                  >
-                    {title}
-                  </button>
-                );
-              })}
-            </div>
-          </CardInner>
-        </Card>
-
-        <div className="grid gap-4">
-          <Card interactive={false}>
-            <CardInner className="p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
-                {isEn ? "Interactive NIST baseline" : "Base NIST interactiva"}
-              </p>
-              <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
-                {nistFunctions[activeNist][0]}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                {nistFunctions[activeNist][1]}
-              </p>
-            </CardInner>
-          </Card>
-          <Card interactive={false}>
-            <CardInner className="p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
-                ISO 27000
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                {isEn
-                  ? "ISO 27000 gives us the information-security management language: policy, roles, control intent, evidence, and continual improvement."
-                  : "ISO 27000 aporta el lenguaje de gestión de seguridad de la información: políticas, roles, intención de controles, evidencia y mejora continua."}
-              </p>
-            </CardInner>
-          </Card>
-        </div>
-      </div>
-      
-      <div className="relative">
-        <div className="grid gap-6 md:grid-cols-3">
-          {services.map((service) => (
-            <Card key={service.title}>
-              <CardInner className="flex min-h-[19rem] flex-col">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-emerald-700/20 bg-emerald-50 text-emerald-800 dark:border-emerald-300/20 dark:bg-emerald-950/40 dark:text-emerald-200">
-                    <service.icon className="h-5 w-5" />
-                  </div>
-                  <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-400">
-                    {service.tag}
-                  </span>
-                </div>
-                <h3 className="mt-5 text-base font-semibold">{service.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                  {service.description}
-                </p>
-                <ul className="mt-5 space-y-2 text-xs text-neutral-600 dark:text-neutral-300">
-                  {service.points.map((item) => (
-                    <li key={item} className="flex gap-2.5">
-                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardInner>
-            </Card>
-          ))}
-        </div>
-      </div>
+    <div className="flex min-h-[calc(100svh-8rem)] items-center py-4 sm:min-h-[28rem] sm:py-6 lg:min-h-[32rem]">
+      <Card interactive={false} className="mx-auto w-full max-w-2xl overflow-hidden">
+        <CardInner className="flex min-h-[22rem] flex-col items-center justify-center p-8 text-center sm:min-h-[26rem]">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
+            {isEn ? "How we work" : "Cómo trabajamos"}
+          </p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+            {isEn ? "Coming soon" : "Próximamente"}
+          </h2>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+            {isEn
+              ? "We are preparing a simpler view of our NIST CSF and ISO 27000 based engagement model."
+              : "Estamos preparando una vista más simple de nuestro modelo de trabajo basado en NIST CSF e ISO 27000."}
+          </p>
+        </CardInner>
+      </Card>
     </div>
   );
 };
@@ -1533,41 +1355,6 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
   );
 };
 
-const MobileTrustSection: React.FC<SectionProps> = ({ language }) => {
-  const isEn = language === "en";
-
-  return (
-    <div className="w-full py-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
-        {isEn ? "Why trust us" : "Por qué confiar"}
-      </p>
-      <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-        {isEn ? "Credentialed work, without the weight." : "Experiencia validada, sin peso visual."}
-      </h2>
-      <div className="mt-6 grid grid-cols-[4.5rem_minmax(0,1fr)] items-stretch gap-3">
-        <div className="flex flex-col items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50/80 px-3 text-center dark:border-emerald-900/70 dark:bg-emerald-950/25">
-          <CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
-          <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-800 dark:text-emerald-300">
-            {isEn ? "Verified" : "Validado"}
-          </span>
-        </div>
-        <Card interactive={false} className="overflow-hidden">
-          <CardInner className="p-4">
-            <h3 className="text-sm font-semibold text-neutral-950 dark:text-neutral-50">
-              {isEn ? "Certifications support the work." : "Las certificaciones respaldan el trabajo."}
-            </h3>
-            <p className="mt-2 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {isEn
-                ? "Our background spans infrastructure, security, networking, storage, and enterprise support, applied as practical guidance for real businesses."
-                : "Nuestra experiencia cubre infraestructura, seguridad, redes, almacenamiento y soporte empresarial, aplicada como guía práctica para negocios reales."}
-            </p>
-          </CardInner>
-        </Card>
-      </div>
-    </div>
-  );
-};
-
 const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
   const [index, setIndex] = useState(0);
@@ -1594,15 +1381,15 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const detail = isEn ? activeLogo.description.en : activeLogo.description.es;
 
   return (
-    <div className="grid gap-5 rounded-lg border border-neutral-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm md:grid-cols-[280px_1fr] dark:border-neutral-800 dark:bg-neutral-950/75">
-      <div className="space-y-3">
-        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70">
+    <div className="grid grid-cols-[5rem_minmax(0,1fr)] gap-3 rounded-lg border border-neutral-200 bg-white/80 p-3 shadow-sm backdrop-blur-sm md:grid-cols-[280px_1fr] md:gap-5 md:p-4 dark:border-neutral-800 dark:bg-neutral-950/75">
+      <div className="space-y-2 md:space-y-3">
+        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70 md:p-8">
           <AnimatePresence mode="wait" initial={false}>
             <motion.img
               key={activeLogo.file}
               src={activeLogo.src}
               alt={activeLogo.title}
-              className="absolute inset-8 h-[calc(100%-4rem)] w-[calc(100%-4rem)] object-contain"
+              className="absolute inset-2 h-[calc(100%-1rem)] w-[calc(100%-1rem)] object-contain md:inset-8 md:h-[calc(100%-4rem)] md:w-[calc(100%-4rem)]"
               initial={{ opacity: 0, scale: 0.96, filter: "blur(6px)" }}
               animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
@@ -1610,31 +1397,31 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
             />
           </AnimatePresence>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-1 md:gap-3">
           <button
             type="button"
             onClick={goPrev}
             aria-label={isEn ? "Previous certification" : "Certificación anterior"}
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-[16px] text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
           >
             ‹
           </button>
-          <div className="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
+          <div className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 md:text-[11px]">
             {index + 1} / {total}
           </div>
           <button
             type="button"
             onClick={goNext}
             aria-label={isEn ? "Next certification" : "Siguiente certificación"}
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-[16px] text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
           >
             ›
           </button>
         </div>
       </div>
-      <div className="grid gap-4 md:grid-rows-[auto_1fr]">
+      <div className="min-w-0">
         <Card interactive={false}>
-          <CardInner>
+          <CardInner className="p-3 md:p-5">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={`${activeLogo.file}-${language}`}
@@ -1643,44 +1430,19 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 md:text-[11px] md:tracking-[0.18em]">
                   {isEn ? "Active credential" : "Credencial activa"}
                 </p>
-                <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
+                <h3 className="mt-2 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:mt-3 md:text-xl">
                   {activeLogo.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                <p className="mt-2 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300 md:mt-3 md:text-sm">
                   {detail}
                 </p>
               </motion.div>
             </AnimatePresence>
           </CardInner>
         </Card>
-        <div className="hidden gap-3 sm:grid sm:grid-cols-3">
-          {(isEn
-            ? [
-                ["Infrastructure", "Server, storage, networking and platform depth."],
-                ["Security", "Controls, governance and secure operations."],
-                ["Support", "Enterprise-grade case handling and customer outcomes."],
-              ]
-            : [
-                ["Infraestructura", "Profundidad en servidores, almacenamiento, redes y plataformas."],
-                ["Seguridad", "Controles, gobierno y operaciones seguras."],
-                ["Soporte", "Manejo de casos empresariales y resultados para clientes."],
-              ]
-          ).map(([title, copy]) => (
-            <Card key={title} interactive={false}>
-              <CardInner className="p-4">
-                <h4 className="text-xs font-semibold text-neutral-950 dark:text-neutral-50">
-                  {title}
-                </h4>
-                <p className="mt-2 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300">
-                  {copy}
-                </p>
-              </CardInner>
-            </Card>
-          ))}
-        </div>
       </div>
     </div>
   );
