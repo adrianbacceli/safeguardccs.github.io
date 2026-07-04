@@ -964,7 +964,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 767px)");
-    let observer: IntersectionObserver | null = null;
+    let animationFrame = 0;
 
     const syncMobileSection = (section: SectionId) => {
       setMobileActiveSection(section);
@@ -975,13 +975,8 @@ const App: React.FC = () => {
       }
     };
 
-    const disconnectObserver = () => {
-      observer?.disconnect();
-      observer = null;
-    };
-
-    const setupObserver = () => {
-      disconnectObserver();
+    const updateMobileSection = () => {
+      animationFrame = 0;
       if (!mobileQuery.matches) return;
 
       const sections = SECTION_IDS
@@ -990,33 +985,43 @@ const App: React.FC = () => {
 
       if (!sections.length) return;
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      const viewportCenter = window.innerHeight / 2;
+      const closest = sections
+        .map((section) => {
+          const rect = section.getBoundingClientRect();
+          const sectionCenter = rect.top + rect.height / 2;
+          return {
+            section,
+            distance: Math.abs(sectionCenter - viewportCenter),
+          };
+        })
+        .sort((a, b) => a.distance - b.distance)[0]?.section;
 
-          const section = visible?.target.getAttribute("data-section");
-          if (section && isSectionId(section)) {
-            syncMobileSection(section);
-          }
-        },
-        {
-          root: null,
-          rootMargin: "-28% 0px -52% 0px",
-          threshold: [0.12, 0.3, 0.55, 0.75],
-        }
-      );
-
-      sections.forEach((section) => observer?.observe(section));
+      const section = closest?.getAttribute("data-section");
+      if (section && isSectionId(section)) {
+        syncMobileSection(section);
+      }
     };
 
-    setupObserver();
-    mobileQuery.addEventListener("change", setupObserver);
+    const scheduleMobileSectionUpdate = () => {
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+      animationFrame = window.requestAnimationFrame(updateMobileSection);
+    };
+
+    scheduleMobileSectionUpdate();
+    window.addEventListener("scroll", scheduleMobileSectionUpdate, { passive: true });
+    window.addEventListener("resize", scheduleMobileSectionUpdate);
+    mobileQuery.addEventListener("change", scheduleMobileSectionUpdate);
 
     return () => {
-      disconnectObserver();
-      mobileQuery.removeEventListener("change", setupObserver);
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+      window.removeEventListener("scroll", scheduleMobileSectionUpdate);
+      window.removeEventListener("resize", scheduleMobileSectionUpdate);
+      mobileQuery.removeEventListener("change", scheduleMobileSectionUpdate);
     };
   }, []);
 
@@ -1100,12 +1105,12 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      <main className="relative z-10 w-full px-4 pb-12 pt-8 md:hidden">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 pr-5">
+      <main className="relative z-10 w-full px-4 pb-12 pt-0 md:hidden">
+        <div className="mx-auto flex w-full max-w-6xl flex-col pr-5">
           <section
             id="mobile-home"
             data-section="home"
-            className="scroll-mt-20"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
             <HeroSection
               language={language}
@@ -1116,28 +1121,28 @@ const App: React.FC = () => {
           <section
             id="mobile-services"
             data-section="services"
-            className="scroll-mt-20"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
             <ServicesSection language={language} />
           </section>
           <section
             id="mobile-approach"
             data-section="approach"
-            className="scroll-mt-20"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
             <ApproachSection language={language} />
           </section>
           <section
             id="mobile-threats"
             data-section="threats"
-            className="scroll-mt-20"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
             <ThreatsSection language={language} isActive={true} />
           </section>
           <section
             id="mobile-contact"
             data-section="contact"
-            className="scroll-mt-20"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
             <ContactSection language={language} />
           </section>
@@ -1190,18 +1195,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
       label: isEn
         ? "Work directly with senior engineers who understand business risk and security operations."
         : "Trabaja directamente con ingenieros senior que entienden riesgo de negocio y operaciones de seguridad.",
+      mobileLines: isEn
+        ? ["Work directly with senior engineers", "who understand business risk and security operations."]
+        : ["Trabaja directamente con ingenieros senior", "que entienden riesgo de negocio y seguridad."],
     },
     {
       icon: Building2,
       label: isEn
         ? "Get cybersecurity decisions sized for SMB budgets, teams, and operational reality."
         : "Recibe decisiones de ciberseguridad ajustadas a presupuestos, equipos y realidad operativa de pymes.",
+      mobileLines: isEn
+        ? ["Get cybersecurity decisions sized for", "SMB budgets, teams, and operational reality."]
+        : ["Recibe decisiones ajustadas a presupuestos", "equipos y realidad operativa de pymes."],
     },
     {
       icon: Network,
       label: isEn
         ? "Lean on engineers with 7+ years across Latin America and deep enterprise infrastructure exposure."
         : "Apóyate en ingenieros con más de 7 años en Latinoamérica y amplia exposición a infraestructura empresarial.",
+      mobileLines: isEn
+        ? ["Lean on engineers with 7+ years across Latin America", "and deep enterprise infrastructure exposure."]
+        : ["Apóyate en ingenieros con más de 7 años", "y experiencia en infraestructura empresarial."],
     },
   ];
 
@@ -1213,14 +1227,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
         </p>
 
         <h1 className="mt-5 max-w-[11ch] text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5rem]">
-          {isEn ? "Security is all we do." : "Seguridad. Sin distracciones."}
+          {isEn ? "Security is all we do." : "Seguridad sin distracciones."}
         </h1>
 
         <ul className="mt-7 max-w-3xl space-y-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-200 lg:text-base">
-          {heroPoints.map(({ icon: Icon, label }) => (
+          {heroPoints.map(({ icon: Icon, label, mobileLines }) => (
             <li key={label} className="flex gap-3">
               <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-              <span>{label}</span>
+              <span className="hidden md:inline">{label}</span>
+              <span className="min-w-0 text-[clamp(0.68rem,3.2vw,0.875rem)] leading-relaxed md:hidden">
+                <span className="block whitespace-nowrap">{mobileLines[0]}</span>
+                <span className="block whitespace-nowrap">{mobileLines[1]}</span>
+              </span>
             </li>
           ))}
         </ul>
