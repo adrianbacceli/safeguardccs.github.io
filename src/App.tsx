@@ -752,7 +752,7 @@ const MobileTopBar: React.FC<MobileTopBarProps> = ({
   onToggleTheme,
   onToggleLanguage,
 }) => (
-  <div className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/88 px-4 py-3 backdrop-blur-xl md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/88">
+  <div className="fixed inset-x-0 top-0 z-50 border-b border-neutral-200/80 bg-white/88 px-4 py-3 backdrop-blur-xl md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/88">
     <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
       <img
         src={theme === "dark" ? "/logo_white.svg" : "/logo.svg"}
@@ -1062,7 +1062,11 @@ const App: React.FC = () => {
 
   const handleMobileNavigate = (section: SectionId) => {
     const target = document.getElementById(`mobile-${section}`);
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (target) {
+      const offset = 64;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
     setMobileActiveSection(section);
     setActiveSection(section);
 
@@ -1130,7 +1134,7 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      <main className="relative z-10 w-full px-4 pb-12 pt-0 md:hidden">
+      <main className="relative z-10 w-full px-4 pb-12 pt-16 md:hidden">
         <div className="mx-auto flex w-full max-w-6xl flex-col pr-5">
           <section
             id="mobile-home"
@@ -1304,6 +1308,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
 
 const ServicesSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
+  const [activeNist, setActiveNist] = useState(0);
 
   const services = [
     {
@@ -1364,6 +1369,23 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
           ],
     },
   ];
+  const nistFunctions = isEn
+    ? [
+        ["Govern", "Set ownership, risk appetite, and security decisions."],
+        ["Identify", "Map assets, data, vendors, and exposure."],
+        ["Protect", "Prioritize access, hardening, backup, and resilience."],
+        ["Detect", "Clarify signals, monitoring, and alert handling."],
+        ["Respond", "Prepare decisions for incidents and business disruption."],
+        ["Recover", "Plan restoration, lessons learned, and continuity."],
+      ]
+    : [
+        ["Gobernar", "Definir responsables, apetito de riesgo y decisiones de seguridad."],
+        ["Identificar", "Mapear activos, datos, proveedores y exposición."],
+        ["Proteger", "Priorizar accesos, hardening, respaldo y resiliencia."],
+        ["Detectar", "Aclarar señales, monitoreo y manejo de alertas."],
+        ["Responder", "Preparar decisiones ante incidentes e interrupciones."],
+        ["Recuperar", "Planificar restauración, aprendizajes y continuidad."],
+      ];
 
   return (
     <div className="py-4 sm:py-6">
@@ -1379,6 +1401,76 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
             ? "We use NIST and ISO 27000 as a practical baseline, then adapt the plan to your operations instead of forcing a generic product stack."
             : "Usamos NIST e ISO 27000 como una base práctica y adaptamos el plan a tus operaciones en lugar de imponer un paquete genérico de productos."}
         </p>
+      </div>
+
+      <div className="mb-8 grid gap-5 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-center">
+        <Card interactive={false} className="overflow-hidden">
+          <CardInner className="p-4">
+            <div className="relative mx-auto aspect-square max-w-[17rem]">
+              <div className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full border border-neutral-200 bg-white/80 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-950/80">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+                  NIST CSF
+                </span>
+                <span className="mt-1 text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+                  {nistFunctions[activeNist][0]}
+                </span>
+              </div>
+              {nistFunctions.map(([title], index) => {
+                const angle = -90 + index * 60;
+                const radius = 40;
+                const x = 50 + radius * Math.cos((angle * Math.PI) / 180);
+                const y = 50 + radius * Math.sin((angle * Math.PI) / 180);
+                const isActive = activeNist === index;
+
+                return (
+                  <button
+                    key={title}
+                    type="button"
+                    onClick={() => setActiveNist(index)}
+                    onMouseEnter={() => setActiveNist(index)}
+                    className={`absolute flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border p-2 text-center text-[10px] font-semibold leading-tight shadow-sm transition-all duration-300 ${
+                      isActive
+                        ? "border-emerald-500 bg-emerald-700 text-white dark:border-emerald-300 dark:bg-emerald-300 dark:text-neutral-950"
+                        : "border-neutral-200 bg-white text-neutral-700 hover:border-emerald-400 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200"
+                    }`}
+                    style={{ left: `${x}%`, top: `${y}%` }}
+                    aria-pressed={isActive}
+                  >
+                    {title}
+                  </button>
+                );
+              })}
+            </div>
+          </CardInner>
+        </Card>
+
+        <div className="grid gap-4">
+          <Card interactive={false}>
+            <CardInner className="p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
+                {isEn ? "Interactive NIST baseline" : "Base NIST interactiva"}
+              </p>
+              <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
+                {nistFunctions[activeNist][0]}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                {nistFunctions[activeNist][1]}
+              </p>
+            </CardInner>
+          </Card>
+          <Card interactive={false}>
+            <CardInner className="p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+                ISO 27000
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                {isEn
+                  ? "ISO 27000 gives us the information-security management language: policy, roles, control intent, evidence, and continual improvement."
+                  : "ISO 27000 aporta el lenguaje de gestión de seguridad de la información: políticas, roles, intención de controles, evidencia y mejora continua."}
+              </p>
+            </CardInner>
+          </Card>
+        </div>
       </div>
       
       <div className="relative">
@@ -1437,6 +1529,41 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
       </div>
 
       <CertCarousel language={language} />
+    </div>
+  );
+};
+
+const MobileTrustSection: React.FC<SectionProps> = ({ language }) => {
+  const isEn = language === "en";
+
+  return (
+    <div className="w-full py-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
+        {isEn ? "Why trust us" : "Por qué confiar"}
+      </p>
+      <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+        {isEn ? "Credentialed work, without the weight." : "Experiencia validada, sin peso visual."}
+      </h2>
+      <div className="mt-6 grid grid-cols-[4.5rem_minmax(0,1fr)] items-stretch gap-3">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50/80 px-3 text-center dark:border-emerald-900/70 dark:bg-emerald-950/25">
+          <CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
+          <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-800 dark:text-emerald-300">
+            {isEn ? "Verified" : "Validado"}
+          </span>
+        </div>
+        <Card interactive={false} className="overflow-hidden">
+          <CardInner className="p-4">
+            <h3 className="text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+              {isEn ? "Certifications support the work." : "Las certificaciones respaldan el trabajo."}
+            </h3>
+            <p className="mt-2 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
+              {isEn
+                ? "Our background spans infrastructure, security, networking, storage, and enterprise support, applied as practical guidance for real businesses."
+                : "Nuestra experiencia cubre infraestructura, seguridad, redes, almacenamiento y soporte empresarial, aplicada como guía práctica para negocios reales."}
+            </p>
+          </CardInner>
+        </Card>
+      </div>
     </div>
   );
 };
