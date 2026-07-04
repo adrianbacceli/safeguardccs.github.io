@@ -33,7 +33,7 @@ type RedirectTarget = {
   kind: "whatsapp" | "email";
 };
 
-const SECTION_IDS: SectionId[] = ["home", "services", "approach", "threats", "contact"];
+const SECTION_IDS: SectionId[] = ["home", "threats", "approach", "services", "contact"];
 const MOBILE_SECTION_IDS: SectionId[] = ["home", "threats", "approach", "services", "contact"];
 const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
 const CONTACT_EMAIL = "consulting@safeguardccs.com";
@@ -490,9 +490,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const isEn = language === "en";
   const navItems: Array<{ section: SectionId; label: string }> = [
     { section: "home", label: isEn ? "Home" : "Inicio" },
-    { section: "services", label: isEn ? "How we work" : "Cómo trabajamos" },
-    { section: "approach", label: isEn ? "Why trust us" : "Por qué confiar" },
     { section: "threats", label: isEn ? "Emerging threats" : "Amenazas actuales" },
+    { section: "approach", label: isEn ? "Why trust us" : "Por qué confiar" },
+    { section: "services", label: isEn ? "How we work" : "Cómo trabajamos" },
     { section: "contact", label: isEn ? "Contact" : "Contacto" },
   ];
 
@@ -1088,17 +1088,17 @@ const App: React.FC = () => {
               onNavigate={handleNavigate}
             />
           </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "services"}>
-            <ServicesSection language={language} />
-          </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "approach"}>
-            <ApproachSection language={language} />
-          </AnimatedSection>
           <AnimatedSection isActive={activeSection === "threats"}>
             <ThreatsSection
               language={language}
               isActive={activeSection === "threats"}
             />
+          </AnimatedSection>
+          <AnimatedSection isActive={activeSection === "approach"}>
+            <ApproachSection language={language} />
+          </AnimatedSection>
+          <AnimatedSection isActive={activeSection === "services"}>
+            <ServicesSection language={language} />
           </AnimatedSection>
           <AnimatedSection isActive={activeSection === "contact"}>
             <ContactSection language={language} />
