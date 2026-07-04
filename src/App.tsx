@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { LayoutGroup, motion } from "motion/react";
 import {
   Activity,
   AlertTriangle,
@@ -90,10 +91,6 @@ interface ThreatStat {
   };
   sourceName: string;
   sourceUrl: string;
-  sourceNote: {
-    en: string;
-    es: string;
-  };
   year: string;
 }
 
@@ -101,8 +98,8 @@ const threatStats: ThreatStat[] = [
   {
     value: "4.0B",
     label: {
-      en: "attack attempts reported for Panama",
-      es: "intentos de ataque reportados para Panamá",
+      en: "Attack attempts reported for Panama",
+      es: "Intentos de ataque reportados para Panamá",
     },
     context: {
       en: "A local report citing Fortinet FortiGuard Labs described Panama’s 2023 attack volume at a scale SMBs cannot ignore.",
@@ -110,17 +107,13 @@ const threatStats: ThreatStat[] = [
     },
     sourceName: "FortiGuard Labs / Vida Digital",
     sourceUrl: "https://www.fortiguard.com/",
-    sourceNote: {
-      en: "Vendor intelligence cited by local reporting",
-      es: "Inteligencia del proveedor citada por prensa local",
-    },
     year: "2023",
   },
   {
     value: "+97%",
     label: {
-      en: "weekly attack growth against Panamanian organizations",
-      es: "crecimiento semanal de ataques contra organizaciones panameñas",
+      en: "Weekly attack growth against Panamanian organizations",
+      es: "Crecimiento semanal de ataques contra organizaciones panameñas",
     },
     context: {
       en: "Local financial press cited Check Point threat intelligence showing sharp year-over-year growth, with banking and finance seeing heavier pressure.",
@@ -128,17 +121,13 @@ const threatStats: ThreatStat[] = [
     },
     sourceName: "Check Point Research / El Capital Financiero",
     sourceUrl: "https://research.checkpoint.com/",
-    sourceNote: {
-      en: "Threat intelligence cited by local reporting",
-      es: "Inteligencia de amenazas citada por prensa local",
-    },
     year: "2024",
   },
   {
     value: "1.1T+",
     label: {
-      en: "malware attacks blocked in Latin America",
-      es: "ataques de malware bloqueados en Latinoamérica",
+      en: "Malware attacks blocked in Latin America",
+      es: "Ataques de malware bloqueados en Latinoamérica",
     },
     context: {
       en: "Kaspersky’s regional threat reporting described more than a trillion blocked malware attacks between mid-2023 and mid-2024.",
@@ -146,17 +135,13 @@ const threatStats: ThreatStat[] = [
     },
     sourceName: "Kaspersky Threat Panorama",
     sourceUrl: "https://latam.kaspersky.com/blog/",
-    sourceNote: {
-      en: "Regional threat panorama",
-      es: "Panorama regional de amenazas",
-    },
     year: "2024",
   },
   {
     value: "1.1M+",
     label: {
-      en: "ransomware attempts in Latin America",
-      es: "intentos de ransomware en Latinoamérica",
+      en: "Ransomware attempts in Latin America",
+      es: "Intentos de ransomware en Latinoamérica",
     },
     context: {
       en: "Kaspersky’s 2025 regional ransomware view framed Latin America as a continuous high-risk operating environment.",
@@ -164,21 +149,17 @@ const threatStats: ThreatStat[] = [
     },
     sourceName: "Kaspersky Threat Panorama",
     sourceUrl: "https://securelist.com/",
-    sourceNote: {
-      en: "Regional ransomware reporting",
-      es: "Reporte regional de ransomware",
-    },
     year: "2025",
   },
 ];
 
 const Button: React.FC<ButtonProps> = ({ variant = "solid", className = "", ...props }) => {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 disabled:cursor-not-allowed disabled:opacity-60";
+    "group inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:translate-x-1";
   const styles =
     variant === "solid"
-      ? "bg-neutral-950 text-white shadow-sm hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-      : "border border-neutral-300 bg-white/80 text-neutral-900 hover:-translate-y-0.5 hover:border-neutral-900 hover:bg-white dark:border-neutral-700 dark:bg-neutral-950/70 dark:text-neutral-100 dark:hover:border-neutral-200 dark:hover:bg-neutral-900";
+      ? "bg-neutral-950 text-white shadow-sm hover:rounded-xl hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+      : "border border-neutral-300 bg-white/80 text-neutral-900 hover:rounded-xl hover:border-neutral-900 hover:bg-white dark:border-neutral-700 dark:bg-neutral-950/70 dark:text-neutral-100 dark:hover:border-neutral-200 dark:hover:bg-neutral-900";
   return <button className={`${base} ${styles} ${className}`} {...props} />;
 };
 
@@ -192,7 +173,7 @@ const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const interactiveClasses = interactive
-    ? "group hover:-translate-y-1 hover:border-emerald-400/60 hover:shadow-lg"
+    ? "group hover:rounded-xl hover:border-emerald-400/60 hover:shadow-lg"
     : "";
 
   return (
@@ -229,26 +210,50 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isEn = language === "en";
+  const navItems: Array<{ section: SectionId; label: string }> = [
+    { section: "home", label: isEn ? "Home" : "Inicio" },
+    { section: "services", label: isEn ? "How we work" : "Cómo trabajamos" },
+    { section: "approach", label: isEn ? "Why trust us" : "Por qué confiar" },
+    { section: "threats", label: isEn ? "Emerging threats" : "Amenazas actuales" },
+    { section: "clients", label: isEn ? "Who we work with" : "Con quién trabajamos" },
+    { section: "contact", label: isEn ? "Contact" : "Contacto" },
+  ];
 
   const linkBase =
-    "relative flex h-8 items-center rounded-md px-3 text-[11px] font-medium transition-all duration-300 ease-out sm:text-xs";
-  const linkActive =
-    "bg-neutral-950 text-neutral-50 shadow-sm dark:bg-neutral-100 dark:text-neutral-950";
-  const linkInactive =
-    "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-neutral-900 dark:hover:text-neutral-50";
+    "relative flex h-8 items-center rounded-md px-3 text-[11px] font-medium transition-colors duration-300 ease-out active:scale-[0.98] sm:text-xs";
 
   const LinkButton: React.FC<{ section: SectionId; children: React.ReactNode }> = ({
     section,
     children,
-  }) => (
-    <button
-      type="button"
-      onClick={() => onNavigate(section)}
-      className={`${linkBase} ${activeSection === section ? linkActive : linkInactive}`}
-    >
-      {children}
-    </button>
-  );
+  }) => {
+    const isActive = activeSection === section;
+
+    return (
+      <button
+        type="button"
+        onClick={() => onNavigate(section)}
+        className={`${linkBase} ${
+          isActive
+            ? "text-neutral-50 dark:text-neutral-950"
+            : "text-neutral-600 hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-neutral-50"
+        }`}
+      >
+        {isActive && (
+          <motion.span
+            layoutId="nav-active-pill"
+            className="absolute inset-0 rounded-xl bg-neutral-950 dark:bg-neutral-100"
+            transition={{
+              type: "spring",
+              stiffness: 420,
+              damping: 34,
+              mass: 0.7,
+            }}
+          />
+        )}
+        <span className="relative z-10">{children}</span>
+      </button>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/85 backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-950/85">
@@ -269,26 +274,15 @@ const Navbar: React.FC<NavbarProps> = ({
         {/* Right side: nav + toggles + mobile button */}
         <div className="flex items-center gap-2">
           {/* Desktop nav – only from md and up */}
-          <nav className="hidden h-10 items-center gap-1 rounded-lg border border-neutral-200 bg-white/75 px-1 text-[11px] shadow-sm backdrop-blur md:flex dark:border-neutral-800 dark:bg-neutral-950/75">
-            <LinkButton section="home">
-              {isEn ? "Home" : "Inicio"}
-            </LinkButton>
-            <LinkButton section="services">
-              {isEn ? "How we work" : "Cómo trabajamos"}
-            </LinkButton>
-            <LinkButton section="approach">
-              {isEn ? "Why trust us" : "Por qué confiar"}
-            </LinkButton>
-            <LinkButton section="threats">
-              {isEn ? "Emerging threats" : "Amenazas actuales"}
-            </LinkButton>
-            <LinkButton section="clients">
-              {isEn ? "Who we work with" : "Con quién trabajamos"}
-            </LinkButton>
-            <LinkButton section="contact">
-              {isEn ? "Contact" : "Contacto"}
-            </LinkButton>
-          </nav>
+          <LayoutGroup id="desktop-nav">
+            <nav className="relative hidden h-10 items-center gap-1 overflow-hidden rounded-lg border border-neutral-200 bg-white/75 px-1 text-[11px] shadow-sm backdrop-blur md:flex dark:border-neutral-800 dark:bg-neutral-950/75">
+              {navItems.map((item) => (
+                <LinkButton key={item.section} section={item.section}>
+                  {item.label}
+                </LinkButton>
+              ))}
+            </nav>
+          </LayoutGroup>
 
           {/* Language + theme */}
           <div className="flex h-10 items-center gap-2 text-xs">
@@ -297,7 +291,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={onToggleLanguage}
                 className={
-                  "flex h-8 items-center rounded px-2 transition-all duration-300 ease-out " +
+                  "flex h-8 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
                   (language === "en"
                     ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                     : "text-neutral-600 dark:text-neutral-300")
@@ -309,7 +303,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={onToggleLanguage}
                 className={
-                  "flex h-8 items-center rounded px-2 transition-all duration-300 ease-out " +
+                  "flex h-8 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
                   (language === "es"
                     ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                     : "text-neutral-600 dark:text-neutral-300")
@@ -323,7 +317,7 @@ const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={onToggleTheme}
               aria-label="Toggle theme"
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 active:scale-[0.98] dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -337,7 +331,7 @@ const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setMobileOpen((o) => !o)}
               aria-label="Menu"
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition duration-300 ease-out md:hidden dark:border-neutral-700/70 dark:bg-neutral-900/80"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm shadow-sm transition-all duration-300 ease-out hover:rounded-xl active:scale-[0.98] md:hidden dark:border-neutral-700/70 dark:bg-neutral-900/80"
             >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
@@ -567,7 +561,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
         </p>
 
         <h1 className="mt-5 max-w-[11ch] text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5rem]">
-          {isEn ? "All we do is security." : "Todo lo que hacemos es seguridad."}
+          {isEn ? "All we do is security." : "Nos dedicamos a seguridad."}
         </h1>
 
         <ul className="mt-7 max-w-3xl space-y-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-200 lg:text-base">
@@ -590,30 +584,30 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, onNavigate }) => {
         </div>
       </div>
 
-      <div className="security-console relative hidden overflow-hidden rounded-lg border border-neutral-200 bg-neutral-950 p-5 text-neutral-100 shadow-2xl shadow-neutral-950/10 lg:block dark:border-neutral-800">
-        <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="security-console relative hidden overflow-hidden rounded-lg border border-neutral-300 bg-white p-5 text-neutral-950 shadow-2xl shadow-neutral-950/10 lg:block dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100">
+        <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-white/10">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-neutral-500">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-neutral-600 dark:text-neutral-500">
               {isEn ? "Regional threat snapshot" : "Panorama regional de amenazas"}
             </p>
           </div>
-          <Activity className="h-5 w-5 text-emerald-300" />
+          <Activity className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
         </div>
         <div className="space-y-3">
           {threatStats.slice(0, 3).map((stat) => (
-            <div key={stat.value} className="grid grid-cols-[4.5rem_1fr] items-start gap-4 rounded-md border border-white/10 bg-white/[0.025] p-3">
-              <div className="font-mono text-lg font-semibold text-emerald-300">
+            <div key={stat.value} className="grid grid-cols-[4.5rem_1fr] items-start gap-4 rounded-md border border-neutral-200 bg-neutral-50 p-3 dark:border-white/10 dark:bg-white/[0.025]">
+              <div className="font-mono text-lg font-semibold text-emerald-700 dark:text-emerald-300">
                 {stat.value}
               </div>
               <div>
-                <p className="text-xs font-medium leading-snug text-neutral-100">
+                <p className="text-xs font-medium leading-snug text-neutral-800 dark:text-neutral-100">
                   {isEn ? stat.label.en : stat.label.es}
                 </p>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-6 rounded-md border border-white/10 bg-white/[0.03] p-3">
+        <div className="mt-6 rounded-md border border-neutral-200 bg-neutral-50 p-3 dark:border-white/10 dark:bg-white/[0.03]">
           <Button
             type="button"
             onClick={() => onNavigate("threats")}
@@ -807,8 +801,10 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   }
 
   const [index, setIndex] = useState(0);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [fadeVisible, setFadeVisible] = useState(true);
   const total = certLogos.length;
-  const activeLogo = certLogos[index];
+  const activeLogo = certLogos[displayIndex];
   const activeLabel = activeLogo.label
     .replace(/\s+/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -822,6 +818,18 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
     return () => window.clearInterval(id);
   }, [total, index]);
 
+  useEffect(() => {
+    if (index === displayIndex) return;
+
+    setFadeVisible(false);
+    const swapId = window.setTimeout(() => {
+      setDisplayIndex(index);
+      window.requestAnimationFrame(() => setFadeVisible(true));
+    }, 180);
+
+    return () => window.clearTimeout(swapId);
+  }, [displayIndex, index]);
+
   const goNext = () => setIndex((prev) => (prev + 1) % total);
   const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
   const detail = getCredentialDetail(activeLogo.label, isEn);
@@ -833,7 +841,9 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
           <img
             src={activeLogo.src}
             alt={activeLabel}
-            className="h-full max-h-[12rem] w-full object-contain transition-all duration-500 ease-out"
+            className={`h-full max-h-[12rem] w-full object-contain transition-all duration-500 ease-out ${
+              fadeVisible ? "scale-100 opacity-100 blur-0" : "scale-[0.98] opacity-0 blur-sm"
+            }`}
           />
         </div>
         <div className="flex items-center justify-between gap-3">
@@ -908,14 +918,14 @@ const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
   const takeaways = isEn
     ? [
-        "Panama is not outside the global attack economy; the country appears in regional telemetry from major cybersecurity vendors.",
-        "SMBs are exposed when backups, identity, remote access, and vendor tools grow faster than security discipline.",
-        "The business risk is practical: downtime, fraud, account compromise, data loss, and loss of client trust.",
+        "Panama appears in regional threat telemetry.",
+        "Growth can outpace security discipline.",
+        "The real risk is downtime, fraud, data loss, and lost trust.",
       ]
     : [
-        "Panamá no está fuera de la economía global de ataques; el país aparece en telemetría regional de grandes proveedores de ciberseguridad.",
-        "Las pymes quedan expuestas cuando respaldos, identidad, acceso remoto y herramientas de proveedores crecen más rápido que la disciplina de seguridad.",
-        "El riesgo de negocio es práctico: caídas, fraude, compromiso de cuentas, pérdida de datos y pérdida de confianza del cliente.",
+        "Panamá aparece en telemetría regional de amenazas.",
+        "El crecimiento puede superar la disciplina de seguridad.",
+        "El riesgo real es caída, fraude, pérdida de datos y pérdida de confianza.",
       ];
 
   return (
@@ -948,8 +958,14 @@ const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
 
         <div className="grid gap-4 sm:grid-cols-2">
           {threatStats.map((stat) => (
-            <Card key={`${stat.value}-${stat.year}`} interactive={false}>
-              <CardInner className="flex min-h-[15rem] flex-col">
+            <a
+              key={`${stat.value}-${stat.year}`}
+              href={stat.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="group rounded-lg border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-500 ease-out hover:rounded-xl hover:border-emerald-400/60 hover:bg-white hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-neutral-800 dark:bg-neutral-950/80 dark:hover:bg-neutral-950"
+            >
+              <div className="flex min-h-[15rem] flex-col p-5 text-sm">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="font-mono text-3xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
@@ -966,22 +982,14 @@ const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
                 <p className="mt-4 flex-1 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
                   {isEn ? stat.context.en : stat.context.es}
                 </p>
-                <div className="mt-5 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                    {isEn ? stat.sourceNote.en : stat.sourceNote.es}
-                  </p>
-                  <a
-                    href={stat.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-emerald-800 transition hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200"
-                  >
+                <div className="mt-5 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-800">
+                  <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                     {stat.sourceName}
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
+                  </span>
+                  <ExternalLink className="h-3.5 w-3.5 text-emerald-800 transition-transform duration-300 ease-out group-hover:translate-x-1 dark:text-emerald-300" />
                 </div>
-              </CardInner>
-            </Card>
+              </div>
+            </a>
           ))}
         </div>
       </div>
@@ -995,30 +1003,6 @@ const ThreatsSection: React.FC<SectionProps> = ({ language }) => {
 
 const ClientsSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
-
-  const pressures = isEn
-    ? [
-        "Security tools are present, but nobody owns the full risk picture.",
-        "Backups, access, remote work, and vendors grew without a clear security roadmap.",
-        "The business needs executive clarity before investing in more licenses.",
-      ]
-    : [
-        "Hay herramientas de seguridad, pero nadie tiene la imagen completa del riesgo.",
-        "Respaldos, accesos, trabajo remoto y proveedores crecieron sin una ruta clara de seguridad.",
-        "El negocio necesita claridad ejecutiva antes de invertir en más licencias.",
-      ];
-
-  const allyModel = isEn
-    ? [
-        "We meet first to understand constraints, risk tolerance, and business priorities.",
-        "We recommend controls and services that fit the budget instead of forcing a vendor stack.",
-        "We can advise, implement, and improve continuously as threats and operations change.",
-      ]
-    : [
-        "Primero entendemos limitaciones, tolerancia al riesgo y prioridades del negocio.",
-        "Recomendamos controles y servicios que encajan con el presupuesto en lugar de imponer un paquete de proveedor.",
-        "Podemos asesorar, implementar y mejorar continuamente mientras cambian las amenazas y operaciones.",
-      ];
 
   const industries = isEn
     ? [
@@ -1049,8 +1033,8 @@ const ClientsSection: React.FC<SectionProps> = ({ language }) => {
         },
         {
           icon: Network,
-          title: "Other organizations",
-          desc: "Any small or mid-size business that needs clarity and better protection.",
+          title: "Other businesses",
+          desc: "Any business that needs clarity, protection, and budget-aware guidance.",
         },
       ]
     : [
@@ -1082,63 +1066,32 @@ const ClientsSection: React.FC<SectionProps> = ({ language }) => {
         {
           icon: Network,
           title: "Otros negocios",
-          desc: "Cualquier empresa pequeña o mediana que necesite claridad y protección.",
+          desc: "Cualquier empresa que necesite claridad, protección y guía consciente del presupuesto.",
         },
       ];
 
   return (
     <div className="py-4 sm:py-6">
-      <div className="grid gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-start">
+      <div className="max-w-4xl">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
             {isEn ? "Client fit" : "Encaje"}
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            {isEn ? "Built for teams that need security depth without enterprise bureaucracy" : "Diseñado para equipos que necesitan profundidad sin burocracia empresarial"}
+            {isEn ? "Everyone deserves security that respects the budget" : "Todos merecen seguridad que respete el presupuesto"}
           </h2>
           <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
             {isEn
-              ? "SafeGuard CCS is for organizations that handle sensitive data, depend on uptime, and need a partner who can translate cybersecurity into business decisions."
-              : "SafeGuard CCS es para organizaciones que manejan datos sensibles, dependen del tiempo activo y necesitan un aliado que traduzca ciberseguridad en decisiones de negocio."}
+              ? "We have experience across small, medium, and large businesses, and we are especially equipped to protect business owners’ pockets while improving security."
+              : "Tenemos experiencia en empresas pequeñas, medianas y grandes, y estamos especialmente preparados para proteger el bolsillo del dueño mientras mejora su seguridad."}
           </p>
         </div>
-
-        <Card interactive={false}>
-          <CardInner className="grid gap-4 text-sm text-neutral-700 dark:text-neutral-200 sm:grid-cols-2">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                {isEn ? "COMMON PRESSURE" : "PRESIÓN COMÚN"}
-              </p>
-              <ul className="mt-2 space-y-1.5 text-xs">
-                {pressures.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                {isEn ? "ALLY MODEL" : "MODELO DE ALIADO"}
-              </p>
-              <ul className="mt-2 space-y-1.5 text-xs">
-                {allyModel.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-neutral-400 dark:bg-neutral-600" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </CardInner>
-        </Card>
       </div>
       <div className="my-6 flex items-center justify-center">
         <span className="text-center text-sm font-medium text-neutral-600 dark:text-neutral-300">
           {isEn
-            ? "We do not lead with a product catalog. We start with your risk, your budget, and your path forward."
-            : "No empezamos con un catálogo de productos. Empezamos con tu riesgo, tu presupuesto y tu camino a seguir."}
+            ? "We adapt the engagement to the company, not the other way around."
+            : "Adaptamos el servicio a la empresa, no al revés."}
         </span>
       </div>
       <div className="mt-10">
@@ -1429,7 +1382,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href="https://x.com/SafeguardCCCS"
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
           >
             <SiX className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
           </a>
@@ -1438,7 +1391,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href="https://www.instagram.com/safeguardccs"
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
           >
             <SiInstagram className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
           </a>
@@ -1447,7 +1400,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href="https://www.facebook.com/people/Safeguardccs/61584112651947/"
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/70 shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:hover:bg-neutral-800"
           >
             <SiFacebook className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
           </a>
@@ -1457,7 +1410,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-md bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+            className="inline-flex items-center gap-2 rounded-md bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-300 ease-out hover:rounded-xl hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             <SiWhatsapp className="h-4 w-4" />
             <span>WhatsApp</span>
@@ -1500,7 +1453,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ language }) => {
       className={`
         fixed bottom-5 right-4 z-50 inline-flex items-center gap-2 rounded-md
         bg-neutral-950 px-4 py-2 text-xs font-medium text-white shadow-lg transition-all duration-300
-        hover:-translate-y-0.5 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200
+        hover:rounded-xl hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200
         ${shouldHide ? "opacity-0 translate-y-3 pointer-events-none" : "opacity-100"}
       `}
     >

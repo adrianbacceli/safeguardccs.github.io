@@ -189,10 +189,16 @@ body {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 38%, transparent 58%),
-    linear-gradient(to bottom, rgba(16,185,129,0.08), transparent 35%);
+    linear-gradient(120deg, transparent 0%, rgba(16,185,129,0.08) 38%, transparent 58%),
+    linear-gradient(to bottom, rgba(16,185,129,0.06), transparent 35%);
   transform: translateX(-65%);
   animation: console-sheen 8s ease-in-out infinite;
+}
+
+.dark .security-console::before {
+  background:
+    linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 38%, transparent 58%),
+    linear-gradient(to bottom, rgba(16,185,129,0.08), transparent 35%);
 }
 
 @keyframes console-sheen {
