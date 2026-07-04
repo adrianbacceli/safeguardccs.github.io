@@ -352,6 +352,30 @@ const threatStats: ThreatStat[] = [
   },
 ];
 
+const regionalSnapshotStats: ThreatStat[] = [
+  threatStats[0],
+  {
+    value: "2.40K",
+    animatedValue: 2400,
+    format: "compact",
+    durationMs: 60000,
+    precision: 2,
+    label: {
+      en: "Attacks right now in Latin America",
+      es: "Ataques ahora mismo en Latinoamérica",
+    },
+    context: {
+      en: "Kaspersky reported more than 2,400 phishing attacks per minute in Latin America.",
+      es: "Kaspersky reportó más de 2,400 ataques de phishing por minuto en Latinoamérica.",
+    },
+    sourceName: "Kaspersky Threat Panorama",
+    sourceUrl: "https://latam.kaspersky.com/about/press-releases/ataques-con-mensajes-falsos-aumentan-85-en-america-latina-mas-de-12-mil-millones-de-casos-detectados-kaspersky",
+    year: "2025",
+  },
+  threatStats[2],
+  threatStats[3],
+];
+
 function formatCompactNumber(value: number, precision?: number): string {
   const units = [
     { threshold: 1_000_000_000_000, suffix: "T" },
@@ -1124,7 +1148,7 @@ const App: React.FC = () => {
             data-section="threats"
             className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
           >
-            <ThreatsSection language={language} isActive={true} />
+            <MobileThreatSnapshot language={language} isActive={true} />
           </section>
           <section
             id="mobile-approach"
@@ -1164,32 +1188,7 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigate }) => {
   const isEn = language === "en";
-  const consoleStats = useMemo(
-    () => [
-      threatStats[0],
-      {
-        value: "2.40K",
-        animatedValue: 2400,
-        format: "compact" as const,
-        durationMs: 60000,
-        precision: 2,
-        label: {
-          en: "Attacks right now in Latin America",
-          es: "Ataques ahora mismo en Latinoamérica",
-        },
-        context: {
-          en: "Kaspersky reported more than 2,400 phishing attacks per minute in Latin America.",
-          es: "Kaspersky reportó más de 2,400 ataques de phishing por minuto en Latinoamérica.",
-        },
-        sourceName: "Kaspersky Threat Panorama",
-        sourceUrl: "https://latam.kaspersky.com/about/press-releases/ataques-con-mensajes-falsos-aumentan-85-en-america-latina-mas-de-12-mil-millones-de-casos-detectados-kaspersky",
-        year: "2025",
-      },
-      threatStats[2],
-      threatStats[3],
-    ],
-    []
-  );
+  const consoleStats = regionalSnapshotStats;
   const heroPoints = [
     {
       icon: LockKeyhole,
@@ -1651,6 +1650,66 @@ const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) =>
             </a>
           ))}
         </div>
+      </div>
+    </div>
+  );
+};
+
+
+const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive }) => {
+  const isEn = language === "en";
+
+  return (
+    <div className="w-full py-4">
+      <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-neutral-800">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
+            {isEn ? "Regional threat snapshot" : "Panorama regional de amenazas"}
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+            {isEn ? "Threat data, at a glance" : "Datos de amenaza, en breve"}
+          </h2>
+        </div>
+        <Activity className="h-5 w-5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {regionalSnapshotStats.map((stat) => (
+          <a
+            key={`${stat.value}-${stat.year}`}
+            href={stat.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="group flex min-h-[9.25rem] flex-col justify-between rounded-lg border border-neutral-200 bg-white/85 p-3 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-neutral-800 dark:bg-neutral-950/80 dark:hover:bg-neutral-950"
+          >
+            <div>
+              <div className="font-mono text-xl font-semibold text-emerald-700 dark:text-emerald-300">
+                {stat.animatedValue ? (
+                  <CountUpValue
+                    target={stat.animatedValue}
+                    durationMs={stat.durationMs || 1400}
+                    isActive={isActive}
+                    format={stat.format}
+                    precision={stat.precision}
+                    prefix={stat.value.startsWith("+") ? "+" : ""}
+                    suffix={stat.value.endsWith("+") ? "+" : ""}
+                  />
+                ) : (
+                  stat.value
+                )}
+              </div>
+              <p className="mt-2 text-[11px] font-semibold leading-snug text-neutral-900 dark:text-neutral-100">
+                {isEn ? stat.label.en : stat.label.es}
+              </p>
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+              <span className="truncate text-[10px] font-semibold text-emerald-800 dark:text-emerald-300">
+                {stat.sourceName}
+              </span>
+              <ExternalLink className="h-3 w-3 flex-shrink-0 text-emerald-800 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-emerald-300" />
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   );
