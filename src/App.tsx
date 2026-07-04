@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { LayoutGroup, motion } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
   Activity,
   AlertTriangle,
@@ -70,12 +70,175 @@ const certLogoModules = import.meta.glob(
   { eager: true, as: "url" }
 ) as Record<string, string>;
 
-const certLogos = Object.entries(certLogoModules).map(([path, url]) => {
-  const filename = path.split("/").pop() || "certification";
-  const baseName = filename.split(".")[0];
+interface CredentialMeta {
+  file: string;
+  title: string;
+  description: {
+    en: string;
+    es: string;
+  };
+}
+
+interface CredentialLogo extends CredentialMeta {
+  src: string;
+}
+
+const credentialMetadata: CredentialMeta[] = [
+  {
+    file: "blob (1).png",
+    title: "Dell Technologies Certified Cloud Infrastructure and Services Foundations 2023",
+    description: {
+      en: "Validates foundational knowledge of cloud infrastructure, service models, virtualization, storage, networking, and operational concepts in Dell environments.",
+      es: "Valida conocimiento base de infraestructura cloud, modelos de servicio, virtualización, almacenamiento, redes y operación en entornos Dell.",
+    },
+  },
+  {
+    file: "blob (2).png",
+    title: "Dell Technologies Certified PowerEdge XE Operate",
+    description: {
+      en: "Covers operation and support knowledge for Dell PowerEdge XE systems used in high-performance, data-intensive, and accelerated workloads.",
+      es: "Cubre operación y soporte de sistemas Dell PowerEdge XE usados en cargas de alto rendimiento, datos intensivos y cómputo acelerado.",
+    },
+  },
+  {
+    file: "blob (3).png",
+    title: "Dell Technologies Proven Professional Prompt Engineering Achievement",
+    description: {
+      en: "Recognizes practical prompt engineering skills for working with generative AI systems, instructions, context, and reliable output patterns.",
+      es: "Reconoce habilidades prácticas de prompt engineering para trabajar con IA generativa, instrucciones, contexto y patrones de salida confiables.",
+    },
+  },
+  {
+    file: "blob.png",
+    title: "Dell Technologies Proven Professional",
+    description: {
+      en: "Represents Dell Technologies Proven Professional participation across enterprise infrastructure, services, support, and technical certification paths.",
+      es: "Representa participación en Dell Technologies Proven Professional en rutas de infraestructura empresarial, servicios, soporte y certificación técnica.",
+    },
+  },
+  {
+    file: "image(10).png",
+    title: "Google Cloud Cybersecurity Certificate",
+    description: {
+      en: "Covers cloud security fundamentals, risk awareness, threat detection concepts, security operations, and practical Google Cloud cybersecurity foundations.",
+      es: "Cubre fundamentos de seguridad cloud, conciencia de riesgo, detección de amenazas, operaciones de seguridad y bases prácticas de ciberseguridad en Google Cloud.",
+    },
+  },
+  {
+    file: "image(2).png",
+    title: "VMware Certified Professional - Data Center Virtualization 2023",
+    description: {
+      en: "Validates VMware data center virtualization skills across vSphere administration, compute, storage, networking, and operational platform management.",
+      es: "Valida habilidades de virtualización de centros de datos VMware en administración vSphere, cómputo, almacenamiento, redes y gestión operativa.",
+    },
+  },
+  {
+    file: "image(3).png",
+    title: "Dell Technologies Proven Professional Security Foundations Achievement",
+    description: {
+      en: "Recognizes foundational security knowledge across core concepts, risk, controls, and secure practices for technology environments.",
+      es: "Reconoce conocimiento base de seguridad en conceptos centrales, riesgo, controles y prácticas seguras para entornos tecnológicos.",
+    },
+  },
+  {
+    file: "image(4).png",
+    title: "Dell Technologies Certified Information Storage and Management Foundations 2023",
+    description: {
+      en: "Validates storage fundamentals including data protection, storage architecture, availability, resilience, and information management concepts.",
+      es: "Valida fundamentos de almacenamiento, incluyendo protección de datos, arquitectura, disponibilidad, resiliencia y gestión de información.",
+    },
+  },
+  {
+    file: "image(5).png",
+    title: "Dell Technologies Proven Professional Exam Developer 2024",
+    description: {
+      en: "Recognizes contribution to Dell Technologies exam development through technical review, assessment design, and certification-quality validation.",
+      es: "Reconoce contribución al desarrollo de exámenes Dell Technologies mediante revisión técnica, diseño de evaluación y validación de calidad.",
+    },
+  },
+  {
+    file: "image(6).png",
+    title: "Dell Technologies Certified Networking Design",
+    description: {
+      en: "Validates design knowledge for enterprise networking, connectivity patterns, architecture choices, and infrastructure planning.",
+      es: "Valida conocimiento de diseño de redes empresariales, patrones de conectividad, decisiones de arquitectura y planificación de infraestructura.",
+    },
+  },
+  {
+    file: "image(7).png",
+    title: "Dell Technologies Proven Professional GenAI Foundations Achievement",
+    description: {
+      en: "Recognizes foundational understanding of generative AI concepts, use cases, responsible adoption, and enterprise AI considerations.",
+      es: "Reconoce comprensión base de IA generativa, casos de uso, adopción responsable y consideraciones empresariales de IA.",
+    },
+  },
+  {
+    file: "image(8).png",
+    title: "Dell Technologies Proven Professional PowerProtect DP Series Appliances Achievement",
+    description: {
+      en: "Covers Dell PowerProtect DP Series appliance concepts for integrated backup, recovery, protection workflows, and operational readiness.",
+      es: "Cubre conceptos de appliances Dell PowerProtect DP Series para respaldo integrado, recuperación, protección y preparación operativa.",
+    },
+  },
+  {
+    file: "image(9).png",
+    title: "Dell Technologies Proven Professional PowerProtect DP Series Appliances DP4400 Achievement",
+    description: {
+      en: "Focuses on Dell PowerProtect DP4400 appliance concepts, deployment awareness, operations, and data protection workflows.",
+      es: "Se enfoca en conceptos del appliance Dell PowerProtect DP4400, despliegue, operación y flujos de protección de datos.",
+    },
+  },
+  {
+    file: "Associate_Badge_-_Information_Storage_and_Management.png",
+    title: "Dell Technologies Certified Associate - Information Storage and Management",
+    description: {
+      en: "Validates associate-level knowledge of information storage, data protection, storage networking, cloud storage, and management concepts.",
+      es: "Valida conocimiento de nivel asociado en almacenamiento de información, protección de datos, redes de almacenamiento, cloud storage y gestión.",
+    },
+  },
+  {
+    file: "Associate_Badge_-_Networking.png",
+    title: "Dell Technologies Certified Associate - Networking",
+    description: {
+      en: "Validates associate-level networking knowledge across connectivity, switching, routing, infrastructure design, and operational fundamentals.",
+      es: "Valida conocimiento de nivel asociado en conectividad, switching, routing, diseño de infraestructura y fundamentos operativos.",
+    },
+  },
+  {
+    file: "Associate_Badge_-_PowerEdge.png",
+    title: "Dell Technologies Certified Associate - PowerEdge",
+    description: {
+      en: "Validates associate-level PowerEdge server knowledge across architecture, deployment, management, maintenance, and enterprise operations.",
+      es: "Valida conocimiento de nivel asociado en servidores PowerEdge: arquitectura, despliegue, gestión, mantenimiento y operación empresarial.",
+    },
+  },
+  {
+    file: "Specialist_Badge_-_Implementation_Engineer_PowerEdge.png",
+    title: "Dell Technologies Certified Specialist - Implementation Engineer PowerEdge",
+    description: {
+      en: "Validates specialist implementation knowledge for Dell PowerEdge systems, including planning, deployment, configuration, and operational handoff.",
+      es: "Valida conocimiento especializado de implementación de Dell PowerEdge, incluyendo planificación, despliegue, configuración y traspaso operativo.",
+    },
+  },
+  {
+    file: "nutanix-oem-badge_Nutanix_Technology_Champions-2020-squaresmall.png",
+    title: "Nutanix Technology Champion 2020",
+    description: {
+      en: "Recognizes Nutanix platform advocacy and technical engagement around hybrid cloud, virtualization, infrastructure, and operational modernization.",
+      es: "Reconoce participación técnica y evangelización de Nutanix en hybrid cloud, virtualización, infraestructura y modernización operativa.",
+    },
+  },
+];
+
+const certLogos: CredentialLogo[] = credentialMetadata.flatMap((credential) => {
+  const src = certLogoModules[`/src/assets/certs/${credential.file}`];
+  if (!src) {
+    return [];
+  }
+
   return {
-    src: url,
-    label: baseName.replace(/[-_]/g, " "), // "aws-security-specialty" -> "aws security specialty"
+    ...credential,
+    src,
   };
 });
 
@@ -904,56 +1067,16 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
   );
 };
 
-function getCredentialDetail(label: string, isEn: boolean): string {
-  const normalized = label.toLowerCase();
-
-  if (normalized.includes("network")) {
-    return isEn
-      ? "Shows practical grounding in network foundations: segmentation, connectivity, access paths, and the infrastructure decisions that influence security posture."
-      : "Demuestra base práctica en redes: segmentación, conectividad, rutas de acceso y decisiones de infraestructura que influyen en la postura de seguridad.";
-  }
-
-  if (normalized.includes("storage")) {
-    return isEn
-      ? "Supports work around data protection, storage architecture, resilience, recovery expectations, and the systems that keep business information available."
-      : "Respalda trabajo en protección de datos, arquitectura de almacenamiento, resiliencia, expectativas de recuperación y sistemas que mantienen disponible la información del negocio.";
-  }
-
-  if (normalized.includes("poweredge")) {
-    return isEn
-      ? "Reflects hands-on enterprise server experience, useful for understanding the real systems behind identity, applications, backups, and operations."
-      : "Refleja experiencia práctica con servidores empresariales, útil para entender los sistemas reales detrás de identidad, aplicaciones, respaldos y operaciones.";
-  }
-
-  if (normalized.includes("nutanix")) {
-    return isEn
-      ? "Connects infrastructure modernization with operations, availability, virtualization, and the platform decisions that affect long-term security."
-      : "Conecta modernización de infraestructura con operaciones, disponibilidad, virtualización y decisiones de plataforma que afectan la seguridad a largo plazo.";
-  }
-
-  return isEn
-    ? "Part of a broader credential portfolio across enterprise infrastructure, security operations, support quality, and practical technical problem solving."
-    : "Parte de un portafolio más amplio de credenciales en infraestructura empresarial, operaciones de seguridad, calidad de soporte y solución práctica de problemas técnicos.";
-}
-
 const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
-
-  if (certLogos.length === 0) {
-    return null;
-  }
-
   const [index, setIndex] = useState(0);
-  const [displayIndex, setDisplayIndex] = useState(0);
-  const [fadeVisible, setFadeVisible] = useState(true);
   const total = certLogos.length;
-  const activeLogo = certLogos[displayIndex];
-  const activeLabel = activeLogo.label
-    .replace(/\s+/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const activeLogo = certLogos[index];
 
   // Auto-advance every 5s, reset whenever index changes (including arrow clicks)
   useEffect(() => {
+    if (total === 0) return;
+
     const id = window.setInterval(() => {
       setIndex((prev) => (prev + 1) % total);
     }, 5000);
@@ -961,33 +1084,30 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
     return () => window.clearInterval(id);
   }, [total, index]);
 
-  useEffect(() => {
-    if (index === displayIndex) return;
-
-    setFadeVisible(false);
-    const swapId = window.setTimeout(() => {
-      setDisplayIndex(index);
-      window.requestAnimationFrame(() => setFadeVisible(true));
-    }, 180);
-
-    return () => window.clearTimeout(swapId);
-  }, [displayIndex, index]);
+  if (total === 0 || !activeLogo) {
+    return null;
+  }
 
   const goNext = () => setIndex((prev) => (prev + 1) % total);
   const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
-  const detail = getCredentialDetail(activeLogo.label, isEn);
+  const detail = isEn ? activeLogo.description.en : activeLogo.description.es;
 
   return (
     <div className="grid gap-5 rounded-lg border border-neutral-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm md:grid-cols-[280px_1fr] dark:border-neutral-800 dark:bg-neutral-950/75">
       <div className="space-y-3">
-        <div className="flex aspect-square items-center justify-center rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70">
-          <img
-            src={activeLogo.src}
-            alt={activeLabel}
-            className={`h-full max-h-[12rem] w-full object-contain transition-all duration-500 ease-out ${
-              fadeVisible ? "scale-100 opacity-100 blur-0" : "scale-[0.98] opacity-0 blur-sm"
-            }`}
-          />
+        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.img
+              key={activeLogo.file}
+              src={activeLogo.src}
+              alt={activeLogo.title}
+              className="absolute inset-8 h-[calc(100%-4rem)] w-[calc(100%-4rem)] object-contain"
+              initial={{ opacity: 0, scale: 0.96, filter: "blur(6px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </AnimatePresence>
         </div>
         <div className="flex items-center justify-between gap-3">
           <button
@@ -1014,15 +1134,25 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
       <div className="grid gap-4 md:grid-rows-[auto_1fr]">
         <Card interactive={false}>
           <CardInner>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-              {isEn ? "Active credential" : "Credencial activa"}
-            </p>
-            <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
-              {activeLabel}
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {detail}
-            </p>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={`${activeLogo.file}-${language}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+                  {isEn ? "Active credential" : "Credencial activa"}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
+                  {activeLogo.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                  {detail}
+                </p>
+              </motion.div>
+            </AnimatePresence>
           </CardInner>
         </Card>
         <div className="grid gap-3 sm:grid-cols-3">
