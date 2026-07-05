@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion, type PanInfo } from "motion/react";
 import {
   Activity,
   AlertTriangle,
@@ -1138,7 +1138,7 @@ const App: React.FC = () => {
           <section
             id="mobile-home"
             data-section="home"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
           >
             <HeroSection
               language={language}
@@ -1149,28 +1149,28 @@ const App: React.FC = () => {
           <section
             id="mobile-threats"
             data-section="threats"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
           >
             <MobileThreatSnapshot language={language} isActive={true} />
           </section>
           <section
             id="mobile-approach"
             data-section="approach"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
           >
             <ApproachSection language={language} />
           </section>
           <section
             id="mobile-services"
             data-section="services"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
           >
             <ServicesSection language={language} />
           </section>
           <section
             id="mobile-contact"
             data-section="contact"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center py-10"
+            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
           >
             <ContactSection language={language} />
           </section>
@@ -1223,8 +1223,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
   ];
 
   return (
-    <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,1.12fr)_420px] lg:items-center xl:gap-12">
-      <div className="max-w-4xl">
+    <div className="grid w-full justify-items-center gap-8 text-center lg:grid-cols-[minmax(0,1.12fr)_420px] lg:items-center lg:justify-items-stretch lg:text-left xl:gap-12">
+      <div className="mx-auto max-w-4xl lg:mx-0">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">
           {isEn ? "Cybersecurity consulting in Panama" : "Consultoría de ciberseguridad en Panamá"}
         </p>
@@ -1233,7 +1233,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
           {isEn ? "Security is all we do." : "Seguridad sin distracciones."}
         </h1>
 
-        <ul className="mt-7 max-w-3xl space-y-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-200 lg:text-base">
+        <ul className="mx-auto mt-7 max-w-3xl space-y-4 text-left text-sm leading-relaxed text-neutral-700 dark:text-neutral-200 lg:mx-0 lg:text-base">
           {heroPoints.map(({ icon: Icon, label, mobileLines }) => (
             <li key={label} className="flex gap-3">
               <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
@@ -1246,7 +1246,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
           ))}
         </ul>
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
           <Button onClick={() => onNavigate("contact")} className="lg:px-6 lg:py-3">
             {isEn ? "Talk about your environment" : "Hablar de tu entorno"}
             <ArrowRight className="h-4 w-4" />
@@ -1309,7 +1309,7 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
 
   return (
-    <div className="flex min-h-[calc(100svh-8rem)] items-center py-4 sm:min-h-[28rem] sm:py-6 lg:min-h-[32rem]">
+    <div className="flex min-h-[calc(100svh-8rem)] w-full items-center justify-center py-4 sm:min-h-[28rem] sm:py-6 lg:min-h-[32rem]">
       <Card interactive={false} className="mx-auto w-full max-w-2xl overflow-hidden">
         <CardInner className="flex min-h-[22rem] flex-col items-center justify-center p-8 text-center sm:min-h-[26rem]">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
@@ -1358,6 +1358,7 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
 const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
   const [index, setIndex] = useState(0);
+  const [canSwipe, setCanSwipe] = useState(false);
   const total = certLogos.length;
   const activeLogo = certLogos[index];
 
@@ -1372,6 +1373,15 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
     return () => window.clearInterval(id);
   }, [total, index]);
 
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+    const syncCanSwipe = () => setCanSwipe(mobileQuery.matches);
+
+    syncCanSwipe();
+    mobileQuery.addEventListener("change", syncCanSwipe);
+    return () => mobileQuery.removeEventListener("change", syncCanSwipe);
+  }, []);
+
   if (total === 0 || !activeLogo) {
     return null;
   }
@@ -1379,10 +1389,28 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const goNext = () => setIndex((prev) => (prev + 1) % total);
   const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
   const detail = isEn ? activeLogo.description.en : activeLogo.description.es;
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (!canSwipe) return;
+    if (Math.abs(info.offset.x) < 48) return;
+
+    if (info.offset.x < 0) {
+      goNext();
+      return;
+    }
+
+    goPrev();
+  };
 
   return (
-    <div className="grid grid-cols-[5rem_minmax(0,1fr)] gap-3 rounded-lg border border-neutral-200 bg-white/80 p-3 shadow-sm backdrop-blur-sm md:grid-cols-[280px_1fr] md:gap-5 md:p-4 dark:border-neutral-800 dark:bg-neutral-950/75">
-      <div className="space-y-2 md:space-y-3">
+    <motion.div
+      drag={canSwipe ? "x" : false}
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.08}
+      dragSnapToOrigin
+      onDragEnd={handleDragEnd}
+      className="grid h-[13.5rem] w-full cursor-grab touch-pan-y select-none grid-cols-[4.75rem_minmax(0,1fr)] gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-white/80 p-3 shadow-sm backdrop-blur-sm active:cursor-grabbing md:h-auto md:cursor-auto md:touch-auto md:select-auto md:grid-cols-[280px_1fr] md:gap-5 md:overflow-visible md:p-4 dark:border-neutral-800 dark:bg-neutral-950/75"
+    >
+      <div className="space-y-0 md:space-y-3">
         <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70 md:p-8">
           <AnimatePresence mode="wait" initial={false}>
             <motion.img
@@ -1397,7 +1425,7 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
             />
           </AnimatePresence>
         </div>
-        <div className="flex items-center justify-between gap-1 md:gap-3">
+        <div className="hidden items-center justify-between gap-1 md:flex md:gap-3">
           <button
             type="button"
             onClick={goPrev}
@@ -1419,9 +1447,9 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
           </button>
         </div>
       </div>
-      <div className="min-w-0">
-        <Card interactive={false}>
-          <CardInner className="p-3 md:p-5">
+      <div className="min-w-0 overflow-hidden">
+        <Card interactive={false} className="h-full overflow-hidden md:h-auto">
+          <CardInner className="overflow-hidden p-3 md:p-5">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={`${activeLogo.file}-${language}`}
@@ -1433,10 +1461,10 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                 <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 md:text-[11px] md:tracking-[0.18em]">
                   {isEn ? "Active credential" : "Credencial activa"}
                 </p>
-                <h3 className="mt-2 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:mt-3 md:text-xl">
+                <h3 className="mt-2 line-clamp-3 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:mt-3 md:line-clamp-none md:text-xl">
                   {activeLogo.title}
                 </h3>
-                <p className="mt-2 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300 md:mt-3 md:text-sm">
+                <p className="mt-2 line-clamp-5 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300 md:mt-3 md:line-clamp-none md:text-sm">
                   {detail}
                 </p>
               </motion.div>
@@ -1444,7 +1472,7 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
           </CardInner>
         </Card>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -1654,30 +1682,30 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       kind: "whatsapp" as const,
       icon: SiWhatsapp,
       label: "WhatsApp",
-      title: isEn ? "Message us on WhatsApp" : "Escríbenos por WhatsApp",
+      title: "WhatsApp",
       description: isEn
-        ? "Best for quick questions and immediate direction."
-        : "Ideal para preguntas rápidas y orientación inmediata.",
+        ? "Quick question / immediate direction"
+        : "Pregunta rápida / dirección inmediata",
       href: WHATSAPP_LINK,
     },
     {
       kind: "email" as const,
       icon: Mail,
       label: isEn ? "Email" : "Correo",
-      title: isEn ? "Send an email" : "Enviar correo",
+      title: isEn ? "Send email" : "Correo",
       description: isEn
-        ? "Use email if you already have details, context, or documents to reference."
-        : "Usa el correo si ya tienes detalles, contexto o documentos para referencia.",
+        ? "Details, content or documents"
+        : "Detalles, contexto o documentos",
       href: mailLink,
     },
     {
       kind: "form" as const,
       icon: Send,
       label: isEn ? "Form" : "Formulario",
-      title: isEn ? "Use the contact form" : "Usar el formulario",
+      title: isEn ? "Contact form" : "Formulario",
       description: isEn
-        ? "Structured and direct. It goes to our inbox, not a marketing list."
-        : "Estructurado y directo. Llega a nuestra bandeja, no a una lista de marketing.",
+        ? "If you want us to reach back"
+        : "Para que te contactemos",
       href: "#contact-form",
     },
   ];
@@ -1800,7 +1828,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
               {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
             </p>
-            <div className="grid gap-3">
+            <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-3">
               {contactMethods.map((method) => (
                 <button
                   key={method.label}
@@ -1817,20 +1845,20 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                       kind: method.kind,
                     });
                   }}
-                className="group flex w-full min-w-0 items-start gap-3 rounded-lg border border-neutral-200 bg-white/85 p-4 text-left shadow-sm transition-all duration-300 hover:border-emerald-500/60 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/75"
+                className="group flex min-h-[7rem] w-full min-w-0 flex-col items-center gap-2 rounded-lg border border-neutral-200 bg-white/85 p-2 text-center shadow-sm transition-all duration-300 hover:border-emerald-500/60 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/75 md:min-h-0 md:flex-row md:items-start md:gap-3 md:p-4 md:text-left"
                 >
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 md:h-10 md:w-10">
                     <method.icon className="h-4 w-4" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+                    <span className="block text-[11px] font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:text-sm">
                       {method.title}
                     </span>
-                    <span className="mt-1 block text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
+                    <span className="mt-1 line-clamp-3 block text-[10px] leading-snug text-neutral-600 dark:text-neutral-300 md:text-xs md:leading-relaxed">
                       {method.description}
                     </span>
                   </span>
-                  <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300" />
+                  <ArrowRight className="mt-1 hidden h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 md:block" />
                 </button>
               ))}
             </div>
