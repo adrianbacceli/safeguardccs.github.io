@@ -1110,7 +1110,6 @@ const App: React.FC = () => {
       mobileProgrammaticScrollRef.current = 0;
     }, 700);
 
-    setMobileActiveSection(section);
     setActiveSection(section);
     if (window.location.hash !== `#${section}`) {
       window.history.pushState(null, "", `#${section}`);
