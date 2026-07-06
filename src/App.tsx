@@ -38,6 +38,10 @@ const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
 const CONTACT_EMAIL = "consulting@safeguardccs.com";
 const MESSAGE_WORD_LIMIT = 120;
 const MOBILE_CERT_AUTOPLAY_MS = 5000;
+const MOBILE_SCROLL_OFFSET = 64;
+const MOBILE_SCROLL_MIN_DURATION_MS = 650;
+const MOBILE_SCROLL_MAX_DURATION_MS = 1400;
+const MOBILE_SCROLL_SETTLE_MS = 120;
 
 function getWordCount(value: string): number {
   const words = value.trim().split(/\s+/).filter(Boolean);
@@ -58,6 +62,16 @@ function getHashSection(): SectionId {
   if (typeof window === "undefined") return "home";
   const hash = window.location.hash.replace("#", "").toLowerCase();
   return isSectionId(hash) ? hash : "home";
+}
+
+function easeInOutCubic(progress: number): number {
+  return progress < 0.5
+    ? 4 * progress * progress * progress
+    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+}
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function useTheme(): { theme: Theme; toggleTheme: () => void } {
@@ -969,6 +983,8 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
   const [mobileActiveSection, setMobileActiveSection] = useState<SectionId>("home");
+  const mobileScrollAnimationRef = useRef<number>(0);
+  const mobileProgrammaticScrollRef = useRef<number>(0);
 
   useEffect(() => {
     const syncSectionFromHash = () => {
@@ -979,12 +995,76 @@ const App: React.FC = () => {
         window.history.replaceState(null, "", `#${section}`);
       }
 
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        const target = document.getElementById(`mobile-${section}`);
+        if (target) {
+          const top = target.getBoundingClientRect().top + window.scrollY - MOBILE_SCROLL_OFFSET;
+          window.scrollTo({ top, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+          setMobileActiveSection(section);
+          return;
+        }
+      }
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     syncSectionFromHash();
     window.addEventListener("hashchange", syncSectionFromHash);
     return () => window.removeEventListener("hashchange", syncSectionFromHash);
+  }, []);
+
+  const scrollWindowTo = (top: number, options: { respectReducedMotion?: boolean } = {}) => {
+    if (mobileScrollAnimationRef.current) {
+      window.cancelAnimationFrame(mobileScrollAnimationRef.current);
+      mobileScrollAnimationRef.current = 0;
+    }
+
+    const scrollElement = document.scrollingElement || document.documentElement;
+    const maxTop = Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight
+    ) - window.innerHeight;
+    const targetTop = Math.max(0, Math.min(top, maxTop));
+
+    if (options.respectReducedMotion && prefersReducedMotion()) {
+      scrollElement.scrollTop = targetTop;
+      return;
+    }
+
+    const startTop = scrollElement.scrollTop;
+    const distance = targetTop - startTop;
+    const duration = Math.min(
+      MOBILE_SCROLL_MAX_DURATION_MS,
+      Math.max(MOBILE_SCROLL_MIN_DURATION_MS, Math.abs(distance) * 0.55)
+    );
+    const startTime = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = easeInOutCubic(progress);
+      scrollElement.scrollTop = startTop + distance * eased;
+
+      if (progress < 1) {
+        mobileScrollAnimationRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      mobileScrollAnimationRef.current = 0;
+      scrollElement.scrollTop = targetTop;
+    };
+
+    mobileScrollAnimationRef.current = window.requestAnimationFrame(tick);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (mobileScrollAnimationRef.current) {
+        window.cancelAnimationFrame(mobileScrollAnimationRef.current);
+      }
+      if (mobileProgrammaticScrollRef.current) {
+        window.clearTimeout(mobileProgrammaticScrollRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -994,6 +1074,8 @@ const App: React.FC = () => {
     const syncMobileSection = (section: SectionId) => {
       setMobileActiveSection(section);
       setActiveSection(section);
+
+      if (mobileProgrammaticScrollRef.current) return;
 
       if (window.location.hash !== `#${section}`) {
         window.history.replaceState(null, "", `#${section}`);
@@ -1061,17 +1143,25 @@ const App: React.FC = () => {
   };
 
   const handleMobileNavigate = (section: SectionId) => {
-    const target = document.getElementById(`mobile-${section}`);
-    if (target) {
-      const offset = 64;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
     setMobileActiveSection(section);
     setActiveSection(section);
 
-    if (window.location.hash !== `#${section}`) {
-      window.history.replaceState(null, "", `#${section}`);
+    if (mobileProgrammaticScrollRef.current) {
+      window.clearTimeout(mobileProgrammaticScrollRef.current);
+    }
+    mobileProgrammaticScrollRef.current = window.setTimeout(() => {
+      mobileProgrammaticScrollRef.current = 0;
+      setMobileActiveSection(section);
+      setActiveSection(section);
+      if (window.location.hash !== `#${section}`) {
+        window.history.pushState(null, "", `#${section}`);
+      }
+    }, MOBILE_SCROLL_MAX_DURATION_MS + MOBILE_SCROLL_SETTLE_MS);
+
+    const target = document.getElementById(`mobile-${section}`);
+    if (target) {
+      const top = target.getBoundingClientRect().top + window.scrollY - MOBILE_SCROLL_OFFSET;
+      scrollWindowTo(top, { respectReducedMotion: false });
     }
   };
 
