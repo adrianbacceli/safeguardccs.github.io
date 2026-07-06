@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ArrowRight,
   Building2,
+  ChevronDown,
   CheckCircle2,
   ExternalLink,
   LockKeyhole,
@@ -20,7 +21,7 @@ import {
 import { SiX, SiInstagram, SiFacebook, SiWhatsapp } from "react-icons/si";
 
 
-type SectionId = "home" | "services" | "approach" | "threats" | "contact";
+type SectionId = "home" | "services" | "approach" | "threats" | "faq" | "contact";
 type Theme = "light" | "dark";
 type Language = "en" | "es";
 type SubmitStatus = "idle" | "sending" | "success" | "error";
@@ -49,13 +50,11 @@ type ProductService = {
   keywords: Record<Language, string>;
 };
 
-const SECTION_IDS: SectionId[] = ["home", "threats", "approach", "services", "contact"];
-const MOBILE_SECTION_IDS: SectionId[] = ["home", "threats", "approach", "services", "contact"];
+const SECTION_IDS: SectionId[] = ["home", "threats", "services", "approach", "faq", "contact"];
 const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
 const CONTACT_EMAIL = "consulting@safeguardccs.com";
 const MESSAGE_WORD_LIMIT = 120;
 const MOBILE_CERT_AUTOPLAY_MS = 5000;
-const MOBILE_SCROLL_OFFSET = 64;
 const productServices: ProductService[] = [
   {
     id: "isms",
@@ -69,8 +68,8 @@ const productServices: ProductService[] = [
       es: "Servicios de SGSI",
     },
     summary: {
-      en: "Information Security Management System support based on ISO 27001 and the ISO 27000 family.",
-      es: "Soporte de Sistema de Gestión de Seguridad de la Información basado en ISO 27001 y la familia ISO 27000.",
+      en: "We use the ISO 27000 family as the strategy foundation around scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
+      es: "Usamos la familia ISO 27000 como base estratégica alrededor de alcance, riesgo, controles, evidencias, responsabilidades, mantenimiento y preparación para certificación.",
     },
     mobileSummary: {
       en: "ISMS support based on ISO 27001 and the ISO 27000 family.",
@@ -81,8 +80,8 @@ const productServices: ProductService[] = [
       es: "Servicios de SGSI basados en ISO 27001 y la familia ISO 27000",
     },
     detail: {
-      en: "We use ISO 27001 and the ISO 27000 family as the strategy foundation, then keep the work practical: scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
-      es: "Usamos ISO 27001 y la familia ISO 27000 como base estratégica, y llevamos el trabajo a la práctica: alcance, riesgo, controles, evidencias, responsables, mantenimiento y preparación para certificación.",
+      en: "We use the ISO 27000 family as the strategy foundation around scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
+      es: "Usamos la familia ISO 27000 como base estratégica alrededor de alcance, riesgo, controles, evidencias, responsabilidades, mantenimiento y preparación para certificación.",
     },
     mobileDetail: {
       en: "ISO 27000-based ISMS work for implementation, maintenance, audits, and certification support.",
@@ -139,8 +138,8 @@ const productServices: ProductService[] = [
       es: "Consultoría de ciberseguridad y asesoría estratégica de seguridad",
     },
     detail: {
-      en: "Our experts bring 7+ years of regional experience across Latin America, shaped by more than 1,000 cumulative support and advisory requests throughout their careers. We turn that experience into clear guidance for posture, risk, applications, networks, and practical security habits.",
-      es: "Nuestros expertos aportan más de 7 años de experiencia regional en Latinoamérica, formada por más de 1,000 solicitudes acumuladas de soporte y asesoría a lo largo de sus carreras. Convertimos esa experiencia en guía clara para postura, riesgo, aplicaciones, redes y hábitos prácticos de seguridad.",
+      en: "Practical advisory from experts with 7+ years of regional Latin America experience and 1,000+ cumulative support and advisory requests across their careers.",
+      es: "Asesoría práctica de expertos con más de 7 años de experiencia regional en Latinoamérica y más de 1,000 solicitudes acumuladas de soporte y asesoría a lo largo de sus carreras.",
     },
     mobileDetail: {
       en: "Regional advisory experience applied to posture, risk, applications, networks, and security habits.",
@@ -192,8 +191,8 @@ const productServices: ProductService[] = [
       es: "Monitoreo y análisis operacional MSSP",
     },
     summary: {
-      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring and response readiness.",
-      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo y preparación de respuesta.",
+      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring. Detect suspicious activity, respond to incidents and harden security.",
+      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo. Detecta actividad sospechosa, responde a incidentes y endurece la seguridad.",
     },
     mobileSummary: {
       en: "Managed monitoring aligned to NIST CSF, IRT, and RMF.",
@@ -204,8 +203,8 @@ const productServices: ProductService[] = [
       es: "Monitoreo MSSP y soporte operacional de seguridad gestionada",
     },
     detail: {
-      en: "We help detect suspicious activity, handle security events, review vulnerabilities, apply updates and hardening, and translate continuous monitoring into clear actions aligned with NIST CSF, IRT, and RMF practices.",
-      es: "Ayudamos a detectar actividad sospechosa, manejar eventos de seguridad, revisar vulnerabilidades, aplicar actualizaciones y endurecimiento, y convertir el monitoreo continuo en acciones claras alineadas a prácticas NIST CSF, IRT y RMF.",
+      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring. Detect suspicious activity, respond to incidents and harden security.",
+      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo. Detecta actividad sospechosa, responde a incidentes y endurece la seguridad.",
     },
     mobileDetail: {
       en: "Monitoring, incident handling, vulnerabilities, updates, hardening, and continuous visibility in one operational service area.",
@@ -306,7 +305,7 @@ interface AnchorButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement
 
 const certLogoModules = import.meta.glob(
   "/src/assets/certs/*.{svg,png,jpg,jpeg}",
-  { eager: true, as: "url" }
+  { eager: true, query: "?url", import: "default" }
 ) as Record<string, string>;
 
 interface CredentialMeta {
@@ -620,12 +619,12 @@ function useCountUp(target: number, durationMs: number, isActive: boolean): numb
 
   useEffect(() => {
     if (!isActive) {
-      setValue(0);
       return;
     }
 
     let animationFrame = 0;
     const startedAt = performance.now();
+    setValue(0);
 
     const tick = (now: number) => {
       const progress = Math.min((now - startedAt) / durationMs, 1);
@@ -748,8 +747,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const navItems: Array<{ section: SectionId; label: string }> = [
     { section: "home", label: isEn ? "Home" : "Inicio" },
     { section: "threats", label: isEn ? "Emerging threats" : "Amenazas actuales" },
+    { section: "services", label: isEn ? "Services" : "Servicios" },
     { section: "approach", label: isEn ? "Why trust us" : "Por qué confiar" },
-    { section: "services", label: isEn ? "How we work" : "Cómo trabajamos" },
+    { section: "faq", label: "FAQ" },
     { section: "contact", label: isEn ? "Contact" : "Contacto" },
   ];
 
@@ -769,6 +769,7 @@ const Navbar: React.FC<NavbarProps> = ({
           event.preventDefault();
           onNavigate(section);
         }}
+        aria-current={isActive ? "page" : undefined}
         className={`${linkBase} ${
           isActive
             ? "text-neutral-50 dark:text-neutral-950"
@@ -793,7 +794,7 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/85 backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-950/85">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-200/80 bg-white/85 backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-950/85">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
         <a
@@ -895,6 +896,17 @@ const Navbar: React.FC<NavbarProps> = ({
               {isEn ? "Home" : "Inicio"}
             </a>
             <a
+              href="#threats"
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate("threats");
+                setMobileOpen(false);
+              }}
+              className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
+            >
+              {isEn ? "Emerging threats" : "Amenazas actuales"}
+            </a>
+            <a
               href="#services"
               onClick={(event) => {
                 event.preventDefault();
@@ -903,7 +915,7 @@ const Navbar: React.FC<NavbarProps> = ({
               }}
               className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
             >
-              {isEn ? "How we work" : "Cómo trabajamos"}
+              {isEn ? "Services" : "Servicios"}
             </a>
             <a
               href="#approach"
@@ -917,15 +929,15 @@ const Navbar: React.FC<NavbarProps> = ({
               {isEn ? "Why trust us" : "Por qué confiar"}
             </a>
             <a
-              href="#threats"
+              href="#faq"
               onClick={(event) => {
                 event.preventDefault();
-                onNavigate("threats");
+                onNavigate("faq");
                 setMobileOpen(false);
               }}
               className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
             >
-              {isEn ? "Emerging threats" : "Amenazas actuales"}
+              FAQ
             </a>
             <a
               href="#contact"
@@ -946,25 +958,6 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 };
 
-
-interface AnimatedSectionProps {
-  isActive: boolean;
-  children: React.ReactNode;
-}
-
-const AnimatedSection: React.FC<AnimatedSectionProps> = ({ isActive, children }) => {
-  return (
-    <section
-      className={`section-transition motion-reduce:transition-none ${
-        isActive
-          ? "relative opacity-100 translate-y-0"
-          : "pointer-events-none absolute inset-0 opacity-0 translate-y-5"
-      }`}
-    >
-      {children}
-    </section>
-  );
-};
 
 interface SectionProps {
   language: Language;
@@ -990,9 +983,10 @@ interface MobileSectionIndicatorProps {
 
 const sectionLabels: Record<SectionId, { en: string; es: string }> = {
   home: { en: "Home", es: "Inicio" },
-  services: { en: "How we work", es: "Cómo trabajamos" },
+  services: { en: "Services", es: "Servicios" },
   approach: { en: "Why trust us", es: "Por qué confiar" },
   threats: { en: "Emerging threats", es: "Amenazas actuales" },
+  faq: { en: "FAQ", es: "Preguntas frecuentes" },
   contact: { en: "Contact", es: "Contacto" },
 };
 
@@ -1075,7 +1069,7 @@ const MobileSectionIndicator: React.FC<MobileSectionIndicatorProps> = ({
       aria-label={isEn ? "Mobile section navigation" : "Navegación móvil por secciones"}
       className="fixed right-2 top-1/2 z-40 flex -translate-y-1/2 flex-col gap-2 rounded-full border border-neutral-200/80 bg-white/75 p-1.5 shadow-sm backdrop-blur md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/75"
     >
-      {MOBILE_SECTION_IDS.map((section) => {
+      {SECTION_IDS.map((section) => {
         const isActive = activeSection === section;
         const label = sectionLabels[section][language];
 
@@ -1227,42 +1221,30 @@ const BackgroundSystem: React.FC = () => {
   );
 };
 
+const LandingSection: React.FC<{
+  id: SectionId;
+  className?: string;
+  children: React.ReactNode;
+}> = ({ id, className = "", children }) => (
+  <section
+    id={id}
+    data-section={id}
+    className={`flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10 sm:py-12 md:block md:min-h-0 md:scroll-mt-20 md:py-16 lg:py-20 ${className}`}
+  >
+    {children}
+  </section>
+);
+
 const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
   const [mobileActiveSection, setMobileActiveSection] = useState<SectionId>("home");
-  const mobileProgrammaticScrollRef = useRef<number>(0);
 
-  useEffect(() => {
-    const syncSectionFromHash = () => {
-      const section = getHashSection();
-      setActiveSection(section);
-
-      if (window.location.hash !== `#${section}`) {
-        window.history.replaceState(null, "", `#${section}`);
-      }
-
-      if (window.matchMedia("(max-width: 767px)").matches) {
-        const target = document.getElementById(`mobile-${section}`);
-        if (target) {
-          const top = target.getBoundingClientRect().top + window.scrollY - MOBILE_SCROLL_OFFSET;
-          window.scrollTo({ top, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-          setMobileActiveSection(section);
-          return;
-        }
-      }
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    syncSectionFromHash();
-    window.addEventListener("hashchange", syncSectionFromHash);
-    return () => window.removeEventListener("hashchange", syncSectionFromHash);
-  }, []);
+  const getScrollOffset = () =>
+    window.matchMedia("(min-width: 768px)").matches ? 56 : 64;
 
   const scrollWindowTo = (top: number, options: { behavior?: ScrollBehavior } = {}) => {
-    const scrollElement = document.scrollingElement || document.documentElement;
     const maxTop = Math.max(
       document.documentElement.scrollHeight,
       document.body.scrollHeight
@@ -1273,124 +1255,109 @@ const App: React.FC = () => {
     window.scrollTo({ top: targetTop, behavior });
   };
 
-  useEffect(() => {
-    return () => {
-      if (mobileProgrammaticScrollRef.current) {
-        window.clearTimeout(mobileProgrammaticScrollRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 767px)");
-    let animationFrame = 0;
-
-    const syncMobileSection = (section: SectionId) => {
-      setMobileActiveSection(section);
-      setActiveSection(section);
-
-      if (mobileProgrammaticScrollRef.current) return;
-
-      if (window.location.hash !== `#${section}`) {
-        window.history.replaceState(null, "", `#${section}`);
-      }
-    };
-
-    const updateMobileSection = () => {
-      animationFrame = 0;
-      if (!mobileQuery.matches) return;
-
-      const sections = MOBILE_SECTION_IDS
-        .map((section) => document.getElementById(`mobile-${section}`))
-        .filter((section): section is HTMLElement => Boolean(section));
-
-      if (!sections.length) return;
-
-      const viewportCenter = window.innerHeight / 2;
-      const closest = sections
-        .map((section) => {
-          const rect = section.getBoundingClientRect();
-          const sectionCenter = rect.top + rect.height / 2;
-          return {
-            section,
-            distance: Math.abs(sectionCenter - viewportCenter),
-          };
-        })
-        .sort((a, b) => a.distance - b.distance)[0]?.section;
-
-      const section = closest?.getAttribute("data-section");
-      if (section && isSectionId(section)) {
-        syncMobileSection(section);
-      }
-    };
-
-    const scheduleMobileSectionUpdate = () => {
-      if (animationFrame) {
-        window.cancelAnimationFrame(animationFrame);
-      }
-      animationFrame = window.requestAnimationFrame(updateMobileSection);
-    };
-
-    scheduleMobileSectionUpdate();
-    window.addEventListener("scroll", scheduleMobileSectionUpdate, { passive: true });
-    window.addEventListener("resize", scheduleMobileSectionUpdate);
-    mobileQuery.addEventListener("change", scheduleMobileSectionUpdate);
-
-    return () => {
-      if (animationFrame) {
-        window.cancelAnimationFrame(animationFrame);
-      }
-      window.removeEventListener("scroll", scheduleMobileSectionUpdate);
-      window.removeEventListener("resize", scheduleMobileSectionUpdate);
-      mobileQuery.removeEventListener("change", scheduleMobileSectionUpdate);
-    };
-  }, []);
-
   const handleNavigate = (section: SectionId) => {
-    if (window.location.hash === `#${section}`) {
-      setActiveSection(section);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    window.location.hash = section;
-  };
-
-  const handleMobileNavigate = (section: SectionId) => {
-    if (mobileProgrammaticScrollRef.current) {
-      window.clearTimeout(mobileProgrammaticScrollRef.current);
-    }
-    mobileProgrammaticScrollRef.current = window.setTimeout(() => {
-      mobileProgrammaticScrollRef.current = 0;
-    }, 700);
+    const target = document.getElementById(section);
+    if (!target) return;
 
     setActiveSection(section);
+    setMobileActiveSection(section);
+
     if (window.location.hash !== `#${section}`) {
       window.history.pushState(null, "", `#${section}`);
     }
 
-    const target = document.getElementById(`mobile-${section}`);
-    if (target) {
-      const top = target.getBoundingClientRect().top + window.scrollY - MOBILE_SCROLL_OFFSET;
-      scrollWindowTo(top);
+    const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+    scrollWindowTo(top);
+  };
+
+  useEffect(() => {
+    const syncSectionFromHash = () => {
+      const section = getHashSection();
+      const target = document.getElementById(section);
+
+      setActiveSection(section);
+      setMobileActiveSection(section);
+
+      if (target) {
+        const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+        scrollWindowTo(top, { behavior: "auto" });
+      }
+    };
+
+    if (window.location.hash) {
+      window.requestAnimationFrame(syncSectionFromHash);
     }
+
+    window.addEventListener("hashchange", syncSectionFromHash);
+    return () => window.removeEventListener("hashchange", syncSectionFromHash);
+  }, []);
+
+  useEffect(() => {
+    const sections = SECTION_IDS
+      .map((section) => document.getElementById(section))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    if (!sections.length) return;
+
+    let animationFrame = 0;
+
+    const syncActiveSection = () => {
+      animationFrame = 0;
+      const readingLine = window.innerHeight * 0.36;
+      const current =
+        [...sections]
+          .reverse()
+          .find((section) => section.getBoundingClientRect().top <= readingLine) ||
+        sections[0];
+      const section = current.id;
+
+      if (isSectionId(section)) {
+        setActiveSection(section);
+        setMobileActiveSection(section);
+
+        if (window.location.hash !== `#${section}`) {
+          window.history.replaceState(null, "", `#${section}`);
+        }
+      }
+    };
+
+    const scheduleSync = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(syncActiveSection);
+    };
+
+    scheduleSync();
+    window.addEventListener("scroll", scheduleSync, { passive: true });
+    window.addEventListener("resize", scheduleSync);
+
+    return () => {
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+      window.removeEventListener("scroll", scheduleSync);
+      window.removeEventListener("resize", scheduleSync);
+    };
+  }, []);
+
+  const handleMobileNavigate = (section: SectionId) => {
+    handleNavigate(section);
   };
 
   const toggleLanguage = () =>
     setLanguage((lang) => (lang === "en" ? "es" : "en"));
 
   return (
-    <div className="relative isolate flex min-h-screen flex-col overflow-hidden bg-[#f7f8f5] text-neutral-950 transition-colors duration-300 dark:bg-[#050706] dark:text-neutral-50">
+    <div className="relative isolate flex min-h-screen flex-col overflow-x-hidden bg-[#f7f8f5] text-neutral-950 transition-colors duration-300 dark:bg-[#050706] dark:text-neutral-50">
       <BackgroundSystem />
 
-      <div className="hidden md:block">
+      <div className="hidden md:contents">
         <Navbar
-        theme={theme}
-        language={language}
-        activeSection={activeSection}
-        onNavigate={handleNavigate}
-        onToggleTheme={toggleTheme}
-        onToggleLanguage={toggleLanguage}
+          theme={theme}
+          language={language}
+          activeSection={activeSection}
+          onNavigate={handleNavigate}
+          onToggleTheme={toggleTheme}
+          onToggleLanguage={toggleLanguage}
         />
       </div>
 
@@ -1408,76 +1375,45 @@ const App: React.FC = () => {
         onNavigate={handleMobileNavigate}
       />
 
-      {/* main takes remaining height */}
-      <main className="relative z-10 mx-auto hidden w-full max-w-6xl flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 md:flex lg:py-16">
-        <div className="relative w-full">
-          <AnimatedSection isActive={activeSection === "home"}>
-            <HeroSection
+      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-12 pt-16 sm:px-6 md:pt-14">
+        <LandingSection id="home" className="md:flex md:min-h-[calc(100svh-3.5rem)] md:items-center">
+          <HeroSection
+            language={language}
+            isActive={activeSection === "home"}
+            onNavigate={handleNavigate}
+          />
+        </LandingSection>
+
+        <LandingSection id="threats">
+          <div className="md:hidden">
+            <MobileThreatSnapshot
               language={language}
-              isActive={activeSection === "home"}
-              onNavigate={handleNavigate}
+              isActive={activeSection === "threats"}
             />
-          </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "threats"}>
+          </div>
+          <div className="hidden md:block">
             <ThreatsSection
               language={language}
               isActive={activeSection === "threats"}
             />
-          </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "approach"}>
-            <ApproachSection language={language} />
-          </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "services"}>
-            <ServicesSection language={language} />
-          </AnimatedSection>
-          <AnimatedSection isActive={activeSection === "contact"}>
-            <ContactSection language={language} />
-          </AnimatedSection>
-        </div>
-      </main>
+          </div>
+        </LandingSection>
 
-      <main className="relative z-10 w-full px-4 pb-12 pt-16 md:hidden">
-        <div className="mx-auto flex w-full max-w-6xl flex-col pr-5">
-          <section
-            id="mobile-home"
-            data-section="home"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
-          >
-            <HeroSection
-              language={language}
-              isActive={true}
-              onNavigate={handleMobileNavigate}
-            />
-          </section>
-          <section
-            id="mobile-threats"
-            data-section="threats"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
-          >
-            <MobileThreatSnapshot language={language} isActive={true} />
-          </section>
-          <section
-            id="mobile-approach"
-            data-section="approach"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
-          >
-            <ApproachSection language={language} />
-          </section>
-          <section
-            id="mobile-services"
-            data-section="services"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
-          >
-            <ServicesSection language={language} />
-          </section>
-          <section
-            id="mobile-contact"
-            data-section="contact"
-            className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 items-center justify-center py-10"
-          >
-            <ContactSection language={language} />
-          </section>
-        </div>
+        <LandingSection id="services">
+          <ServicesSection language={language} />
+        </LandingSection>
+
+        <LandingSection id="approach">
+          <ApproachSection language={language} />
+        </LandingSection>
+
+        <LandingSection id="faq">
+          <FAQSection language={language} />
+        </LandingSection>
+
+        <LandingSection id="contact" className="pb-16">
+          <ContactSection language={language} />
+        </LandingSection>
       </main>
 
       <Footer language={language} />
@@ -1631,6 +1567,8 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
   language,
 }) => {
   const isComingSoon = service.availability === "coming-soon";
+  const isEn = language === "en";
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const card = (
     <article
       className={`flex h-full flex-col rounded-xl border p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-all duration-300 dark:shadow-[0_18px_50px_rgba(0,0,0,0.24)] lg:p-6 ${
@@ -1639,11 +1577,16 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
           : "border-neutral-200/90 bg-white/90 dark:border-neutral-800/90 dark:bg-neutral-950/80"
       }`}
     >
-      <div className="min-h-[15rem]">
+      <div className="md:min-h-[14.5rem]">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
-            {service.eyebrow[language]}
-          </p>
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm dark:bg-white dark:text-neutral-950">
+              <service.icon className="h-4 w-4" />
+            </span>
+            <p className="pt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
+              {service.eyebrow[language]}
+            </p>
+          </div>
 
           {service.badge ? (
             <span
@@ -1658,32 +1601,41 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
           ) : null}
         </div>
 
-        <h3 className="mt-4 min-h-[4rem] text-2xl font-semibold leading-tight tracking-tight text-neutral-950 dark:text-neutral-50 lg:text-3xl">
+        <h3 className="mt-4 text-2xl font-semibold leading-tight tracking-tight text-neutral-950 dark:text-neutral-50 lg:text-3xl">
           {service.title[language]}
         </h3>
 
-        <p className="mt-4 min-h-[5.5rem] text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+        <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           {service.summary[language]}
         </p>
       </div>
 
       <div className="my-5 h-px w-full bg-gradient-to-r from-emerald-700/80 via-emerald-400/70 to-transparent dark:from-emerald-300/80 dark:via-emerald-500/50" />
 
-      {isComingSoon ? (
-        <div className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-xs font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
-          {service.ctaLabel[language]}
-        </div>
-      ) : (
-        <a
-          href="#contact"
-          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
+        {isComingSoon ? (
+          <div className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-xs font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
+            {service.ctaLabel[language]}
+          </div>
+        ) : (
+          <a
+            href="#contact"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
+          >
+            {service.ctaLabel[language]}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        )}
+        <button
+          type="button"
+          onClick={() => setOptionsOpen(true)}
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 bg-white/80 px-4 text-xs font-semibold text-neutral-900 shadow-sm transition-all duration-300 hover:border-emerald-600 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 md:hidden dark:border-neutral-700 dark:bg-neutral-950/70 dark:text-neutral-100 dark:hover:border-emerald-300 dark:hover:bg-neutral-900"
         >
-          {service.ctaLabel[language]}
-          <ArrowRight className="h-3.5 w-3.5" />
-        </a>
-      )}
+          {isEn ? "Service Options" : "Opciones de servicio"}
+        </button>
+      </div>
 
-      <div className="mt-6 flex-1 border-t border-neutral-200 pt-5 dark:border-neutral-800">
+      <div className="mt-6 hidden flex-1 border-t border-neutral-200 pt-5 md:block dark:border-neutral-800">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
           {language === "en" ? "Service options" : "Opciones de servicio"}
         </p>
@@ -1701,13 +1653,73 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
           ))}
         </ul>
       </div>
+
+      {optionsOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed inset-0 z-[1000] flex items-end bg-neutral-950/45 px-3 py-3 backdrop-blur-md sm:items-center sm:justify-center sm:px-4 md:hidden">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={`service-options-title-${service.id}`}
+              className="max-h-[88svh] w-full overflow-y-auto rounded-xl border border-neutral-200 bg-white text-neutral-900 shadow-2xl shadow-neutral-950/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 sm:max-w-2xl"
+            >
+              <div className="border-b border-neutral-200 p-5 dark:border-neutral-800">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
+                      {isEn ? "Service options" : "Opciones de servicio"}
+                    </p>
+                    <h3
+                      id={`service-options-title-${service.id}`}
+                      className="mt-2 text-2xl font-semibold tracking-tight"
+                    >
+                      {service.title[language]}
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setOptionsOpen(false)}
+                    aria-label={isEn ? "Close service options" : "Cerrar opciones de servicio"}
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950 dark:border-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-5">
+                <div className="divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+                  {service.subServices[language].map((subService) => (
+                    <div
+                      key={subService}
+                      className="flex items-start gap-3 bg-white px-3.5 py-3 text-sm font-medium leading-relaxed text-neutral-800 dark:bg-neutral-950 dark:text-neutral-100"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
+                      {subService}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOptionsOpen(false)}
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-neutral-950 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                >
+                  {isEn ? "Close" : "Cerrar"}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </article>
   );
 
-  if (!service.featured) return card;
+  if (!service.featured) {
+    return <div className="mx-auto w-[calc(100vw-3rem)] max-w-md md:w-full md:max-w-none">{card}</div>;
+  }
 
   return (
-    <div className="h-full rounded-xl bg-gradient-to-br from-emerald-700 via-emerald-500 to-neutral-950 p-px shadow-[0_24px_70px_rgba(4,120,87,0.18)] dark:from-emerald-300 dark:via-emerald-700 dark:to-neutral-800">
+    <div className="mx-auto h-full w-[calc(100vw-3rem)] max-w-md rounded-xl bg-gradient-to-br from-emerald-700 via-emerald-500 to-neutral-950 p-px shadow-[0_24px_70px_rgba(4,120,87,0.18)] dark:from-emerald-300 dark:via-emerald-700 dark:to-neutral-800 md:w-full md:max-w-none">
       {card}
     </div>
   );
@@ -1715,11 +1727,10 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
 
 const ServicesSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
-  const [selectedService, setSelectedService] = useState<ProductService | null>(null);
 
   return (
-    <div className="py-4 sm:py-6">
-      <div className="mb-6 max-w-3xl">
+    <div className="w-full py-4 sm:py-6">
+      <div className="mx-auto mb-6 w-[calc(100vw-3rem)] max-w-md md:mx-0 md:w-auto md:max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
           {isEn ? "Cybersecurity services" : "Servicios de ciberseguridad"}
         </p>
@@ -1735,163 +1746,11 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
         </p>
       </div>
 
-      <div className="grid gap-3 md:hidden">
-        {productServices.map((service) => (
-          <button
-            key={service.id}
-            type="button"
-            onClick={() => setSelectedService(service)}
-            className={`group flex min-h-[7.5rem] w-full min-w-0 flex-col rounded-xl border p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 ${
-              service.availability === "coming-soon"
-                ? "border-neutral-200/70 bg-white/60 opacity-75 dark:border-neutral-800/70 dark:bg-neutral-950/55"
-                : "border-neutral-200/90 bg-white/90 dark:border-neutral-800/90 dark:bg-neutral-950/80"
-            }`}
-          >
-            <span className="flex items-start justify-between gap-3">
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300">
-                <service.icon className="h-4 w-4" />
-              </span>
-              <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300" />
-            </span>
-            <span className="mt-3 block text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
-              {service.title[language]}
-            </span>
-            <span className="mt-2 line-clamp-3 block text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {service.mobileSummary[language]}
-            </span>
-            <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-              {service.availability === "coming-soon"
-                ? service.ctaLabel[language]
-                : isEn
-                  ? "View options"
-                  : "Ver opciones"}
-              <ArrowRight className="h-3 w-3" />
-            </span>
-          </button>
-        ))}
-      </div>
-
-      <div className="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         {productServices.map((service) => (
           <ServiceBundleCard key={service.id} service={service} language={language} />
         ))}
       </div>
-
-      {selectedService &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div className="fixed inset-0 z-[1000] flex items-end bg-neutral-950/45 px-3 py-3 backdrop-blur-md sm:items-center sm:justify-center sm:px-4">
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={`service-title-${selectedService.id}`}
-              className="max-h-[88svh] w-full overflow-y-auto rounded-xl border border-neutral-200 bg-white text-neutral-900 shadow-2xl shadow-neutral-950/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 sm:max-w-2xl"
-            >
-              <div className="border-b border-neutral-200 p-5 dark:border-neutral-800 sm:p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm dark:bg-white dark:text-neutral-950">
-                      <selectedService.icon className="h-4 w-4" />
-                    </span>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
-                      {isEn ? "Service area" : "Área de servicio"}
-                    </p>
-                    <h3
-                      id={`service-title-${selectedService.id}`}
-                      className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl"
-                    >
-                      {selectedService.title[language]}
-                    </h3>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                      {selectedService.mobileDetail[language]}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedService(null)}
-                    aria-label={isEn ? "Close service details" : "Cerrar detalle del servicio"}
-                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950 dark:border-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-5 sm:p-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                    {isEn ? "Service options" : "Opciones de servicio"}
-                  </p>
-                  <div className="mt-3 divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
-                    {selectedService.subServices[language].map((subService) => (
-                      <div
-                        key={subService}
-                        className="flex items-start gap-3 bg-white px-3.5 py-3 text-sm font-medium leading-relaxed text-neutral-800 dark:bg-neutral-950 dark:text-neutral-100"
-                      >
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                        {subService}
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-                    {isEn
-                      ? "These are selectable service options within this area. We quote the scope you actually need."
-                      : "Estas son opciones de servicio dentro de esta área. Cotizamos el alcance que realmente necesitas."}
-                  </p>
-                </div>
-
-                <div className="mt-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                    {isEn ? "How we help" : "Cómo ayudamos"}
-                  </p>
-                  <div className="mt-3 grid gap-2">
-                    {selectedService.highlights[language].map((highlight) => (
-                      <div
-                        key={highlight}
-                        className="rounded-lg bg-neutral-50 px-3 py-2 text-xs font-medium leading-relaxed text-neutral-700 dark:bg-neutral-900/60 dark:text-neutral-200"
-                      >
-                        {highlight}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <p className="mt-4 text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">
-                  <span className="font-semibold">
-                    {isEn ? "Search context: " : "Contexto de búsqueda: "}
-                  </span>
-                  {selectedService.keywords[language]}
-                </p>
-
-                <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                  {selectedService.availability === "coming-soon" ? (
-                    <div className="inline-flex items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
-                      {selectedService.ctaLabel[language]}
-                    </div>
-                  ) : (
-                    <a
-                      href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-                        `${selectedService.title[language]} - SafeGuard CCS`
-                      )}`}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-                    >
-                      {isEn ? "Ask about this service" : "Consultar este servicio"}
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedService(null)}
-                    className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-xs font-semibold text-neutral-700 shadow-sm transition hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:bg-neutral-900"
-                  >
-                    {isEn ? "Close" : "Cerrar"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
     </div>
   );
 };
@@ -2142,68 +2001,74 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
         </div>
       </div>
 
-      <div className="hidden grid-cols-[280px_1fr] gap-5 rounded-lg border border-neutral-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm md:grid dark:border-neutral-800 dark:bg-neutral-950/75">
-        <div className="space-y-3">
-          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70 md:p-8">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.img
-                key={activeLogo.file}
-                src={activeLogo.src}
-                alt={activeLogo.title}
-                className="absolute inset-2 h-[calc(100%-1rem)] w-[calc(100%-1rem)] object-contain md:inset-8 md:h-[calc(100%-4rem)] md:w-[calc(100%-4rem)]"
-                initial={{ opacity: 0, scale: 0.96, filter: "blur(6px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
-                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </AnimatePresence>
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={goPrev}
-              aria-label={isEn ? "Previous certification" : "Certificación anterior"}
-              className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
-            >
-              ‹
-            </button>
-            <div className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 md:text-[11px]">
-              {index + 1} / {total}
+      <div className="hidden gap-5 md:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.35fr)]">
+        <Card interactive={false} className="overflow-hidden">
+          <CardInner className="flex h-full flex-col p-5">
+            <div className="flex items-start gap-4">
+              <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-white p-3 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70">
+                <img
+                  src={activeLogo.src}
+                  alt={activeLogo.title}
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+                  {isEn ? "Highlighted credential" : "Credencial destacada"}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold leading-tight text-neutral-950 dark:text-neutral-50">
+                  {activeLogo.title}
+                </h3>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={goNext}
-              aria-label={isEn ? "Next certification" : "Siguiente certificación"}
-              className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
-            >
-              ›
-            </button>
-          </div>
-        </div>
-        <div className="min-w-0">
-          <Card interactive={false}>
-            <CardInner className="p-5">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={`${activeLogo.file}-${language}`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 md:text-[11px] md:tracking-[0.18em]">
-                    {isEn ? "Active credential" : "Credencial activa"}
-                  </p>
-                  <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
-                    {activeLogo.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                    {detail}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </CardInner>
-          </Card>
+            <p className="mt-5 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+              {detail}
+            </p>
+            <p className="mt-auto pt-6 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+              {isEn
+                ? "Select any credential to review the experience area it represents."
+                : "Selecciona cualquier credencial para revisar el área de experiencia que representa."}
+            </p>
+          </CardInner>
+        </Card>
+
+        <div className="credential-scrollbar grid max-h-[31rem] gap-3 overflow-y-auto pr-3 sm:grid-cols-2">
+          {certLogos.map((logo, logoIndex) => {
+            const logoDetail = isEn ? logo.description.en : logo.description.es;
+            const isActive = logoIndex === index;
+
+            return (
+              <button
+                key={logo.file}
+                type="button"
+                onClick={() => goTo(logoIndex)}
+                aria-current={isActive ? "true" : undefined}
+                className={`group grid min-h-[8rem] grid-cols-[4.5rem_minmax(0,1fr)] gap-3 rounded-lg border bg-white/80 p-3 text-left shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 dark:bg-neutral-950/75 dark:hover:bg-neutral-950 ${
+                  isActive
+                    ? "border-emerald-500/70 dark:border-emerald-300/60"
+                    : "border-neutral-200 dark:border-neutral-800"
+                }`}
+              >
+                <span className="flex aspect-square items-center justify-center rounded-md border border-neutral-200 bg-white p-2 dark:border-neutral-800 dark:bg-neutral-900/70">
+                  <img
+                    src={logo.src}
+                    alt=""
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                </span>
+                <span className="min-w-0 overflow-hidden pr-1">
+                  <span className="line-clamp-2 min-w-0 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
+                    {logo.title}
+                  </span>
+                  <span className="mt-2 line-clamp-3 block min-w-0 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
+                    {logoDetail}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </>
@@ -2306,13 +2171,12 @@ const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) =>
   );
 };
 
-
 const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive }) => {
   const isEn = language === "en";
 
   return (
-    <div className="w-full py-4">
-      <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-neutral-800">
+    <div className="mx-auto w-[calc(100vw-3rem)] max-w-md py-4 text-center">
+      <div className="mb-5 flex flex-col items-center justify-center gap-3 border-b border-neutral-200 pb-4 dark:border-neutral-800">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
             {isEn ? "Regional threat snapshot" : "Panorama regional de amenazas"}
@@ -2367,7 +2231,228 @@ const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive
 };
 
 
+const FAQSection: React.FC<SectionProps> = ({ language }) => {
+  const isEn = language === "en";
+  const [openItem, setOpenItem] = React.useState<number | null>(null);
 
+  const faqItems = isEn
+    ? [
+        {
+          question: "How much does a cybersecurity service cost?",
+          answer: [
+            "Practical security steps that stop many basic threats can be cheaper than people think. A strong foundation is achievable with small budgets when the priorities and advisors are right.",
+            "A full program depends on the scope, company size, systems involved, urgency, and whether the work is one-time or ongoing.",
+            "A short discovery conversation is usually the best way to recommend a practical starting point.",
+          ],
+        },
+        {
+          question: "Who do you usually help?",
+          answer: [
+            "We work with small and medium businesses, with special attention to protecting business owners' budgets while improving security.",
+            "Common clients include accounting and tax firms, legal and compliance practices, professional services, health and wellness clinics, small retail, and local businesses.",
+          ],
+        },
+        {
+          question: "Where should we start if we do not have a cybersecurity program?",
+          answer: [
+            "Start by understanding what systems you use, what data you handle, who has access, and which risks could hurt the business first.",
+            "Our first step is helping you discover where you are, then turning that into a practical roadmap without overwhelming your team.",
+          ],
+        },
+        {
+          question: "Do you replace our IT provider?",
+          answer: [
+            "We can own or support security-heavy IT tasks, but we do not replace a regular helpdesk or day-to-day IT support team.",
+            "We work alongside your IT team or provider to heavy lift, advise, improve visibility, harden systems, and reduce risk.",
+          ],
+        },
+        {
+          question: "Ley 81 and GDPR: what are they, and can you help?",
+          answer: [
+            "Ley 81 in Panama and the GDPR in Europe are data protection rules that matter when a business handles personal data.",
+            "We help with the security side of those obligations by identifying gaps and implementing strong standards, including ISMS practices aligned with ISO 27000, so the business is better prepared for demanding compliance expectations.",
+            "For legal interpretation, we recommend qualified legal counsel.",
+          ],
+        },
+        {
+          question: "What is an ISMS, and why does ISO 27001 matter?",
+          answer: [
+            "An ISMS is the structured way a company manages information security: risks, policies, responsibilities, controls, evidence, and improvement following international standards like ISO 27001.",
+            "We can help you prepare, maintain, or improve it by translating these concepts into simpler terms: who does what, how it is done, and how to follow international best practices without unnecessary hurdles.",
+          ],
+        },
+        {
+          question: "Do you offer one-time consulting or ongoing support?",
+          answer: [
+            "Yes. Some clients need a focused review, audit preparation, or help with a specific risk. Others need ongoing monitoring, vulnerability management, hardening, and security improvement.",
+            "We scope the work around the need and budget. We adapt the engagement to the company, not the other way around.",
+          ],
+        },
+        {
+          question: "Can you help with vulnerability scanning and security monitoring?",
+          answer: [
+            "Yes. We help organizations see vulnerabilities, exposed systems, security weaknesses, and operational risks more clearly.",
+            "Depending on scope, we can support scanning, findings review, remediation guidance, hardening recommendations, and monitoring.",
+          ],
+        },
+        {
+          question: "Do you guarantee that my company will not be hacked?",
+          answer: [
+            "No honest provider can guarantee that. Cybersecurity requires shifting the question from \"Will I be hacked?\" to \"How do we operate when it happens?\"",
+            "We work from a Zero Trust and assume-breach mindset: protect systems, data, and access even if someone is already inside the environment.",
+          ],
+        },
+      ]
+    : [
+        {
+          question: "Cuanto cuesta un servicio de ciberseguridad?",
+          answer: [
+            "Los pasos practicos de seguridad que detienen muchas amenazas basicas pueden ser mas economicos de lo que la gente piensa. Una base solida es alcanzable con presupuestos pequenos cuando las prioridades y los asesores son correctos.",
+            "Un programa completo depende del alcance, tamano de la empresa, sistemas involucrados, urgencia y si el trabajo es puntual o continuo.",
+            "Una conversacion corta de descubrimiento suele ser la mejor forma de recomendar un punto de partida practico.",
+          ],
+        },
+        {
+          question: "A que tipo de empresas ayudan?",
+          answer: [
+            "Trabajamos con empresas pequenas y medianas, con especial atencion a proteger el presupuesto del dueno mientras mejora la seguridad.",
+            "Clientes comunes incluyen firmas contables y fiscales, practicas legales y de cumplimiento, servicios profesionales, clinicas de salud y bienestar, pequenos comercios y negocios locales.",
+          ],
+        },
+        {
+          question: "Por donde empezamos si no tenemos un programa de ciberseguridad?",
+          answer: [
+            "Empieza entendiendo que sistemas usas, que datos manejas, quien tiene acceso y que riesgos pueden afectar primero al negocio.",
+            "Nuestro primer paso es ayudarte a descubrir donde estas y convertir eso en una hoja de ruta practica sin abrumar a tu equipo.",
+          ],
+        },
+        {
+          question: "Reemplazan a nuestro proveedor de TI?",
+          answer: [
+            "Podemos asumir o apoyar tareas de TI con alto componente de seguridad, pero no reemplazamos un helpdesk regular ni el soporte diario de TI.",
+            "Trabajamos junto a tu equipo o proveedor actual para hacer trabajo pesado, asesorar, mejorar visibilidad, endurecer sistemas y reducir riesgo.",
+          ],
+        },
+        {
+          question: "Ley 81 y GDPR: que son y podemos ayudar?",
+          answer: [
+            "La Ley 81 en Panama y el GDPR en Europa son normas de proteccion de datos que importan cuando una empresa maneja datos personales.",
+            "Ayudamos con el lado de seguridad de esas obligaciones identificando brechas e implementando estandares fuertes, incluyendo practicas de SGSI alineadas con ISO 27000, para que el negocio este mejor preparado ante exigencias de cumplimiento.",
+            "Para interpretacion legal, recomendamos asesoria legal calificada.",
+          ],
+        },
+        {
+          question: "Que es un SGSI y por que importa ISO 27001?",
+          answer: [
+            "Un SGSI es la forma estructurada de gestionar seguridad de la informacion: riesgos, politicas, responsabilidades, controles, evidencias y mejora siguiendo estandares internacionales como ISO 27001.",
+            "Podemos ayudarte a prepararlo, mantenerlo o mejorarlo traduciendo estos conceptos a terminos simples: quien hace que, como se hace y como seguir buenas practicas internacionales sin trabas innecesarias.",
+          ],
+        },
+        {
+          question: "Ofrecen consultoria puntual o soporte continuo?",
+          answer: [
+            "Si. Algunos clientes necesitan una revision puntual, preparacion para auditoria o apoyo con un riesgo especifico. Otros necesitan monitoreo, gestion de vulnerabilidades, hardening y mejora continua.",
+            "Definimos el alcance segun la necesidad y el presupuesto. Adaptamos el servicio a la empresa, no al reves.",
+          ],
+        },
+        {
+          question: "Pueden ayudar con escaneo de vulnerabilidades y monitoreo?",
+          answer: [
+            "Si. Ayudamos a ver vulnerabilidades, sistemas expuestos, debilidades de seguridad y riesgos operativos con mayor claridad.",
+            "Segun el alcance, podemos apoyar con escaneo, revision de hallazgos, guia de remediacion, recomendaciones de hardening y monitoreo.",
+          ],
+        },
+        {
+          question: "Garantizan que mi empresa no sera hackeada?",
+          answer: [
+            "Ningun proveedor honesto puede garantizar eso. La ciberseguridad requiere cambiar la pregunta de \"Me van a hackear?\" a \"Como operamos cuando pase?\"",
+            "Trabajamos con una mentalidad de Zero Trust y asumir brecha: proteger sistemas, datos y accesos incluso si alguien ya esta dentro del entorno.",
+          ],
+        },
+      ];
+
+  return (
+    <div className="py-4 sm:py-6">
+      <div className="mx-auto max-w-3xl space-y-6">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
+            FAQ
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+            {isEn ? "Frequently Asked Questions" : "Preguntas frecuentes"}
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+            {isEn
+              ? "Short answers to common questions. For anything specific, contact us and we will point you in the right direction."
+              : "Respuestas cortas a preguntas comunes. Para algo especifico, contactanos y te orientamos en la direccion correcta."}
+          </p>
+        </div>
+
+        <div className="min-w-0 space-y-3">
+          {faqItems.map((item, index) => {
+            const isOpen = openItem === index;
+            const contentId = `faq-answer-${index}`;
+
+            return (
+              <div
+                key={item.question}
+                className="overflow-hidden rounded-xl border border-neutral-200/90 bg-white/90 shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)]"
+              >
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={contentId}
+                  onClick={() => setOpenItem((current) => (current === index ? null : index))}
+                  className="flex w-full items-start justify-between gap-4 px-4 py-3 text-left text-sm font-semibold text-neutral-950 transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500/50 dark:text-neutral-50 dark:hover:bg-neutral-900"
+                >
+                  <span>{item.question}</span>
+                  <ChevronDown
+                    className={`mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-700 transition-transform duration-200 dark:text-emerald-300 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      id={contentId}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="space-y-3 border-t border-neutral-200 px-4 py-4 text-sm leading-relaxed text-neutral-600 dark:border-neutral-800 dark:text-neutral-300">
+                        {item.answer.map((paragraph) => (
+                          <p key={paragraph}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="rounded-xl border border-neutral-200 bg-white/80 p-5 text-center shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-950/70">
+          <h3 className="text-lg font-semibold tracking-tight">
+            {isEn ? "Other questions?" : "Otras preguntas?"}
+          </h3>
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+            {isEn
+              ? "Send us a short note and we will address your questions promptly."
+              : "Envianos una nota breve y atenderemos tus preguntas con prontitud."}
+          </p>
+          <AnchorButton href="#contact" className="mt-4">
+            {isEn ? "Contact SafeGuard CCS" : "Contactar a SafeGuard CCS"}
+            <ArrowRight className="h-4 w-4" />
+          </AnchorButton>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 const ContactSection: React.FC<SectionProps> = ({ language }) => {
@@ -2444,24 +2529,6 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
     },
   ];
 
-  const clientFit = isEn
-    ? [
-        "Accounting & tax firms",
-        "Legal & compliance practices",
-        "Professional services",
-        "Health & wellness clinics",
-        "Small retail & local businesses",
-        "Budget-aware guidance for businesses",
-      ]
-    : [
-        "Firmas contables y fiscales",
-        "Firmas legales y de cumplimiento",
-        "Servicios profesionales",
-        "Clínicas de salud y bienestar",
-        "Pequeños comercios y negocios locales",
-        "Guía ajustada al presupuesto",
-      ];
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitStatus("sending");
@@ -2510,7 +2577,9 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       <motion.div
         layout
         transition={{ type: "spring", stiffness: 180, damping: 26, mass: 0.8 }}
-        className="grid min-w-0 gap-8 min-h-[32rem] lg:min-h-[33rem] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start"
+        className={`grid min-w-0 gap-8 min-h-[32rem] lg:min-h-[33rem] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start ${
+          contactMode === "form" ? "justify-items-center md:justify-items-stretch" : ""
+        }`}
       >
         <motion.div
           layout="position"
@@ -2525,40 +2594,15 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 ? "Everyone deserves security that respects the budget"
                 : "Todos merecen seguridad que respete el presupuesto"}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-              <span className="md:hidden">
-                {isEn
-                  ? "We support companies across retail, health, legal, accounting, professional services, and local business."
-                  : "Acompañamos empresas de retail, salud, legal, contabilidad, servicios profesionales y negocios locales."}
-              </span>
-              <span className="hidden md:inline">
-                {isEn
-                  ? "We have experience across small, medium, and large businesses, and we are especially equipped to protect business owners’ pockets while improving security."
-                  : "Tenemos experiencia en empresas pequeñas, medianas y grandes, y estamos especialmente preparados para proteger el bolsillo del dueño mientras mejora su seguridad."}
-              </span>
-            </p>
-            <p className="mt-3 text-sm font-medium text-neutral-700 dark:text-neutral-200">
-              {isEn
-                ? "We adapt the engagement to the company, not the other way around."
-                : "Adaptamos el servicio a la empresa, no al revés."}
-            </p>
-          </div>
-
-          <div className="hidden gap-2 text-xs text-neutral-600 md:grid md:grid-cols-2 dark:text-neutral-300">
-            {clientFit.map((item) => (
-              <div
-                key={item}
-                className="flex min-h-10 items-start gap-2 rounded-lg border border-neutral-200 bg-white/70 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-950/60"
-              >
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                <span>{item}</span>
-              </div>
-            ))}
           </div>
 
         </motion.div>
 
-        <div className="min-w-0 scroll-mt-24 lg:min-h-[33rem]">
+        <div
+          className={`min-w-0 scroll-mt-24 lg:min-h-[33rem] ${
+            contactMode === "form" ? "flex w-full items-center justify-center md:block" : ""
+          }`}
+        >
           <AnimatePresence mode="wait" initial={false}>
             {contactMode === "methods" ? (
               <motion.div
@@ -2572,7 +2616,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
               {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
             </p>
-            <div className="grid grid-cols-1 gap-3 md:gap-3">
+            <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-3">
               {contactMethods.map((method) => (
                 <button
                   key={method.label}
@@ -2589,20 +2633,21 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                       kind: method.kind,
                     });
                   }}
-                className="group flex min-h-[4.75rem] w-full min-w-0 items-center gap-3 rounded-xl border border-neutral-200/90 bg-white/90 px-4 py-3 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 md:min-h-0 md:items-start md:gap-3 md:p-4"
+                className="group flex min-h-[5.25rem] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-neutral-200/90 bg-white/90 px-2.5 py-3 text-center shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 md:min-h-0 md:flex-row md:items-start md:justify-start md:gap-3 md:p-4 md:text-left"
                 >
-                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300 md:h-10 md:w-10">
-                    <method.icon className="h-[1.125rem] w-[1.125rem] md:h-4 md:w-4" />
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300">
+                    <method.icon className="h-4 w-4" />
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
-                      {method.title}
+                  <span className="min-w-0 md:flex-1">
+                    <span className="block truncate text-xs font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:text-sm">
+                      <span className="md:hidden">{method.label}</span>
+                      <span className="hidden md:inline">{method.title}</span>
                     </span>
-                    <span className="mt-1 line-clamp-2 block text-xs leading-snug text-neutral-600 dark:text-neutral-300 md:line-clamp-3 md:leading-relaxed">
+                    <span className="mt-1 hidden text-xs leading-relaxed text-neutral-600 dark:text-neutral-300 md:line-clamp-3 md:block">
                       {method.description}
                     </span>
                   </span>
-                  <ArrowRight className="h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 md:mt-1" />
+                  <ArrowRight className="hidden h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 md:mt-1 md:block" />
                 </button>
               ))}
             </div>
@@ -2615,7 +2660,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.24, ease: "easeOut" }}
-                className="min-w-0"
+                className="w-[calc(100vw-3rem)] max-w-md min-w-0 md:w-full md:max-w-none"
               >
           <button
             type="button"
@@ -2628,7 +2673,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             {isEn ? "Tell us about your environment" : "Cuéntanos sobre tu entorno"}
           </h2>
-          <Card interactive={false} className="mt-5 overflow-hidden">
+          <Card interactive={false} className="mt-5 overflow-hidden text-left">
             <CardInner className="min-w-0 space-y-4 text-xs text-neutral-700 dark:text-neutral-200">
               <form onSubmit={handleSubmit} className="min-w-0 space-y-3">
               <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
@@ -2687,7 +2732,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </div>
                 <div>
                   <label className="mb-1 block text-[11px] font-medium">
-                    {isEn ? "Approximate number of employees" : "Número aproximado de empleados"}
+                    {isEn ? "Number of employees" : "Número de empleados"}
                   </label>
                   <input
                     type="text"
@@ -2724,7 +2769,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center justify-between gap-3 pt-1">
 	                <Button
 	                  type="submit"
 	                  disabled={submitStatus === "sending"}
@@ -2739,7 +2784,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
 	                      : "Enviar"}
                 </Button>
 
-                <span className="text-[10px] text-neutral-500 dark:text-neutral-400 max-w-xs leading-tight">
+                <span className="max-w-[11rem] text-right text-[10px] leading-tight text-neutral-500 dark:text-neutral-400 sm:max-w-xs">
                   {submitStatus === "success"
                     ? isEn
                       ? "Message sent. We’ll reply soon."
