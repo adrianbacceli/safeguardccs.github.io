@@ -32,6 +32,21 @@ html.dark body {
   background: #020617;
 }
 
+@media (max-width: 767px) {
+  html,
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
 @keyframes ambient-sweep {
   0%, 100% {
     transform: translateX(-50%) translateY(0) scale(1);
