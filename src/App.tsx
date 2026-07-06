@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, LayoutGroup, motion, type PanInfo } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
   Activity,
   AlertTriangle,
@@ -1358,28 +1358,67 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
 const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
   const [index, setIndex] = useState(0);
-  const [canSwipe, setCanSwipe] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
+  const mobileCardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const scrollEndTimerRef = useRef<number>();
+  const programmaticScrollRef = useRef(false);
+  const programmaticScrollTimerRef = useRef<number>();
   const total = certLogos.length;
   const activeLogo = certLogos[index];
 
-  // Auto-advance every 5s, reset whenever index changes (including arrow clicks)
-  useEffect(() => {
-    if (total === 0) return;
-
-    const id = window.setInterval(() => {
-      setIndex((prev) => (prev + 1) % total);
-    }, 5000);
-
-    return () => window.clearInterval(id);
-  }, [total, index]);
-
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 767px)");
-    const syncCanSwipe = () => setCanSwipe(mobileQuery.matches);
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncQueries = () => {
+      setIsMobile(mobileQuery.matches);
+      setIsReducedMotion(motionQuery.matches);
+    };
 
-    syncCanSwipe();
-    mobileQuery.addEventListener("change", syncCanSwipe);
-    return () => mobileQuery.removeEventListener("change", syncCanSwipe);
+    syncQueries();
+    mobileQuery.addEventListener("change", syncQueries);
+    motionQuery.addEventListener("change", syncQueries);
+
+    return () => {
+      mobileQuery.removeEventListener("change", syncQueries);
+      motionQuery.removeEventListener("change", syncQueries);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (total === 0 || isReducedMotion || isInteracting) return;
+    const id = window.setInterval(() => {
+      setIndex((prev) => (prev + 1) % total);
+    }, isMobile ? 6500 : 5000);
+
+    return () => window.clearInterval(id);
+  }, [total, index, isMobile, isReducedMotion, isInteracting]);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const track = mobileTrackRef.current;
+    const card = mobileCardRefs.current[index];
+    if (!track || !card) return;
+
+    const centeredLeft = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
+    programmaticScrollRef.current = true;
+    window.clearTimeout(programmaticScrollTimerRef.current);
+    track.scrollTo({
+      left: centeredLeft,
+      behavior: isReducedMotion ? "auto" : "smooth",
+    });
+    programmaticScrollTimerRef.current = window.setTimeout(() => {
+      programmaticScrollRef.current = false;
+    }, isReducedMotion ? 0 : 520);
+  }, [index, isMobile, isReducedMotion]);
+
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(scrollEndTimerRef.current);
+      window.clearTimeout(programmaticScrollTimerRef.current);
+    };
   }, []);
 
   if (total === 0 || !activeLogo) {
@@ -1389,90 +1428,198 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const goNext = () => setIndex((prev) => (prev + 1) % total);
   const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
   const detail = isEn ? activeLogo.description.en : activeLogo.description.es;
-  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (!canSwipe) return;
-    if (Math.abs(info.offset.x) < 48) return;
+  const goTo = (nextIndex: number) => setIndex(nextIndex);
+  const pauseMobileAutoplay = () => {
+    setIsInteracting(true);
+    window.clearTimeout(scrollEndTimerRef.current);
+    scrollEndTimerRef.current = window.setTimeout(() => setIsInteracting(false), 1800);
+  };
+  const handleMobileScroll = () => {
+    const track = mobileTrackRef.current;
+    if (!track) return;
 
-    if (info.offset.x < 0) {
-      goNext();
-      return;
+    pauseMobileAutoplay();
+    if (programmaticScrollRef.current) return;
+
+    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+    const closestIndex = mobileCardRefs.current.reduce((closest, card, cardIndex) => {
+      if (!card) return closest;
+
+      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const distance = Math.abs(cardCenter - trackCenter);
+      return distance < closest.distance ? { index: cardIndex, distance } : closest;
+    }, { index, distance: Number.POSITIVE_INFINITY }).index;
+
+    if (closestIndex !== index) {
+      setIndex(closestIndex);
     }
-
-    goPrev();
   };
 
   return (
-    <motion.div
-      drag={canSwipe ? "x" : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.08}
-      dragSnapToOrigin
-      onDragEnd={handleDragEnd}
-      className="grid h-[13.5rem] w-full cursor-grab touch-pan-y select-none grid-cols-[4.75rem_minmax(0,1fr)] gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-white/80 p-3 shadow-sm backdrop-blur-sm active:cursor-grabbing md:h-auto md:cursor-auto md:touch-auto md:select-auto md:grid-cols-[280px_1fr] md:gap-5 md:overflow-visible md:p-4 dark:border-neutral-800 dark:bg-neutral-950/75"
-    >
-      <div className="space-y-0 md:space-y-3">
-        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70 md:p-8">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.img
-              key={activeLogo.file}
-              src={activeLogo.src}
-              alt={activeLogo.title}
-              className="absolute inset-2 h-[calc(100%-1rem)] w-[calc(100%-1rem)] object-contain md:inset-8 md:h-[calc(100%-4rem)] md:w-[calc(100%-4rem)]"
-              initial={{ opacity: 0, scale: 0.96, filter: "blur(6px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-            />
-          </AnimatePresence>
-        </div>
-        <div className="hidden items-center justify-between gap-1 md:flex md:gap-3">
-          <button
-            type="button"
-            onClick={goPrev}
-            aria-label={isEn ? "Previous certification" : "Certificación anterior"}
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
-          >
-            ‹
-          </button>
-          <div className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 md:text-[11px]">
-            {index + 1} / {total}
-          </div>
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label={isEn ? "Next certification" : "Siguiente certificación"}
-            className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
-          >
-            ›
-          </button>
-        </div>
-      </div>
-      <div className="min-w-0 overflow-hidden">
-        <Card interactive={false} className="h-full overflow-hidden md:h-auto">
-          <CardInner className="overflow-hidden p-3 md:p-5">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={`${activeLogo.file}-${language}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+    <>
+      <div
+        className="md:hidden"
+        onPointerEnter={() => setIsInteracting(true)}
+        onPointerLeave={() => setIsInteracting(false)}
+      >
+        <div
+          ref={mobileTrackRef}
+          onScroll={handleMobileScroll}
+          className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {certLogos.map((logo, logoIndex) => {
+            const logoDetail = isEn ? logo.description.en : logo.description.es;
+            const isActive = index === logoIndex;
+
+            return (
+              <button
+                key={logo.file}
+                ref={(node) => {
+                  mobileCardRefs.current[logoIndex] = node;
+                }}
+                type="button"
+                onClick={() => {
+                  pauseMobileAutoplay();
+                  goTo(logoIndex);
+                }}
+                onFocus={() => {
+                  setIsInteracting(true);
+                  goTo(logoIndex);
+                }}
+                onBlur={() => setIsInteracting(false)}
+                aria-label={
+                  isEn
+                    ? `Show certification ${logoIndex + 1}: ${logo.title}`
+                    : `Mostrar certificación ${logoIndex + 1}: ${logo.title}`
+                }
+                aria-current={isActive ? "true" : undefined}
+                className={`h-[15rem] w-[86%] flex-shrink-0 snap-center overflow-hidden rounded-xl border bg-white/90 p-3 text-left shadow-sm transition-colors duration-300 dark:bg-neutral-950/85 ${
+                  isActive
+                    ? "border-emerald-500/70 shadow-lg shadow-emerald-950/10 dark:border-emerald-300/60"
+                    : "border-neutral-200 dark:border-neutral-800"
+                }`}
               >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 md:text-[11px] md:tracking-[0.18em]">
-                  {isEn ? "Active credential" : "Credencial activa"}
-                </p>
-                <h3 className="mt-2 line-clamp-3 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:mt-3 md:line-clamp-none md:text-xl">
-                  {activeLogo.title}
-                </h3>
-                <p className="mt-2 line-clamp-5 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300 md:mt-3 md:line-clamp-none md:text-sm">
-                  {detail}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-          </CardInner>
-        </Card>
+                <div className="grid h-full grid-cols-[4.75rem_minmax(0,1fr)] gap-3">
+                  <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 dark:border-neutral-800 dark:bg-neutral-900/70">
+                    <img
+                      src={logo.src}
+                      alt={logo.title}
+                      className="h-full w-full object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="min-w-0 overflow-hidden">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+                      {isEn ? "Active credential" : "Credencial activa"}
+                    </p>
+                    <h3 className="mt-2 line-clamp-3 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
+                      {logo.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-5 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+                      {logoDetail}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-1.5">
+            {certLogos.map((logo, logoIndex) => (
+              <button
+                key={`${logo.file}-dot`}
+                type="button"
+                onClick={() => {
+                  pauseMobileAutoplay();
+                  goTo(logoIndex);
+                }}
+                aria-label={
+                  isEn
+                    ? `Go to certification ${logoIndex + 1}`
+                    : `Ir a certificación ${logoIndex + 1}`
+                }
+                aria-current={index === logoIndex ? "true" : undefined}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  index === logoIndex
+                    ? "w-6 bg-emerald-700 dark:bg-emerald-300"
+                    : "w-1.5 bg-neutral-300 dark:bg-neutral-700"
+                }`}
+              />
+            ))}
+          </div>
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+            {isEn ? "Swipe" : "Desliza"}
+          </p>
+        </div>
       </div>
-    </motion.div>
+
+      <div className="hidden grid-cols-[280px_1fr] gap-5 rounded-lg border border-neutral-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm md:grid dark:border-neutral-800 dark:bg-neutral-950/75">
+        <div className="space-y-3">
+          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-white p-2 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70 md:p-8">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.img
+                key={activeLogo.file}
+                src={activeLogo.src}
+                alt={activeLogo.title}
+                className="absolute inset-2 h-[calc(100%-1rem)] w-[calc(100%-1rem)] object-contain md:inset-8 md:h-[calc(100%-4rem)] md:w-[calc(100%-4rem)]"
+                initial={{ opacity: 0, scale: 0.96, filter: "blur(6px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
+                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </AnimatePresence>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label={isEn ? "Previous certification" : "Certificación anterior"}
+              className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
+            >
+              ‹
+            </button>
+            <div className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 md:text-[11px]">
+              {index + 1} / {total}
+            </div>
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label={isEn ? "Next certification" : "Siguiente certificación"}
+              className="flex h-7 w-7 items-center justify-center rounded-md border border-neutral-300/70 bg-white/80 text-sm text-neutral-700 shadow-sm transition duration-300 ease-out hover:bg-neutral-100 dark:border-neutral-700/70 dark:bg-neutral-900/80 dark:text-neutral-100 dark:hover:bg-neutral-800 md:h-9 md:w-9 md:text-[16px]"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+        <div className="min-w-0">
+          <Card interactive={false}>
+            <CardInner className="p-5">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={`${activeLogo.file}-${language}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400 md:text-[11px] md:tracking-[0.18em]">
+                    {isEn ? "Active credential" : "Credencial activa"}
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold text-neutral-950 dark:text-neutral-50">
+                    {activeLogo.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                    {detail}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </CardInner>
+          </Card>
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -2220,10 +2367,10 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl bg-neutral-950 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all duration-300 ease-out hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+            aria-label={isEn ? "Open WhatsApp" : "Abrir WhatsApp"}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-all duration-300 ease-out hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             <SiWhatsapp className="h-4 w-4" />
-            <span>WhatsApp</span>
           </a>
         </div>
       </div>
@@ -2233,6 +2380,7 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
 
 const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ language }) => {
   const [footerVisible, setFooterVisible] = useState(false);
+  const isEn = language === "en";
 
   useEffect(() => {
     const footer = document.getElementById("site-footer");
@@ -2260,15 +2408,15 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ language }) => {
       href={WHATSAPP_LINK}
       target="_blank"
       rel="noreferrer"
+      aria-label={isEn ? "Open WhatsApp" : "Abrir WhatsApp"}
       className={`
-        fixed bottom-5 right-4 z-50 inline-flex items-center gap-2 rounded-xl
-        bg-neutral-950 px-4 py-2 text-xs font-medium text-white shadow-lg transition-all duration-300
+        fixed bottom-5 right-4 z-50 inline-flex h-11 w-11 items-center justify-center rounded-xl
+        bg-neutral-950 text-white shadow-lg transition-all duration-300
         hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200
         ${shouldHide ? "opacity-0 translate-y-3 pointer-events-none" : "opacity-100"}
       `}
     >
-      <SiWhatsapp className="h-4 w-4" />
-      <span>WhatsApp</span>
+      <SiWhatsapp className="h-5 w-5" />
     </a>
   );
 };
