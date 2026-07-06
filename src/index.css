@@ -269,7 +269,12 @@ body {
   }
 
   .mobile-cert-card {
-    transition-duration: 0.001ms;
+    transition-duration: 420ms !important;
+  }
+
+  .mobile-cert-progress {
+    animation-duration: 5000ms !important;
+    animation-iteration-count: 1 !important;
   }
 
   .background-system .ambient-sweep,

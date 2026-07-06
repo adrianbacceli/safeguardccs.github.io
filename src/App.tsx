@@ -1360,7 +1360,6 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
   const [index, setIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [isReducedMotion, setIsReducedMotion] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
   const touchStartXRef = useRef<number | null>(null);
@@ -1370,30 +1369,26 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
 
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 767px)");
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const syncQueries = () => {
       setIsMobile(mobileQuery.matches);
-      setIsReducedMotion(motionQuery.matches);
     };
 
     syncQueries();
     mobileQuery.addEventListener("change", syncQueries);
-    motionQuery.addEventListener("change", syncQueries);
 
     return () => {
       mobileQuery.removeEventListener("change", syncQueries);
-      motionQuery.removeEventListener("change", syncQueries);
     };
   }, []);
 
   useEffect(() => {
-    if (total === 0 || isReducedMotion || isPaused) return;
+    if (total === 0 || isPaused) return;
     const id = window.setInterval(() => {
       setIndex((prev) => (prev + 1) % total);
     }, isMobile ? MOBILE_CERT_AUTOPLAY_MS : 5000);
 
     return () => window.clearInterval(id);
-  }, [total, index, isMobile, isReducedMotion, isPaused]);
+  }, [total, index, isMobile, isPaused]);
 
   useEffect(() => {
     setProgressKey((prev) => prev + 1);
@@ -1571,9 +1566,7 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                 strokeLinecap="round"
                 strokeDasharray={progressCircumference}
                 strokeDashoffset={progressCircumference}
-                className={
-                  isPaused || isReducedMotion ? "" : "mobile-cert-progress"
-                }
+                className={isPaused ? "" : "mobile-cert-progress"}
                 style={{
                   ["--cert-progress-offset" as string]: progressCircumference,
                 }}
