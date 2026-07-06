@@ -1472,7 +1472,7 @@ const App: React.FC = () => {
         </LandingSection>
 
         <LandingSection id="services">
-          <ServicesSection language={language} />
+          <ServicesSection language={language} onNavigate={handleNavigate} />
         </LandingSection>
 
         <LandingSection id="approach">
@@ -1480,7 +1480,7 @@ const App: React.FC = () => {
         </LandingSection>
 
         <LandingSection id="faq">
-          <FAQSection language={language} />
+          <FAQSection language={language} onNavigate={handleNavigate} />
         </LandingSection>
 
         <LandingSection id="contact" className="pb-16">
@@ -1634,9 +1634,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
   );
 };
 
-const ServiceBundleCard: React.FC<{ service: ProductService; language: Language }> = ({
+const ServiceBundleCard: React.FC<{
+  service: ProductService;
+  language: Language;
+  onNavigate: (section: SectionId) => void;
+}> = ({
   service,
   language,
+  onNavigate,
 }) => {
   const isComingSoon = service.availability === "coming-soon";
   const isEn = language === "en";
@@ -1692,6 +1697,10 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
         ) : (
           <a
             href="#contact"
+            onClick={(event) => {
+              event.preventDefault();
+              onNavigate("contact");
+            }}
             className="group inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
           >
             {service.ctaLabel[language]}
@@ -1797,7 +1806,9 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
   );
 };
 
-const ServicesSection: React.FC<SectionProps> = ({ language }) => {
+const ServicesSection: React.FC<SectionProps & {
+  onNavigate: (section: SectionId) => void;
+}> = ({ language, onNavigate }) => {
   const isEn = language === "en";
 
   return (
@@ -1820,7 +1831,12 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
 
       <div className="grid gap-4 md:grid-cols-3">
         {productServices.map((service) => (
-          <ServiceBundleCard key={service.id} service={service} language={language} />
+          <ServiceBundleCard
+            key={service.id}
+            service={service}
+            language={language}
+            onNavigate={onNavigate}
+          />
         ))}
       </div>
     </div>
@@ -2303,7 +2319,9 @@ const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive
 };
 
 
-const FAQSection: React.FC<SectionProps> = ({ language }) => {
+const FAQSection: React.FC<SectionProps & {
+  onNavigate: (section: SectionId) => void;
+}> = ({ language, onNavigate }) => {
   const isEn = language === "en";
   const [openItem, setOpenItem] = React.useState<number | null>(null);
 
@@ -2516,7 +2534,14 @@ const FAQSection: React.FC<SectionProps> = ({ language }) => {
               ? "Send us a short note and we will address your questions promptly."
               : "Envianos una nota breve y atenderemos tus preguntas con prontitud."}
           </p>
-          <AnchorButton href="#contact" className="mt-4">
+          <AnchorButton
+            href="#contact"
+            onClick={(event) => {
+              event.preventDefault();
+              onNavigate("contact");
+            }}
+            className="mt-4"
+          >
             {isEn ? "Contact SafeGuard CCS" : "Contactar a SafeGuard CCS"}
             <ArrowDown className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
           </AnchorButton>
