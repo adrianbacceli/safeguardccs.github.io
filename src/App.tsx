@@ -2033,7 +2033,10 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
         transition={{ type: "spring", stiffness: 180, damping: 26, mass: 0.8 }}
         className="grid min-w-0 gap-8 min-h-[32rem] lg:min-h-[33rem] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start"
       >
-        <motion.div layout="position" className="min-w-0 space-y-6">
+        <motion.div
+          layout="position"
+          className={`min-w-0 space-y-6 ${contactMode === "form" ? "hidden md:block" : ""}`}
+        >
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
               {isEn ? "Contact" : "Contacto"}
@@ -2044,9 +2047,16 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 : "Todos merecen seguridad que respete el presupuesto"}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {isEn
-                ? "We have experience across small, medium, and large businesses, and we are especially equipped to protect business owners’ pockets while improving security."
-                : "Tenemos experiencia en empresas pequeñas, medianas y grandes, y estamos especialmente preparados para proteger el bolsillo del dueño mientras mejora su seguridad."}
+              <span className="md:hidden">
+                {isEn
+                  ? "We support companies across retail, health, legal, accounting, professional services, and local business."
+                  : "Acompañamos empresas de retail, salud, legal, contabilidad, servicios profesionales y negocios locales."}
+              </span>
+              <span className="hidden md:inline">
+                {isEn
+                  ? "We have experience across small, medium, and large businesses, and we are especially equipped to protect business owners’ pockets while improving security."
+                  : "Tenemos experiencia en empresas pequeñas, medianas y grandes, y estamos especialmente preparados para proteger el bolsillo del dueño mientras mejora su seguridad."}
+              </span>
             </p>
             <p className="mt-3 text-sm font-medium text-neutral-700 dark:text-neutral-200">
               {isEn
@@ -2055,7 +2065,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             </p>
           </div>
 
-          <div className="grid gap-2 text-xs text-neutral-600 sm:grid-cols-2 dark:text-neutral-300">
+          <div className="hidden gap-2 text-xs text-neutral-600 md:grid md:grid-cols-2 dark:text-neutral-300">
             {clientFit.map((item) => (
               <div
                 key={item}
@@ -2083,7 +2093,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
               {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
             </p>
-            <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-3">
+            <div className="grid grid-cols-1 gap-3 md:gap-3">
               {contactMethods.map((method) => (
                 <button
                   key={method.label}
@@ -2100,20 +2110,20 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                       kind: method.kind,
                     });
                   }}
-                className="group flex min-h-[7rem] w-full min-w-0 flex-col items-center gap-2 rounded-lg border border-neutral-200 bg-white/85 p-2 text-center shadow-sm transition-all duration-300 hover:border-emerald-500/60 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950/75 md:min-h-0 md:flex-row md:items-start md:gap-3 md:p-4 md:text-left"
+                className="group flex min-h-[4.75rem] w-full min-w-0 items-center gap-3 rounded-xl border border-neutral-200/90 bg-white/90 px-4 py-3 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 md:min-h-0 md:items-start md:gap-3 md:p-4"
                 >
-                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 md:h-10 md:w-10">
-                    <method.icon className="h-4 w-4" />
+                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300 md:h-10 md:w-10">
+                    <method.icon className="h-[1.125rem] w-[1.125rem] md:h-4 md:w-4" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[11px] font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:text-sm">
+                    <span className="block text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
                       {method.title}
                     </span>
-                    <span className="mt-1 line-clamp-3 block text-[10px] leading-snug text-neutral-600 dark:text-neutral-300 md:text-xs md:leading-relaxed">
+                    <span className="mt-1 line-clamp-2 block text-xs leading-snug text-neutral-600 dark:text-neutral-300 md:line-clamp-3 md:leading-relaxed">
                       {method.description}
                     </span>
                   </span>
-                  <ArrowRight className="mt-1 hidden h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 md:block" />
+                  <ArrowRight className="h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 md:mt-1" />
                 </button>
               ))}
             </div>
