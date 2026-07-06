@@ -41,6 +41,7 @@ type ProductService = {
   detail: Record<Language, string>;
   mobileDetail: Record<Language, string>;
   ctaLabel: Record<Language, string>;
+  availability?: "available" | "coming-soon";
   featured?: boolean;
   badge?: Record<Language, string>;
   subServices: Record<Language, string[]>;
@@ -115,71 +116,6 @@ const productServices: ProductService[] = [
     },
   },
   {
-    id: "mssp-operational-monitoring",
-    icon: Activity,
-    eyebrow: {
-      en: "Managed security operations",
-      es: "Operaciones de seguridad gestionadas",
-    },
-    title: {
-      en: "MSSP Operational Monitoring",
-      es: "Monitoreo y análisis operacional MSSP",
-    },
-    summary: {
-      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring and response readiness.",
-      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo y preparación de respuesta.",
-    },
-    mobileSummary: {
-      en: "Managed monitoring aligned to NIST CSF, IRT, and RMF.",
-      es: "Monitoreo gestionado alineado a NIST CSF, IRT y RMF.",
-    },
-    detailTitle: {
-      en: "Managed Security Service Provider monitoring and operational support",
-      es: "Monitoreo MSSP y soporte operacional de seguridad gestionada",
-    },
-    detail: {
-      en: "We help detect suspicious activity, handle security events, review vulnerabilities, apply updates and hardening, and translate continuous monitoring into clear actions aligned with NIST CSF, IRT, and RMF practices.",
-      es: "Ayudamos a detectar actividad sospechosa, manejar eventos de seguridad, revisar vulnerabilidades, aplicar actualizaciones y endurecimiento, y convertir el monitoreo continuo en acciones claras alineadas a prácticas NIST CSF, IRT y RMF.",
-    },
-    mobileDetail: {
-      en: "Monitoring, incident handling, vulnerabilities, updates, hardening, and continuous visibility in one operational service area.",
-      es: "Monitoreo, incidentes, vulnerabilidades, actualizaciones, endurecimiento y visibilidad continua en una sola área operacional.",
-    },
-    ctaLabel: {
-      en: "Plan monitoring support",
-      es: "Planificar monitoreo",
-    },
-    featured: true,
-    badge: {
-      en: "Featured",
-      es: "Recomendado",
-    },
-    subServices: {
-      en: [
-        "Incident handling",
-        "IT support",
-        "Vulnerability scanning",
-        "Updates and hardening",
-        "Continuous monitoring",
-      ],
-      es: [
-        "Manejo de incidentes",
-        "Soporte de TI",
-        "Escaneo de vulnerabilidades",
-        "Actualizaciones y endurecimiento",
-        "Monitoreo continuo",
-      ],
-    },
-    highlights: {
-      en: ["Security event triage", "Operational visibility", "Actionable remediation support"],
-      es: ["Priorización de eventos de seguridad", "Visibilidad operacional", "Soporte de remediación accionable"],
-    },
-    keywords: {
-      en: "MSSP, managed security monitoring, incident handling, vulnerability scanning, continuous monitoring, IT support, hardening",
-      es: "MSSP, monitoreo gestionado de seguridad, manejo de incidentes, escaneo de vulnerabilidades, monitoreo continuo, soporte de TI, hardening",
-    },
-  },
-  {
     id: "cybersecurity-consulting",
     icon: LockKeyhole,
     eyebrow: {
@@ -214,6 +150,11 @@ const productServices: ProductService[] = [
       en: "Request consulting",
       es: "Solicitar asesoría",
     },
+    featured: true,
+    badge: {
+      en: "Featured",
+      es: "Recomendado",
+    },
     subServices: {
       en: [
         "General advisory",
@@ -239,8 +180,72 @@ const productServices: ProductService[] = [
       es: "consultoría de ciberseguridad, asesoría de seguridad, formación en seguridad, seguridad de redes, seguridad de aplicaciones, diagnóstico de postura de seguridad",
     },
   },
+  {
+    id: "mssp-operational-monitoring",
+    icon: Activity,
+    eyebrow: {
+      en: "Managed security operations",
+      es: "Operaciones de seguridad gestionadas",
+    },
+    title: {
+      en: "MSSP Operational Monitoring",
+      es: "Monitoreo y análisis operacional MSSP",
+    },
+    summary: {
+      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring and response readiness.",
+      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo y preparación de respuesta.",
+    },
+    mobileSummary: {
+      en: "Managed monitoring aligned to NIST CSF, IRT, and RMF.",
+      es: "Monitoreo gestionado alineado a NIST CSF, IRT y RMF.",
+    },
+    detailTitle: {
+      en: "Managed Security Service Provider monitoring and operational support",
+      es: "Monitoreo MSSP y soporte operacional de seguridad gestionada",
+    },
+    detail: {
+      en: "We help detect suspicious activity, handle security events, review vulnerabilities, apply updates and hardening, and translate continuous monitoring into clear actions aligned with NIST CSF, IRT, and RMF practices.",
+      es: "Ayudamos a detectar actividad sospechosa, manejar eventos de seguridad, revisar vulnerabilidades, aplicar actualizaciones y endurecimiento, y convertir el monitoreo continuo en acciones claras alineadas a prácticas NIST CSF, IRT y RMF.",
+    },
+    mobileDetail: {
+      en: "Monitoring, incident handling, vulnerabilities, updates, hardening, and continuous visibility in one operational service area.",
+      es: "Monitoreo, incidentes, vulnerabilidades, actualizaciones, endurecimiento y visibilidad continua en una sola área operacional.",
+    },
+    ctaLabel: {
+      en: "Coming soon",
+      es: "Próximamente",
+    },
+    availability: "coming-soon",
+    badge: {
+      en: "Coming soon",
+      es: "Próximamente",
+    },
+    subServices: {
+      en: [
+        "Incident handling",
+        "IT support",
+        "Vulnerability scanning",
+        "Updates and hardening",
+        "Continuous monitoring",
+      ],
+      es: [
+        "Manejo de incidentes",
+        "Soporte de TI",
+        "Escaneo de vulnerabilidades",
+        "Actualizaciones y endurecimiento",
+        "Monitoreo continuo",
+      ],
+    },
+    highlights: {
+      en: ["Security event triage", "Operational visibility", "Actionable remediation support"],
+      es: ["Priorización de eventos de seguridad", "Visibilidad operacional", "Soporte de remediación accionable"],
+    },
+    keywords: {
+      en: "MSSP, managed security monitoring, incident handling, vulnerability scanning, continuous monitoring, IT support, hardening",
+      es: "MSSP, monitoreo gestionado de seguridad, manejo de incidentes, escaneo de vulnerabilidades, monitoreo continuo, soporte de TI, hardening",
+    },
+  },
 ];
-
 function getWordCount(value: string): number {
   const words = value.trim().split(/\s+/).filter(Boolean);
   return words.length;
@@ -1625,8 +1630,15 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
   service,
   language,
 }) => {
+  const isComingSoon = service.availability === "coming-soon";
   const card = (
-    <article className="flex h-full flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-all duration-300 dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_18px_50px_rgba(0,0,0,0.24)] lg:p-6">
+    <article
+      className={`flex h-full flex-col rounded-xl border p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-all duration-300 dark:shadow-[0_18px_50px_rgba(0,0,0,0.24)] lg:p-6 ${
+        isComingSoon
+          ? "border-neutral-200/70 bg-white/60 opacity-75 dark:border-neutral-800/70 dark:bg-neutral-950/55"
+          : "border-neutral-200/90 bg-white/90 dark:border-neutral-800/90 dark:bg-neutral-950/80"
+      }`}
+    >
       <div className="min-h-[15rem]">
         <div className="flex items-start justify-between gap-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
@@ -1634,7 +1646,13 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
           </p>
 
           {service.badge ? (
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
+            <span
+              className={`whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                isComingSoon
+                  ? "border-neutral-200 bg-neutral-100 text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-400"
+                  : "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200"
+              }`}
+            >
               {service.badge[language]}
             </span>
           ) : null}
@@ -1651,13 +1669,19 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
 
       <div className="my-5 h-px w-full bg-gradient-to-r from-emerald-700/80 via-emerald-400/70 to-transparent dark:from-emerald-300/80 dark:via-emerald-500/50" />
 
-      <a
-        href="#contact"
-        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
-      >
-        {service.ctaLabel[language]}
-        <ArrowRight className="h-3.5 w-3.5" />
-      </a>
+      {isComingSoon ? (
+        <div className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-xs font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
+          {service.ctaLabel[language]}
+        </div>
+      ) : (
+        <a
+          href="#contact"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
+        >
+          {service.ctaLabel[language]}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </a>
+      )}
 
       <div className="mt-6 flex-1 border-t border-neutral-200 pt-5 dark:border-neutral-800">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
@@ -1702,7 +1726,7 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
         <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
           {isEn
             ? "Security services built for real operations"
-            : "Servicios de seguridad pensados para la operación real"}
+            : "Servicios de seguridad para tu operación"}
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           {isEn
@@ -1717,7 +1741,11 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
             key={service.id}
             type="button"
             onClick={() => setSelectedService(service)}
-            className="group flex min-h-[7.5rem] w-full min-w-0 flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950"
+            className={`group flex min-h-[7.5rem] w-full min-w-0 flex-col rounded-xl border p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 ${
+              service.availability === "coming-soon"
+                ? "border-neutral-200/70 bg-white/60 opacity-75 dark:border-neutral-800/70 dark:bg-neutral-950/55"
+                : "border-neutral-200/90 bg-white/90 dark:border-neutral-800/90 dark:bg-neutral-950/80"
+            }`}
           >
             <span className="flex items-start justify-between gap-3">
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300">
@@ -1732,7 +1760,11 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
               {service.mobileSummary[language]}
             </span>
             <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-              {isEn ? "View options" : "Ver opciones"}
+              {service.availability === "coming-soon"
+                ? service.ctaLabel[language]
+                : isEn
+                  ? "View options"
+                  : "Ver opciones"}
               <ArrowRight className="h-3 w-3" />
             </span>
           </button>
@@ -1832,15 +1864,21 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
                 </p>
 
                 <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                  <a
-                    href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-                      `${selectedService.title[language]} - SafeGuard CCS`
-                    )}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-                  >
-                    {isEn ? "Ask about this service" : "Consultar este servicio"}
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </a>
+                  {selectedService.availability === "coming-soon" ? (
+                    <div className="inline-flex items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
+                      {selectedService.ctaLabel[language]}
+                    </div>
+                  ) : (
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+                        `${selectedService.title[language]} - SafeGuard CCS`
+                      )}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                    >
+                      {isEn ? "Ask about this service" : "Consultar este servicio"}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </a>
+                  )}
                   <button
                     type="button"
                     onClick={() => setSelectedService(null)}
