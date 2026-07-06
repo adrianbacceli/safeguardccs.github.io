@@ -37,6 +37,7 @@ const MOBILE_SECTION_IDS: SectionId[] = ["home", "threats", "approach", "service
 const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
 const CONTACT_EMAIL = "consulting@safeguardccs.com";
 const MESSAGE_WORD_LIMIT = 120;
+const MOBILE_CERT_AUTOPLAY_MS = 5000;
 
 function getWordCount(value: string): number {
   const words = value.trim().split(/\s+/).filter(Boolean);
@@ -1388,7 +1389,7 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
     if (total === 0 || isReducedMotion || isInteracting) return;
     const id = window.setInterval(() => {
       setIndex((prev) => (prev + 1) % total);
-    }, isMobile ? 6500 : 5000);
+    }, isMobile ? MOBILE_CERT_AUTOPLAY_MS : 5000);
 
     return () => window.clearInterval(id);
   }, [total, index, isMobile, isReducedMotion, isInteracting]);
@@ -1446,8 +1447,6 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
         className="w-full max-w-full overflow-hidden md:hidden"
         onTouchStart={handleMobileTouchStart}
         onTouchEnd={handleMobileTouchEnd}
-        onPointerEnter={() => setIsInteracting(true)}
-        onPointerLeave={() => setIsInteracting(false)}
       >
         <div className="relative h-[15.5rem] w-full max-w-full overflow-hidden py-1">
           {mobileCards.map(({ logo, logoIndex, position }) => {
@@ -1481,14 +1480,14 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                 animate={{
                   x: xPosition,
                   scale: isActive ? 1 : 0.9,
-                  opacity: isActive ? 1 : 0.46,
+                  opacity: 1,
                 }}
                 transition={
                   isReducedMotion
                     ? { duration: 0 }
                     : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }
                 }
-                className={`absolute left-1/2 top-1 h-[15rem] w-[82%] max-w-[20rem] overflow-hidden rounded-xl border bg-white/90 p-3 text-left shadow-sm transition-colors duration-300 dark:bg-neutral-950/85 ${
+                className={`absolute left-1/2 top-1 h-[15rem] w-[82%] max-w-[20rem] overflow-hidden rounded-xl border bg-white p-3 text-left shadow-sm transition-colors duration-300 dark:bg-neutral-950 ${
                   isActive
                     ? "border-emerald-500/70 shadow-lg shadow-emerald-950/10 dark:border-emerald-300/60"
                     : "border-neutral-200 dark:border-neutral-800"
@@ -1520,8 +1519,8 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
           })}
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-4">
-          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+        <div className="mt-4 flex flex-col items-center gap-3">
+          <div className="flex min-w-0 flex-wrap items-center justify-center gap-1.5">
             {certLogos.map((logo, logoIndex) => (
               <button
                 key={`${logo.file}-dot`}
@@ -1544,9 +1543,40 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
               />
             ))}
           </div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-            {isEn ? "Swipe" : "Desliza"}
-          </p>
+          <div className="flex items-center justify-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+            <span>{isEn ? "Swipe" : "Desliza"}</span>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              className="h-4 w-4 -rotate-90 text-emerald-700 dark:text-emerald-300"
+            >
+              <circle
+                cx="10"
+                cy="10"
+                r="7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="opacity-20"
+              />
+              <motion.circle
+                key={`${index}-${isInteracting}-${isReducedMotion}`}
+                cx="10"
+                cy="10"
+                r="7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: isInteracting || isReducedMotion ? 0 : 1 }}
+                transition={{
+                  duration: MOBILE_CERT_AUTOPLAY_MS / 1000,
+                  ease: "linear",
+                }}
+              />
+            </svg>
+          </div>
         </div>
       </div>
 
