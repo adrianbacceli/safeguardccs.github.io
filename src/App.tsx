@@ -1361,11 +1361,8 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
-  const mobileTrackRef = useRef<HTMLDivElement>(null);
-  const mobileCardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const touchStartXRef = useRef<number | null>(null);
   const scrollEndTimerRef = useRef<number>();
-  const programmaticScrollRef = useRef(false);
-  const programmaticScrollTimerRef = useRef<number>();
   const total = certLogos.length;
   const activeLogo = certLogos[index];
 
@@ -1397,27 +1394,8 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   }, [total, index, isMobile, isReducedMotion, isInteracting]);
 
   useEffect(() => {
-    if (!isMobile) return;
-    const track = mobileTrackRef.current;
-    const card = mobileCardRefs.current[index];
-    if (!track || !card) return;
-
-    const centeredLeft = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
-    programmaticScrollRef.current = true;
-    window.clearTimeout(programmaticScrollTimerRef.current);
-    track.scrollTo({
-      left: centeredLeft,
-      behavior: isReducedMotion ? "auto" : "smooth",
-    });
-    programmaticScrollTimerRef.current = window.setTimeout(() => {
-      programmaticScrollRef.current = false;
-    }, isReducedMotion ? 0 : 520);
-  }, [index, isMobile, isReducedMotion]);
-
-  useEffect(() => {
     return () => {
       window.clearTimeout(scrollEndTimerRef.current);
-      window.clearTimeout(programmaticScrollTimerRef.current);
     };
   }, []);
 
@@ -1429,54 +1407,58 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
   const goPrev = () => setIndex((prev) => (prev - 1 + total) % total);
   const detail = isEn ? activeLogo.description.en : activeLogo.description.es;
   const goTo = (nextIndex: number) => setIndex(nextIndex);
+  const previousIndex = (index - 1 + total) % total;
+  const nextIndex = (index + 1) % total;
+  const mobileCards = [
+    { logo: certLogos[previousIndex], logoIndex: previousIndex, position: "previous" },
+    { logo: activeLogo, logoIndex: index, position: "active" },
+    { logo: certLogos[nextIndex], logoIndex: nextIndex, position: "next" },
+  ] as const;
   const pauseMobileAutoplay = () => {
     setIsInteracting(true);
     window.clearTimeout(scrollEndTimerRef.current);
     scrollEndTimerRef.current = window.setTimeout(() => setIsInteracting(false), 1800);
   };
-  const handleMobileScroll = () => {
-    const track = mobileTrackRef.current;
-    if (!track) return;
-
+  const handleMobileTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
     pauseMobileAutoplay();
-    if (programmaticScrollRef.current) return;
+  };
+  const handleMobileTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const startX = touchStartXRef.current;
+    touchStartXRef.current = null;
+    if (startX === null) return;
 
-    const trackCenter = track.scrollLeft + track.clientWidth / 2;
-    const closestIndex = mobileCardRefs.current.reduce((closest, card, cardIndex) => {
-      if (!card) return closest;
+    const endX = event.changedTouches[0]?.clientX ?? startX;
+    const deltaX = endX - startX;
+    if (Math.abs(deltaX) < 42) return;
 
-      const cardCenter = card.offsetLeft + card.clientWidth / 2;
-      const distance = Math.abs(cardCenter - trackCenter);
-      return distance < closest.distance ? { index: cardIndex, distance } : closest;
-    }, { index, distance: Number.POSITIVE_INFINITY }).index;
-
-    if (closestIndex !== index) {
-      setIndex(closestIndex);
+    if (deltaX < 0) {
+      goNext();
+      return;
     }
+
+    goPrev();
   };
 
   return (
     <>
       <div
-        className="md:hidden"
+        className="w-full max-w-full overflow-hidden md:hidden"
+        onTouchStart={handleMobileTouchStart}
+        onTouchEnd={handleMobileTouchEnd}
         onPointerEnter={() => setIsInteracting(true)}
         onPointerLeave={() => setIsInteracting(false)}
       >
-        <div
-          ref={mobileTrackRef}
-          onScroll={handleMobileScroll}
-          className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {certLogos.map((logo, logoIndex) => {
+        <div className="relative h-[15.5rem] w-full max-w-full overflow-hidden py-1">
+          {mobileCards.map(({ logo, logoIndex, position }) => {
             const logoDetail = isEn ? logo.description.en : logo.description.es;
-            const isActive = index === logoIndex;
+            const isActive = position === "active";
+            const xPosition =
+              position === "previous" ? "-132%" : position === "next" ? "32%" : "-50%";
 
             return (
-              <button
+              <motion.button
                 key={logo.file}
-                ref={(node) => {
-                  mobileCardRefs.current[logoIndex] = node;
-                }}
                 type="button"
                 onClick={() => {
                   pauseMobileAutoplay();
@@ -1493,7 +1475,20 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                     : `Mostrar certificación ${logoIndex + 1}: ${logo.title}`
                 }
                 aria-current={isActive ? "true" : undefined}
-                className={`h-[15rem] w-[86%] flex-shrink-0 snap-center overflow-hidden rounded-xl border bg-white/90 p-3 text-left shadow-sm transition-colors duration-300 dark:bg-neutral-950/85 ${
+                aria-hidden={!isActive}
+                tabIndex={isActive ? 0 : -1}
+                initial={false}
+                animate={{
+                  x: xPosition,
+                  scale: isActive ? 1 : 0.9,
+                  opacity: isActive ? 1 : 0.46,
+                }}
+                transition={
+                  isReducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }
+                }
+                className={`absolute left-1/2 top-1 h-[15rem] w-[82%] max-w-[20rem] overflow-hidden rounded-xl border bg-white/90 p-3 text-left shadow-sm transition-colors duration-300 dark:bg-neutral-950/85 ${
                   isActive
                     ? "border-emerald-500/70 shadow-lg shadow-emerald-950/10 dark:border-emerald-300/60"
                     : "border-neutral-200 dark:border-neutral-800"
@@ -1520,13 +1515,13 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                     </p>
                   </div>
                 </div>
-              </button>
+              </motion.button>
             );
           })}
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5">
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
             {certLogos.map((logo, logoIndex) => (
               <button
                 key={`${logo.file}-dot`}
