@@ -78,6 +78,15 @@ body {
   }
 }
 
+@keyframes mobile-cert-progress {
+  from {
+    stroke-dashoffset: var(--cert-progress-offset);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .ambient-sweep {
   animation: ambient-sweep 18s ease-in-out infinite;
   animation-duration: var(--ambient-duration, 18s);
@@ -121,6 +130,16 @@ body {
 
 .console-meter {
   animation: console-meter 4s ease-in-out infinite;
+}
+
+.mobile-cert-progress {
+  animation: mobile-cert-progress 5000ms linear forwards;
+}
+
+.mobile-cert-card {
+  transition-property: transform, opacity, border-color, box-shadow;
+  transition-duration: 420ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .section-transition {
@@ -247,6 +266,10 @@ body {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
+  }
+
+  .mobile-cert-card {
+    transition-duration: 0.001ms;
   }
 
   .background-system .ambient-sweep,
