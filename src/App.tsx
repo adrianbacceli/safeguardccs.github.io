@@ -737,6 +737,7 @@ interface ActiveSectionProps extends SectionProps {
 interface MobileTopBarProps {
   theme: Theme;
   language: Language;
+  onNavigate: (section: SectionId) => void;
   onToggleTheme: () => void;
   onToggleLanguage: () => void;
 }
@@ -758,16 +759,23 @@ const sectionLabels: Record<SectionId, { en: string; es: string }> = {
 const MobileTopBar: React.FC<MobileTopBarProps> = ({
   theme,
   language,
+  onNavigate,
   onToggleTheme,
   onToggleLanguage,
 }) => (
   <div className="fixed inset-x-0 top-0 z-50 border-b border-neutral-200/80 bg-white/88 px-4 py-3 backdrop-blur-xl md:hidden dark:border-neutral-800/80 dark:bg-neutral-950/88">
     <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-      <img
-        src={theme === "dark" ? "/logo_white.svg" : "/logo.svg"}
-        alt="SafeGuard CCS logo"
-        className="h-7 w-auto"
-      />
+      <button
+        type="button"
+        onClick={() => onNavigate("home")}
+        className="flex items-center"
+      >
+        <img
+          src={theme === "dark" ? "/logo_white.svg" : "/logo.svg"}
+          alt="SafeGuard CCS logo"
+          className="h-7 w-auto"
+        />
+      </button>
       <div className="flex items-center gap-2">
         <div className="flex h-9 items-center rounded-xl border border-neutral-300/70 bg-white/80 p-0.5 text-[11px] shadow-sm dark:border-neutral-700/70 dark:bg-neutral-900/80">
           <button
@@ -1143,6 +1151,7 @@ const App: React.FC = () => {
       <MobileTopBar
         theme={theme}
         language={language}
+        onNavigate={handleMobileNavigate}
         onToggleTheme={toggleTheme}
         onToggleLanguage={toggleLanguage}
       />
