@@ -1,0 +1,15 @@
+# SafeGuard CCS
+
+SafeGuard CCS provides cybersecurity consulting for small and mid-size businesses in Panama.
+
+Website: https://safeguardccs.com/
+Services:
+- Cybersecurity consulting
+- Security assessments
+- Vulnerability remediation guidance
+- IT hardening
+- Backup and recovery readiness
+- Cybersecurity awareness
+
+Primary location: Panama
+Contact: https://safeguardccs.com/#contact
