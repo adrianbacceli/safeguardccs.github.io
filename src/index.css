@@ -6,6 +6,16 @@
   box-sizing: border-box;
 }
 
+html {
+  background: #f8fafc;
+  color-scheme: light;
+}
+
+html.dark {
+  background: #020617;
+  color-scheme: dark;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -14,7 +24,12 @@ html, body {
 }
 
 body {
+  background: #f8fafc;
   text-rendering: geometricPrecision;
+}
+
+html.dark body {
+  background: #020617;
 }
 
 @keyframes ambient-sweep {
@@ -78,6 +93,15 @@ body {
   }
 }
 
+@keyframes mobile-cert-progress {
+  from {
+    stroke-dashoffset: var(--cert-progress-offset);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .ambient-sweep {
   animation: ambient-sweep 18s ease-in-out infinite;
   animation-duration: var(--ambient-duration, 18s);
@@ -121,6 +145,16 @@ body {
 
 .console-meter {
   animation: console-meter 4s ease-in-out infinite;
+}
+
+.mobile-cert-progress {
+  animation: mobile-cert-progress 5000ms linear forwards;
+}
+
+.mobile-cert-card {
+  transition-property: transform, opacity, border-color, box-shadow;
+  transition-duration: 420ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .section-transition {
@@ -247,6 +281,15 @@ body {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
+  }
+
+  .mobile-cert-card {
+    transition-duration: 420ms !important;
+  }
+
+  .mobile-cert-progress {
+    animation-duration: 5000ms !important;
+    animation-iteration-count: 1 !important;
   }
 
   .background-system .ambient-sweep,
