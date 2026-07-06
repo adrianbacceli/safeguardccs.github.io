@@ -2115,21 +2115,11 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             <ArrowRight className="h-3.5 w-3.5 rotate-180" />
             {isEn ? "Back to contact options" : "Volver a opciones de contacto"}
           </button>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
-            {isEn ? "Tell us where to begin" : "Cuéntanos por dónde empezar"}
-          </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             {isEn ? "Tell us about your environment" : "Cuéntanos sobre tu entorno"}
           </h2>
           <Card interactive={false} className="mt-5 overflow-hidden">
             <CardInner className="min-w-0 space-y-4 text-xs text-neutral-700 dark:text-neutral-200">
-              <div className="flex min-w-0 items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50/80 px-3 py-2 text-[11px] font-semibold text-emerald-950 dark:border-emerald-900/70 dark:bg-emerald-950/25 dark:text-emerald-100">
-                <MessageCircle className="h-3.5 w-3.5 flex-shrink-0" />
-                <span className="min-w-0 truncate">
-                  {isEn ? "Direct inbox, no newsletter list." : "Bandeja directa, sin lista de boletines."}
-                </span>
-              </div>
-
               <form onSubmit={handleSubmit} className="min-w-0 space-y-3">
               <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
               <input
