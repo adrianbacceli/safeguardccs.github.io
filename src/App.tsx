@@ -580,8 +580,8 @@ const regionalSnapshotStats: ThreatStat[] = [
     durationMs: 60000,
     precision: 2,
     label: {
-      en: "Attacks right now in Latin America",
-      es: "Ataques ahora mismo en Latinoamérica",
+      en: "More than 2,400 attacks per minute in Latin America",
+      es: "Mas de 2,400 ataques por minuto en Latinoamerica",
     },
     context: {
       en: "Kaspersky reported more than 2,400 phishing attacks per minute in Latin America.",
