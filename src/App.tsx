@@ -1317,7 +1317,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
           {isEn ? "Cybersecurity consulting in Panama" : "Consultoría de ciberseguridad en Panamá"}
         </p>
 
-        <h1 className="mt-5 max-w-[11ch] text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5rem]">
+        <h1 className="mx-auto mt-5 max-w-[11ch] text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:mx-0 lg:text-7xl xl:text-[5rem]">
           {isEn ? "Security is all we do." : "Seguridad sin distracciones."}
         </h1>
 
