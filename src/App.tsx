@@ -33,10 +33,16 @@ type RedirectTarget = {
 type ProductService = {
   id: string;
   icon: React.ComponentType<{ className?: string }>;
+  eyebrow: Record<Language, string>;
   title: Record<Language, string>;
   summary: Record<Language, string>;
+  mobileSummary: Record<Language, string>;
   detailTitle: Record<Language, string>;
   detail: Record<Language, string>;
+  mobileDetail: Record<Language, string>;
+  ctaLabel: Record<Language, string>;
+  featured?: boolean;
+  badge?: Record<Language, string>;
   subServices: Record<Language, string[]>;
   highlights: Record<Language, string[]>;
   keywords: Record<Language, string>;
@@ -53,6 +59,10 @@ const productServices: ProductService[] = [
   {
     id: "isms",
     icon: Building2,
+    eyebrow: {
+      en: "Governance & ISO 27001",
+      es: "Gobierno e ISO 27001",
+    },
     title: {
       en: "ISMS Services",
       es: "Servicios de SGSI",
@@ -61,6 +71,10 @@ const productServices: ProductService[] = [
       en: "Information Security Management System support based on ISO 27001 and the ISO 27000 family.",
       es: "Soporte de Sistema de Gestión de Seguridad de la Información basado en ISO 27001 y la familia ISO 27000.",
     },
+    mobileSummary: {
+      en: "ISMS support based on ISO 27001 and the ISO 27000 family.",
+      es: "Soporte de SGSI basado en ISO 27001 y la familia ISO 27000.",
+    },
     detailTitle: {
       en: "ISMS services based on ISO 27001 and the ISO 27000 family",
       es: "Servicios de SGSI basados en ISO 27001 y la familia ISO 27000",
@@ -68,6 +82,14 @@ const productServices: ProductService[] = [
     detail: {
       en: "We use ISO 27001 and the ISO 27000 family as the strategy foundation, then keep the work practical: scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
       es: "Usamos ISO 27001 y la familia ISO 27000 como base estratégica, y llevamos el trabajo a la práctica: alcance, riesgo, controles, evidencias, responsables, mantenimiento y preparación para certificación.",
+    },
+    mobileDetail: {
+      en: "ISO 27000-based ISMS work for implementation, maintenance, audits, and certification support.",
+      es: "Trabajo de SGSI basado en ISO 27000 para implementación, mantenimiento, auditoría y certificación.",
+    },
+    ctaLabel: {
+      en: "Discuss ISMS support",
+      es: "Hablar sobre SGSI",
     },
     subServices: {
       en: [
@@ -95,21 +117,42 @@ const productServices: ProductService[] = [
   {
     id: "mssp-operational-monitoring",
     icon: Activity,
+    eyebrow: {
+      en: "Managed security operations",
+      es: "Operaciones de seguridad gestionadas",
+    },
     title: {
       en: "MSSP Operational Monitoring",
       es: "Monitoreo y análisis operacional MSSP",
     },
     summary: {
-      en: "Managed security operations for teams that need monitoring, incident handling, vulnerability visibility, and hardening support.",
-      es: "Operaciones de seguridad gestionadas para equipos que necesitan monitoreo, manejo de incidentes, visibilidad de vulnerabilidades y endurecimiento.",
+      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring and response readiness.",
+      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo y preparación de respuesta.",
+    },
+    mobileSummary: {
+      en: "Managed monitoring aligned to NIST CSF, IRT, and RMF.",
+      es: "Monitoreo gestionado alineado a NIST CSF, IRT y RMF.",
     },
     detailTitle: {
       en: "Managed Security Service Provider monitoring and operational support",
       es: "Monitoreo MSSP y soporte operacional de seguridad gestionada",
     },
     detail: {
-      en: "We help detect suspicious activity, handle security events, review vulnerabilities, apply updates and hardening, and translate continuous monitoring into clear actions.",
-      es: "Ayudamos a detectar actividad sospechosa, manejar eventos de seguridad, revisar vulnerabilidades, aplicar actualizaciones y endurecimiento, y convertir el monitoreo continuo en acciones claras.",
+      en: "We help detect suspicious activity, handle security events, review vulnerabilities, apply updates and hardening, and translate continuous monitoring into clear actions aligned with NIST CSF, IRT, and RMF practices.",
+      es: "Ayudamos a detectar actividad sospechosa, manejar eventos de seguridad, revisar vulnerabilidades, aplicar actualizaciones y endurecimiento, y convertir el monitoreo continuo en acciones claras alineadas a prácticas NIST CSF, IRT y RMF.",
+    },
+    mobileDetail: {
+      en: "Monitoring, incident handling, vulnerabilities, updates, hardening, and continuous visibility in one operational service area.",
+      es: "Monitoreo, incidentes, vulnerabilidades, actualizaciones, endurecimiento y visibilidad continua en una sola área operacional.",
+    },
+    ctaLabel: {
+      en: "Plan monitoring support",
+      es: "Planificar monitoreo",
+    },
+    featured: true,
+    badge: {
+      en: "Featured",
+      es: "Recomendado",
     },
     subServices: {
       en: [
@@ -139,21 +182,37 @@ const productServices: ProductService[] = [
   {
     id: "cybersecurity-consulting",
     icon: LockKeyhole,
+    eyebrow: {
+      en: "Practical advisory",
+      es: "Asesoría práctica",
+    },
     title: {
       en: "Cybersecurity Consulting",
       es: "Consultoría y asesoría de seguridad",
     },
     summary: {
-      en: "Practical advisory for security training, network security, application security, and current-state posture diagnostics.",
-      es: "Asesoría práctica para formación, seguridad de redes, seguridad de aplicaciones y diagnóstico de postura actual.",
+      en: "Practical advisory from experts with 7+ years of regional Latin America experience and 1,000+ cumulative support and advisory requests across their careers.",
+      es: "Asesoría práctica de expertos con más de 7 años de experiencia regional en Latinoamérica y más de 1,000 solicitudes acumuladas de soporte y asesoría a lo largo de sus carreras.",
+    },
+    mobileSummary: {
+      en: "Expert advisory backed by 7+ years in Latin America and 1,000+ cumulative support requests.",
+      es: "Asesoría experta con más de 7 años en Latinoamérica y 1,000+ solicitudes acumuladas.",
     },
     detailTitle: {
       en: "Cybersecurity consulting and security advisory services",
       es: "Consultoría de ciberseguridad y asesoría estratégica de seguridad",
     },
     detail: {
-      en: "We provide clear guidance for organizations that need to improve security posture, reduce risk, protect applications and networks, and build practical security habits.",
-      es: "Brindamos guía clara para organizaciones que necesitan mejorar su postura de seguridad, reducir riesgo, proteger aplicaciones y redes, y crear hábitos prácticos de seguridad.",
+      en: "Our experts bring 7+ years of regional experience across Latin America, shaped by more than 1,000 cumulative support and advisory requests throughout their careers. We turn that experience into clear guidance for posture, risk, applications, networks, and practical security habits.",
+      es: "Nuestros expertos aportan más de 7 años de experiencia regional en Latinoamérica, formada por más de 1,000 solicitudes acumuladas de soporte y asesoría a lo largo de sus carreras. Convertimos esa experiencia en guía clara para postura, riesgo, aplicaciones, redes y hábitos prácticos de seguridad.",
+    },
+    mobileDetail: {
+      en: "Regional advisory experience applied to posture, risk, applications, networks, and security habits.",
+      es: "Experiencia regional aplicada a postura, riesgo, aplicaciones, redes y hábitos de seguridad.",
+    },
+    ctaLabel: {
+      en: "Request consulting",
+      es: "Solicitar asesoría",
     },
     subServices: {
       en: [
@@ -1562,6 +1621,74 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
   );
 };
 
+const ServiceBundleCard: React.FC<{ service: ProductService; language: Language }> = ({
+  service,
+  language,
+}) => {
+  const card = (
+    <article className="flex h-full flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-all duration-300 dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_18px_50px_rgba(0,0,0,0.24)] lg:p-6">
+      <div className="min-h-[15rem]">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
+            {service.eyebrow[language]}
+          </p>
+
+          {service.badge ? (
+            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/30 dark:text-emerald-200">
+              {service.badge[language]}
+            </span>
+          ) : null}
+        </div>
+
+        <h3 className="mt-4 min-h-[4rem] text-2xl font-semibold leading-tight tracking-tight text-neutral-950 dark:text-neutral-50 lg:text-3xl">
+          {service.title[language]}
+        </h3>
+
+        <p className="mt-4 min-h-[5.5rem] text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+          {service.summary[language]}
+        </p>
+      </div>
+
+      <div className="my-5 h-px w-full bg-gradient-to-r from-emerald-700/80 via-emerald-400/70 to-transparent dark:from-emerald-300/80 dark:via-emerald-500/50" />
+
+      <a
+        href="#contact"
+        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
+      >
+        {service.ctaLabel[language]}
+        <ArrowRight className="h-3.5 w-3.5" />
+      </a>
+
+      <div className="mt-6 flex-1 border-t border-neutral-200 pt-5 dark:border-neutral-800">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+          {language === "en" ? "Service options" : "Opciones de servicio"}
+        </p>
+        <ul className="space-y-3">
+          {service.subServices[language].map((subService) => (
+            <li
+              key={subService}
+              className="flex items-start gap-3 text-sm leading-5"
+            >
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300" />
+              <span className="font-semibold text-neutral-950 dark:text-neutral-50">
+                {subService}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
+
+  if (!service.featured) return card;
+
+  return (
+    <div className="h-full rounded-xl bg-gradient-to-br from-emerald-700 via-emerald-500 to-neutral-950 p-px shadow-[0_24px_70px_rgba(4,120,87,0.18)] dark:from-emerald-300 dark:via-emerald-700 dark:to-neutral-800">
+      {card}
+    </div>
+  );
+};
+
 const ServicesSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
   const [selectedService, setSelectedService] = useState<ProductService | null>(null);
@@ -1579,18 +1706,18 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           {isEn
-            ? "Choose a service area to see the sub-services available for ISMS, MSSP operational monitoring, and cybersecurity consulting."
-            : "Elige un área de servicio para ver los subservicios disponibles en SGSI, monitoreo operacional MSSP y consultoría de ciberseguridad."}
+            ? "Explore focused service areas designed around governance, operations, and advisory support."
+            : "Explora áreas de servicio enfocadas en gobierno, operación y asesoría."}
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 md:hidden">
         {productServices.map((service) => (
           <button
             key={service.id}
             type="button"
             onClick={() => setSelectedService(service)}
-            className="group flex min-h-[7.5rem] w-full min-w-0 flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 sm:min-h-[16rem]"
+            className="group flex min-h-[7.5rem] w-full min-w-0 flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950"
           >
             <span className="flex items-start justify-between gap-3">
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300">
@@ -1602,24 +1729,19 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
               {service.title[language]}
             </span>
             <span className="mt-2 line-clamp-3 block text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
-              {service.summary[language]}
+              {service.mobileSummary[language]}
             </span>
-            <span className="mt-4 hidden gap-1.5 sm:grid">
-              {service.subServices[language].map((subService) => (
-                <span
-                  key={subService}
-                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-2.5 py-1.5 text-[11px] font-medium leading-snug text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-200"
-                >
-                  <CheckCircle2 className="h-3 w-3 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                  {subService}
-                </span>
-              ))}
-            </span>
-            <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 sm:hidden">
+            <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
               {isEn ? "View options" : "Ver opciones"}
               <ArrowRight className="h-3 w-3" />
             </span>
           </button>
+        ))}
+      </div>
+
+      <div className="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+        {productServices.map((service) => (
+          <ServiceBundleCard key={service.id} service={service} language={language} />
         ))}
       </div>
 
@@ -1649,7 +1771,7 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
                       {selectedService.title[language]}
                     </h3>
                     <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                      {selectedService.detail[language]}
+                      {selectedService.mobileDetail[language]}
                     </p>
                   </div>
                   <button
@@ -1686,11 +1808,11 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
                   </p>
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
                     {isEn ? "How we help" : "Cómo ayudamos"}
                   </p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                  <div className="mt-3 grid gap-2">
                     {selectedService.highlights[language].map((highlight) => (
                       <div
                         key={highlight}
@@ -1702,7 +1824,7 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
                   </div>
                 </div>
 
-                <p className="mt-5 text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+                <p className="mt-4 text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">
                   <span className="font-semibold">
                     {isEn ? "Search context: " : "Contexto de búsqueda: "}
                   </span>
