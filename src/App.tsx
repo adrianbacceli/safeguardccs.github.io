@@ -39,9 +39,6 @@ const CONTACT_EMAIL = "consulting@safeguardccs.com";
 const MESSAGE_WORD_LIMIT = 120;
 const MOBILE_CERT_AUTOPLAY_MS = 5000;
 const MOBILE_SCROLL_OFFSET = 64;
-const MOBILE_SCROLL_MIN_DURATION_MS = 650;
-const MOBILE_SCROLL_MAX_DURATION_MS = 1400;
-const MOBILE_SCROLL_SETTLE_MS = 120;
 
 function getWordCount(value: string): number {
   const words = value.trim().split(/\s+/).filter(Boolean);
@@ -62,12 +59,6 @@ function getHashSection(): SectionId {
   if (typeof window === "undefined") return "home";
   const hash = window.location.hash.replace("#", "").toLowerCase();
   return isSectionId(hash) ? hash : "home";
-}
-
-function easeInOutCubic(progress: number): number {
-  return progress < 0.5
-    ? 4 * progress * progress * progress
-    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 }
 
 function prefersReducedMotion(): boolean {
@@ -987,7 +978,6 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
   const [mobileActiveSection, setMobileActiveSection] = useState<SectionId>("home");
-  const mobileScrollAnimationRef = useRef<number>(0);
   const mobileProgrammaticScrollRef = useRef<number>(0);
 
   useEffect(() => {
@@ -1017,54 +1007,20 @@ const App: React.FC = () => {
     return () => window.removeEventListener("hashchange", syncSectionFromHash);
   }, []);
 
-  const scrollWindowTo = (top: number, options: { respectReducedMotion?: boolean } = {}) => {
-    if (mobileScrollAnimationRef.current) {
-      window.cancelAnimationFrame(mobileScrollAnimationRef.current);
-      mobileScrollAnimationRef.current = 0;
-    }
-
+  const scrollWindowTo = (top: number, options: { behavior?: ScrollBehavior } = {}) => {
     const scrollElement = document.scrollingElement || document.documentElement;
     const maxTop = Math.max(
       document.documentElement.scrollHeight,
       document.body.scrollHeight
     ) - window.innerHeight;
     const targetTop = Math.max(0, Math.min(top, maxTop));
+    const behavior = prefersReducedMotion() ? "auto" : options.behavior ?? "smooth";
 
-    if (options.respectReducedMotion && prefersReducedMotion()) {
-      scrollElement.scrollTop = targetTop;
-      return;
-    }
-
-    const startTop = scrollElement.scrollTop;
-    const distance = targetTop - startTop;
-    const duration = Math.min(
-      MOBILE_SCROLL_MAX_DURATION_MS,
-      Math.max(MOBILE_SCROLL_MIN_DURATION_MS, Math.abs(distance) * 0.55)
-    );
-    const startTime = performance.now();
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - startTime) / duration, 1);
-      const eased = easeInOutCubic(progress);
-      scrollElement.scrollTop = startTop + distance * eased;
-
-      if (progress < 1) {
-        mobileScrollAnimationRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      mobileScrollAnimationRef.current = 0;
-      scrollElement.scrollTop = targetTop;
-    };
-
-    mobileScrollAnimationRef.current = window.requestAnimationFrame(tick);
+    window.scrollTo({ top: targetTop, behavior });
   };
 
   useEffect(() => {
     return () => {
-      if (mobileScrollAnimationRef.current) {
-        window.cancelAnimationFrame(mobileScrollAnimationRef.current);
-      }
       if (mobileProgrammaticScrollRef.current) {
         window.clearTimeout(mobileProgrammaticScrollRef.current);
       }
@@ -1152,17 +1108,18 @@ const App: React.FC = () => {
     }
     mobileProgrammaticScrollRef.current = window.setTimeout(() => {
       mobileProgrammaticScrollRef.current = 0;
-      setMobileActiveSection(section);
-      setActiveSection(section);
-      if (window.location.hash !== `#${section}`) {
-        window.history.pushState(null, "", `#${section}`);
-      }
-    }, MOBILE_SCROLL_MAX_DURATION_MS + MOBILE_SCROLL_SETTLE_MS);
+    }, 700);
+
+    setMobileActiveSection(section);
+    setActiveSection(section);
+    if (window.location.hash !== `#${section}`) {
+      window.history.pushState(null, "", `#${section}`);
+    }
 
     const target = document.getElementById(`mobile-${section}`);
     if (target) {
       const top = target.getBoundingClientRect().top + window.scrollY - MOBILE_SCROLL_OFFSET;
-      scrollWindowTo(top, { respectReducedMotion: false });
+      scrollWindowTo(top);
     }
   };
 
