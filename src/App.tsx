@@ -4,6 +4,7 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import {
   Activity,
   AlertTriangle,
+  ArrowDown,
   ArrowRight,
   Building2,
   ChevronDown,
@@ -675,7 +676,7 @@ const CountUpValue: React.FC<CountUpValueProps> = ({
 
 const Button: React.FC<ButtonProps> = ({ variant = "solid", className = "", ...props }) => {
   const base =
-    "group inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:translate-x-1";
+    "group inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 disabled:cursor-not-allowed disabled:opacity-60";
   const styles =
     variant === "solid"
       ? "bg-neutral-950 text-white shadow-sm hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
@@ -689,7 +690,7 @@ const AnchorButton: React.FC<AnchorButtonProps> = ({
   ...props
 }) => {
   const base =
-    "group inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:translate-x-1";
+    "group inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60";
   const styles =
     variant === "solid"
       ? "bg-neutral-950 text-white shadow-sm hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
@@ -1566,7 +1567,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
             className="lg:px-6 lg:py-3"
           >
             {isEn ? "Talk about your environment" : "Hablar de tu entorno"}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowDown className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
           </AnchorButton>
           <AnchorButton
             href="#services"
@@ -1625,7 +1626,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
             className="w-full bg-emerald-300 text-neutral-950 hover:bg-emerald-200 dark:bg-emerald-300 dark:text-neutral-950 dark:hover:bg-emerald-200"
           >
             {isEn ? "See emerging threats" : "Ver amenazas actuales"}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowDown className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
           </AnchorButton>
         </div>
       </div>
@@ -1691,10 +1692,10 @@ const ServiceBundleCard: React.FC<{ service: ProductService; language: Language 
         ) : (
           <a
             href="#contact"
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
+            className="group inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:bg-white dark:text-neutral-950 dark:hover:bg-emerald-200"
           >
             {service.ctaLabel[language]}
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowDown className="h-3.5 w-3.5 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
           </a>
         )}
         <button
@@ -2517,7 +2518,7 @@ const FAQSection: React.FC<SectionProps> = ({ language }) => {
           </p>
           <AnchorButton href="#contact" className="mt-4">
             {isEn ? "Contact SafeGuard CCS" : "Contactar a SafeGuard CCS"}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowDown className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
           </AnchorButton>
         </div>
       </div>
@@ -2648,7 +2649,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       <motion.div
         layout
         transition={{ type: "spring", stiffness: 180, damping: 26, mass: 0.8 }}
-        className={`grid min-w-0 gap-8 min-h-[32rem] lg:min-h-[33rem] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start ${
+        className={`grid min-w-0 gap-4 lg:gap-8 min-h-0 lg:min-h-[33rem] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start ${
           contactMode === "form" ? "justify-items-center md:justify-items-stretch" : ""
         }`}
       >
@@ -2684,10 +2685,10 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 transition={{ duration: 0.24, ease: "easeOut" }}
                 className="min-w-0 space-y-3"
               >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 md:mb-0 dark:text-neutral-400">
               {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
             </p>
-            <div className="grid grid-cols-3 gap-2 md:grid-cols-1 md:gap-3">
+            <div className="grid grid-cols-1 gap-3">
               {contactMethods.map((method) => (
                 <button
                   key={method.label}
@@ -2704,21 +2705,24 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                       kind: method.kind,
                     });
                   }}
-                className="group flex min-h-[5.25rem] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-neutral-200/90 bg-white/90 px-2.5 py-3 text-center shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 md:min-h-0 md:flex-row md:items-start md:justify-start md:gap-3 md:p-4 md:text-left"
+                className="group flex min-h-0 w-full min-w-0 items-start justify-start gap-3 rounded-xl border border-neutral-200/90 bg-white/90 p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950"
                 >
                   <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300">
                     <method.icon className="h-4 w-4" />
                   </span>
-                  <span className="min-w-0 md:flex-1">
-                    <span className="block truncate text-xs font-semibold leading-snug text-neutral-950 dark:text-neutral-50 md:text-sm">
-                      <span className="md:hidden">{method.label}</span>
-                      <span className="hidden md:inline">{method.title}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
+                      {method.title}
                     </span>
-                    <span className="mt-1 hidden text-xs leading-relaxed text-neutral-600 dark:text-neutral-300 md:line-clamp-3 md:block">
+                    <span className="mt-1 line-clamp-3 block text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
                       {method.description}
                     </span>
                   </span>
-                  <ArrowRight className="hidden h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 md:mt-1 md:block" />
+                  {method.kind === "form" ? (
+                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-neutral-400 transition-all duration-300 ease-out group-hover:translate-x-0.5 group-hover:text-emerald-700 dark:group-hover:text-emerald-300" />
+                  ) : (
+                    <ExternalLink className="mt-1 h-4 w-4 flex-shrink-0 text-neutral-400 transition-colors duration-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-300" />
+                  )}
                 </button>
               ))}
             </div>
