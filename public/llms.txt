@@ -4,12 +4,25 @@ SafeGuard CCS provides cybersecurity consulting for small and mid-size businesse
 
 Website: https://safeguardccs.com/
 Services:
-- Cybersecurity consulting
-- Security assessments
-- Vulnerability remediation guidance
-- IT hardening
-- Backup and recovery readiness
-- Cybersecurity awareness
+ISMS and ISO 27000 Audit/Implementation:
+- ISO 27001 ISMS implementation / FP
+- ISMS implementation / TP
+- ISMS maintenance
+- ISMS audit
+
+MSSP operational monitoring
+- Incident Handling
+- IT Support
+- Vulnerability Scanning
+- Updates/Hardening
+- Continuous Monitoring
+
+Cybersecurity consulting:
+- Security training
+- Network Security
+- Application Security
+- Security Posture Diagnostic
+
 
 Primary location: Panama
 Contact: https://safeguardccs.com/#contact

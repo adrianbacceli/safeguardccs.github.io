@@ -54,31 +54,31 @@ const productServices: ProductService[] = [
     id: "isms",
     icon: Building2,
     title: {
-      en: "ISMS services",
+      en: "ISMS Services",
       es: "Servicios de SGSI",
     },
     summary: {
-      en: "ISO 27001 and Information Security Management System support from implementation to maintenance and audit readiness.",
-      es: "Soporte de ISO 27001 y Sistema de Gestión de Seguridad de la Información desde implementación hasta mantenimiento y auditoría.",
+      en: "Information Security Management System support based on ISO 27001 and the ISO 27000 family.",
+      es: "Soporte de Sistema de Gestión de Seguridad de la Información basado en ISO 27001 y la familia ISO 27000.",
     },
     detailTitle: {
-      en: "ISO 27001 and Information Security Management System services",
-      es: "Servicios de ISO 27001 y Sistema de Gestión de Seguridad de la Información",
+      en: "ISMS services based on ISO 27001 and the ISO 27000 family",
+      es: "Servicios de SGSI basados en ISO 27001 y la familia ISO 27000",
     },
     detail: {
-      en: "We help organizations design, implement, maintain, and review practical ISMS programs aligned with ISO 27001, business risk, evidence needs, and operational capacity.",
-      es: "Ayudamos a diseñar, implementar, mantener y revisar programas de SGSI prácticos, alineados a ISO 27001, riesgo del negocio, evidencias necesarias y capacidad operativa.",
+      en: "We use ISO 27001 and the ISO 27000 family as the strategy foundation, then keep the work practical: scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
+      es: "Usamos ISO 27001 y la familia ISO 27000 como base estratégica, y llevamos el trabajo a la práctica: alcance, riesgo, controles, evidencias, responsables, mantenimiento y preparación para certificación.",
     },
     subServices: {
       en: [
-        "ISO 27001 ISMS implementation / FP",
-        "ISMS implementation / TP",
+        "Hands-on ISMS implementation",
+        "Certification audit support",
         "ISMS maintenance",
         "ISMS audit",
       ],
       es: [
-        "Implementación de SGSI ISO 27001 / FP",
-        "Implementación de SGSI / TP",
+        "Implementación directa de SGSI",
+        "Acompañamiento ante auditoría de certificación",
         "Mantenimiento de SGSI",
         "Auditoría de SGSI",
       ],
@@ -96,7 +96,7 @@ const productServices: ProductService[] = [
     id: "mssp-operational-monitoring",
     icon: Activity,
     title: {
-      en: "MSSP operational monitoring",
+      en: "MSSP Operational Monitoring",
       es: "Monitoreo y análisis operacional MSSP",
     },
     summary: {
@@ -140,7 +140,7 @@ const productServices: ProductService[] = [
     id: "cybersecurity-consulting",
     icon: LockKeyhole,
     title: {
-      en: "Cybersecurity consulting",
+      en: "Cybersecurity Consulting",
       es: "Consultoría y asesoría de seguridad",
     },
     summary: {
@@ -157,12 +157,14 @@ const productServices: ProductService[] = [
     },
     subServices: {
       en: [
+        "General advisory",
         "Security training",
         "Network security",
         "Application security",
         "Security posture diagnostic",
       ],
       es: [
+        "Asesoría general",
         "Formación",
         "Seguridad de redes",
         "Seguridad de aplicaciones",
@@ -1588,7 +1590,7 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
             key={service.id}
             type="button"
             onClick={() => setSelectedService(service)}
-            className="group flex min-h-[16rem] w-full min-w-0 flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950"
+            className="group flex min-h-[7.5rem] w-full min-w-0 flex-col rounded-xl border border-neutral-200/90 bg-white/90 p-4 text-left shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/60 hover:bg-white hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 active:scale-[0.99] dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)] dark:hover:bg-neutral-950 sm:min-h-[16rem]"
           >
             <span className="flex items-start justify-between gap-3">
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm transition-colors duration-300 group-hover:bg-emerald-700 dark:bg-white dark:text-neutral-950 dark:group-hover:bg-emerald-300">
@@ -1602,7 +1604,7 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
             <span className="mt-2 line-clamp-3 block text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
               {service.summary[language]}
             </span>
-            <span className="mt-4 grid gap-1.5">
+            <span className="mt-4 hidden gap-1.5 sm:grid">
               {service.subServices[language].map((subService) => (
                 <span
                   key={subService}
@@ -1612,6 +1614,10 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
                   {subService}
                 </span>
               ))}
+            </span>
+            <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 sm:hidden">
+              {isEn ? "View options" : "Ver opciones"}
+              <ArrowRight className="h-3 w-3" />
             </span>
           </button>
         ))}
@@ -1625,86 +1631,102 @@ const ServicesSection: React.FC<SectionProps> = ({ language }) => {
               role="dialog"
               aria-modal="true"
               aria-labelledby={`service-title-${selectedService.id}`}
-              className="max-h-[88svh] w-full overflow-y-auto rounded-xl border border-neutral-200 bg-white p-5 text-neutral-900 shadow-xl dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 sm:max-w-2xl sm:p-6"
+              className="max-h-[88svh] w-full overflow-y-auto rounded-xl border border-neutral-200 bg-white text-neutral-900 shadow-2xl shadow-neutral-950/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 sm:max-w-2xl"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
-                    {isEn ? "Service detail" : "Detalle del servicio"}
-                  </p>
-                  <h3
-                    id={`service-title-${selectedService.id}`}
-                    className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl"
-                  >
-                    {selectedService.detailTitle[language]}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedService(null)}
-                  aria-label={isEn ? "Close service details" : "Cerrar detalle del servicio"}
-                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950 dark:border-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                {selectedService.detail[language]}
-              </p>
-
-              <div className="mt-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
-                  {isEn ? "Included sub-services" : "Subservicios incluidos"}
-                </p>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {selectedService.subServices[language].map((subService) => (
-                    <div
-                      key={subService}
-                      className="flex items-start gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-medium leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-200"
+              <div className="border-b border-neutral-200 p-5 dark:border-neutral-800 sm:p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-950 text-white shadow-sm dark:bg-white dark:text-neutral-950">
+                      <selectedService.icon className="h-4 w-4" />
+                    </span>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
+                      {isEn ? "Service area" : "Área de servicio"}
+                    </p>
+                    <h3
+                      id={`service-title-${selectedService.id}`}
+                      className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl"
                     >
-                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                      {subService}
-                    </div>
-                  ))}
+                      {selectedService.title[language]}
+                    </h3>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                      {selectedService.detail[language]}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedService(null)}
+                    aria-label={isEn ? "Close service details" : "Cerrar detalle del servicio"}
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950 dark:border-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                {selectedService.highlights[language].map((highlight) => (
-                  <div
-                    key={highlight}
-                    className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-medium leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-200"
-                  >
-                    {highlight}
+              <div className="p-5 sm:p-6">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+                    {isEn ? "Service options" : "Opciones de servicio"}
+                  </p>
+                  <div className="mt-3 divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+                    {selectedService.subServices[language].map((subService) => (
+                      <div
+                        key={subService}
+                        className="flex items-start gap-3 bg-white px-3.5 py-3 text-sm font-medium leading-relaxed text-neutral-800 dark:bg-neutral-950 dark:text-neutral-100"
+                      >
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
+                        {subService}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <p className="mt-3 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                    {isEn
+                      ? "These are selectable service options within this area. We quote the scope you actually need."
+                      : "Estas son opciones de servicio dentro de esta área. Cotizamos el alcance que realmente necesitas."}
+                  </p>
+                </div>
 
-              <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50/80 px-3 py-2 text-xs leading-relaxed text-emerald-950 dark:border-emerald-900/70 dark:bg-emerald-950/25 dark:text-emerald-100">
-                <span className="font-semibold">
-                  {isEn ? "Related search terms: " : "Términos relacionados: "}
-                </span>
-                {selectedService.keywords[language]}
-              </div>
+                <div className="mt-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+                    {isEn ? "How we help" : "Cómo ayudamos"}
+                  </p>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    {selectedService.highlights[language].map((highlight) => (
+                      <div
+                        key={highlight}
+                        className="rounded-lg bg-neutral-50 px-3 py-2 text-xs font-medium leading-relaxed text-neutral-700 dark:bg-neutral-900/60 dark:text-neutral-200"
+                      >
+                        {highlight}
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                <a
-                  href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-                    `${selectedService.title[language]} - SafeGuard CCS`
-                  )}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-                >
-                  {isEn ? "Ask about this service" : "Consultar este servicio"}
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setSelectedService(null)}
-                  className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-4 py-2 text-xs font-semibold text-neutral-700 shadow-sm transition hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:bg-neutral-900"
-                >
-                  {isEn ? "Close" : "Cerrar"}
-                </button>
+                <p className="mt-5 text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+                  <span className="font-semibold">
+                    {isEn ? "Search context: " : "Contexto de búsqueda: "}
+                  </span>
+                  {selectedService.keywords[language]}
+                </p>
+
+                <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+                      `${selectedService.title[language]} - SafeGuard CCS`
+                    )}`}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                  >
+                    {isEn ? "Ask about this service" : "Consultar este servicio"}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedService(null)}
+                    className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-xs font-semibold text-neutral-700 shadow-sm transition hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:bg-neutral-900"
+                  >
+                    {isEn ? "Close" : "Cerrar"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>,
