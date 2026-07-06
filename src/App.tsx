@@ -1240,9 +1240,25 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
   const [mobileActiveSection, setMobileActiveSection] = useState<SectionId>("home");
+  const programmaticTargetRef = useRef<SectionId | null>(null);
+  const programmaticTimerRef = useRef<number | null>(null);
+  const programmaticFrameRef = useRef<number | null>(null);
 
   const getScrollOffset = () =>
     window.matchMedia("(min-width: 768px)").matches ? 56 : 64;
+
+  const getSectionTop = (section: SectionId): number | null => {
+    const target = document.getElementById(section);
+    if (!target) return null;
+
+    const rawTop = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+    const maxTop = Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight
+    ) - window.innerHeight;
+
+    return Math.max(0, Math.min(rawTop, maxTop));
+  };
 
   const scrollWindowTo = (top: number, options: { behavior?: ScrollBehavior } = {}) => {
     const maxTop = Math.max(
@@ -1255,23 +1271,70 @@ const App: React.FC = () => {
     window.scrollTo({ top: targetTop, behavior });
   };
 
-  const handleNavigate = (section: SectionId) => {
-    const target = document.getElementById(section);
-    if (!target) return;
+  const clearProgrammaticNavigation = () => {
+    if (programmaticTimerRef.current) {
+      window.clearTimeout(programmaticTimerRef.current);
+      programmaticTimerRef.current = null;
+    }
 
+    if (programmaticFrameRef.current) {
+      window.cancelAnimationFrame(programmaticFrameRef.current);
+      programmaticFrameRef.current = null;
+    }
+  };
+
+  const finishProgrammaticNavigation = (section: SectionId) => {
+    clearProgrammaticNavigation();
+    programmaticTargetRef.current = null;
     setActiveSection(section);
     setMobileActiveSection(section);
+
+    if (window.location.hash !== `#${section}`) {
+      window.history.replaceState(null, "", `#${section}`);
+    }
+  };
+
+  const watchProgrammaticNavigation = (section: SectionId) => {
+    clearProgrammaticNavigation();
+
+    const tick = () => {
+      if (programmaticTargetRef.current !== section) return;
+
+      const targetTop = getSectionTop(section);
+      if (targetTop === null || Math.abs(window.scrollY - targetTop) <= 2) {
+        finishProgrammaticNavigation(section);
+        return;
+      }
+
+      programmaticFrameRef.current = window.requestAnimationFrame(tick);
+    };
+
+    programmaticFrameRef.current = window.requestAnimationFrame(tick);
+    programmaticTimerRef.current = window.setTimeout(() => {
+      if (programmaticTargetRef.current === section) {
+        finishProgrammaticNavigation(section);
+      }
+    }, prefersReducedMotion() ? 80 : 1800);
+  };
+
+  const handleNavigate = (section: SectionId) => {
+    const top = getSectionTop(section);
+    if (top === null) return;
 
     if (window.location.hash !== `#${section}`) {
       window.history.pushState(null, "", `#${section}`);
     }
 
-    const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+    programmaticTargetRef.current = section;
+    watchProgrammaticNavigation(section);
     scrollWindowTo(top);
   };
 
   useEffect(() => {
     const syncSectionFromHash = () => {
+      clearProgrammaticNavigation();
+      programmaticTargetRef.current = null;
+
       const section = getHashSection();
       const target = document.getElementById(section);
 
@@ -1303,6 +1366,8 @@ const App: React.FC = () => {
 
     const syncActiveSection = () => {
       animationFrame = 0;
+      if (programmaticTargetRef.current) return;
+
       const readingLine = window.innerHeight * 0.36;
       const current =
         [...sections]
@@ -1336,6 +1401,12 @@ const App: React.FC = () => {
       }
       window.removeEventListener("scroll", scheduleSync);
       window.removeEventListener("resize", scheduleSync);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearProgrammaticNavigation();
     };
   }, []);
 
