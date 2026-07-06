@@ -585,7 +585,7 @@ const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2">
           {/* Desktop nav – only from md and up */}
           <LayoutGroup id="desktop-nav">
-            <nav className="relative hidden h-10 items-center gap-1 overflow-hidden rounded-lg border border-neutral-200 bg-white/75 px-1 text-[11px] shadow-sm backdrop-blur md:flex dark:border-neutral-800 dark:bg-neutral-950/75">
+            <nav className="relative hidden h-10 items-center gap-1 overflow-hidden rounded-xl border border-neutral-200 bg-white/75 px-1 text-[11px] shadow-sm backdrop-blur md:flex dark:border-neutral-800 dark:bg-neutral-950/75">
               {navItems.map((item) => (
                 <LinkButton key={item.section} section={item.section}>
                   {item.label}
@@ -596,12 +596,12 @@ const Navbar: React.FC<NavbarProps> = ({
 
           {/* Language + theme */}
           <div className="flex h-10 items-center gap-2 text-xs">
-            <div className="flex h-10 items-center rounded-md border border-neutral-300/70 bg-white/80 p-0.5 text-[11px] shadow-sm dark:border-neutral-700/70 dark:bg-neutral-900/80">
+            <div className="flex h-10 items-center rounded-xl border border-neutral-300/70 bg-white/80 p-0.5 text-[11px] shadow-sm dark:border-neutral-700/70 dark:bg-neutral-900/80">
               <button
                 type="button"
                 onClick={onToggleLanguage}
                 className={
-                  "flex h-8 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
+                  "flex h-8 items-center rounded-[0.625rem] px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
                   (language === "en"
                     ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                     : "text-neutral-600 dark:text-neutral-300")
@@ -613,7 +613,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={onToggleLanguage}
                 className={
-                  "flex h-8 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
+                  "flex h-8 items-center rounded-[0.625rem] px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
                   (language === "es"
                     ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                     : "text-neutral-600 dark:text-neutral-300")
@@ -769,12 +769,12 @@ const MobileTopBar: React.FC<MobileTopBarProps> = ({
         className="h-7 w-auto"
       />
       <div className="flex items-center gap-2">
-        <div className="flex h-9 items-center rounded-md border border-neutral-300/70 bg-white/80 p-0.5 text-[11px] shadow-sm dark:border-neutral-700/70 dark:bg-neutral-900/80">
+        <div className="flex h-9 items-center rounded-xl border border-neutral-300/70 bg-white/80 p-0.5 text-[11px] shadow-sm dark:border-neutral-700/70 dark:bg-neutral-900/80">
           <button
             type="button"
             onClick={onToggleLanguage}
             className={
-              "flex h-7 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
+              "flex h-7 items-center rounded-[0.625rem] px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
               (language === "en"
                 ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                 : "text-neutral-600 dark:text-neutral-300")
@@ -786,7 +786,7 @@ const MobileTopBar: React.FC<MobileTopBarProps> = ({
             type="button"
             onClick={onToggleLanguage}
             className={
-              "flex h-7 items-center rounded px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
+              "flex h-7 items-center rounded-[0.625rem] px-2 transition-all duration-300 ease-out active:scale-[0.98] " +
               (language === "es"
                 ? "bg-neutral-950 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-950"
                 : "text-neutral-600 dark:text-neutral-300")
