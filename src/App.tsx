@@ -1143,9 +1143,6 @@ const App: React.FC = () => {
   };
 
   const handleMobileNavigate = (section: SectionId) => {
-    setMobileActiveSection(section);
-    setActiveSection(section);
-
     if (mobileProgrammaticScrollRef.current) {
       window.clearTimeout(mobileProgrammaticScrollRef.current);
     }
