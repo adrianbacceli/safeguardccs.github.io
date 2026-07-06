@@ -6,6 +6,16 @@
   box-sizing: border-box;
 }
 
+html {
+  background: #f8fafc;
+  color-scheme: light;
+}
+
+html.dark {
+  background: #020617;
+  color-scheme: dark;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -14,7 +24,12 @@ html, body {
 }
 
 body {
+  background: #f8fafc;
   text-rendering: geometricPrecision;
+}
+
+html.dark body {
+  background: #020617;
 }
 
 @keyframes ambient-sweep {

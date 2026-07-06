@@ -9,8 +9,35 @@
     <link rel="manifest" href="/icons/site.webmanifest" />
 
     <!-- Theme colors -->
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta id="theme-color" name="theme-color" content="#f8fafc" />
+    <script>
+      (() => {
+        const lightColor = "#f8fafc";
+        const darkColor = "#020617";
+
+        let theme = null;
+        try {
+          theme = localStorage.getItem("theme");
+        } catch {
+          theme = null;
+        }
+
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDark = theme === "dark" || (theme !== "light" && prefersDark);
+        const root = document.documentElement;
+
+        root.classList.toggle("dark", isDark);
+        root.style.colorScheme = isDark ? "dark" : "light";
+
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        if (themeColor) {
+          themeColor.setAttribute("content", isDark ? darkColor : lightColor);
+        }
+      })();
+    </script>
 
     <!-- SERP -->
     <title>SafeGuard CCS - Cybersecurity Consulting in Panama</title>

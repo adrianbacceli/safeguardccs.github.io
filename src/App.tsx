@@ -87,6 +87,10 @@ function useTheme(): { theme: Theme; toggleTheme: () => void } {
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("dark", theme === "dark");
+    root.style.colorScheme = theme;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme === "dark" ? "#020617" : "#f8fafc");
     window.localStorage.setItem("theme", theme);
   }, [theme]);
 
