@@ -25,6 +25,7 @@ import { SiX, SiInstagram, SiFacebook, SiWhatsapp } from "react-icons/si";
 type SectionId = "home" | "services" | "approach" | "threats" | "faq" | "contact";
 type Theme = "light" | "dark";
 type Language = "en" | "es";
+type FaqId = "about" | "services" | "audience" | "topics" | "frameworks" | "data-sources" | "ransomware" | "contact";
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 type ContactMode = "methods" | "form";
 type RedirectTarget = {
@@ -32,23 +33,11 @@ type RedirectTarget = {
   href: string;
   kind: "whatsapp" | "email";
 };
-type ProductService = {
+type ResearchTopic = {
   id: string;
   icon: React.ComponentType<{ className?: string }>;
-  eyebrow: Record<Language, string>;
   title: Record<Language, string>;
-  summary: Record<Language, string>;
-  mobileSummary: Record<Language, string>;
-  detailTitle: Record<Language, string>;
-  detail: Record<Language, string>;
-  mobileDetail: Record<Language, string>;
-  ctaLabel: Record<Language, string>;
-  availability?: "available" | "coming-soon";
-  featured?: boolean;
-  badge?: Record<Language, string>;
-  subServices: Record<Language, string[]>;
-  highlights: Record<Language, string[]>;
-  keywords: Record<Language, string>;
+  keywords: Record<Language, string[]>;
 };
 
 const SECTION_IDS: SectionId[] = ["home", "threats", "services", "approach", "faq", "contact"];
@@ -56,193 +45,41 @@ const WEB3FORMS_ACCESS_KEY = "b15631e6-e590-4acf-9085-ff56b23526b7";
 const CONTACT_EMAIL = "consulting@safeguardccs.com";
 const MESSAGE_WORD_LIMIT = 120;
 const MOBILE_CERT_AUTOPLAY_MS = 5000;
-const productServices: ProductService[] = [
+const researchTopics: ResearchTopic[] = [
   {
-    id: "isms",
+    id: "business-security-research",
     icon: Building2,
-    eyebrow: {
-      en: "Governance & ISO 27001",
-      es: "Gobierno e ISO 27001",
-    },
     title: {
-      en: "ISMS Services",
-      es: "Servicios de SGSI",
-    },
-    summary: {
-      en: "We use the ISO 27000 family as the strategy foundation around scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
-      es: "Usamos la familia ISO 27000 como base estratégica alrededor de alcance, riesgo, controles, evidencias, responsabilidades, mantenimiento y preparación para certificación.",
-    },
-    mobileSummary: {
-      en: "ISMS support based on ISO 27001 and the ISO 27000 family.",
-      es: "Soporte de SGSI basado en ISO 27001 y la familia ISO 27000.",
-    },
-    detailTitle: {
-      en: "ISMS services based on ISO 27001 and the ISO 27000 family",
-      es: "Servicios de SGSI basados en ISO 27001 y la familia ISO 27000",
-    },
-    detail: {
-      en: "We use the ISO 27000 family as the strategy foundation around scope, risk, controls, evidence, responsibilities, maintenance, and certification readiness.",
-      es: "Usamos la familia ISO 27000 como base estratégica alrededor de alcance, riesgo, controles, evidencias, responsabilidades, mantenimiento y preparación para certificación.",
-    },
-    mobileDetail: {
-      en: "ISO 27000-based ISMS work for implementation, maintenance, audits, and certification support.",
-      es: "Trabajo de SGSI basado en ISO 27000 para implementación, mantenimiento, auditoría y certificación.",
-    },
-    ctaLabel: {
-      en: "Discuss ISMS support",
-      es: "Hablar sobre SGSI",
-    },
-    subServices: {
-      en: [
-        "Hands-on ISMS implementation",
-        "Certification audit support",
-        "ISMS maintenance",
-        "ISMS audit",
-      ],
-      es: [
-        "Implementación directa de SGSI",
-        "Acompañamiento ante auditoría de certificación",
-        "Mantenimiento de SGSI",
-        "Auditoría de SGSI",
-      ],
-    },
-    highlights: {
-      en: ["ISO 27001 implementation roadmap", "Risk, control, and evidence structure", "Governance routines that can be maintained"],
-      es: ["Ruta de implementación ISO 27001", "Estructura de riesgos, controles y evidencias", "Rutinas de gobierno sostenibles"],
+      en: "Emerging businesses",
+      es: "Negocios emergentes",
     },
     keywords: {
-      en: "ISO 27001 implementation, ISMS, information security management system, ISMS audit, ISO 27001 maintenance",
-      es: "implementación ISO 27001, SGSI, sistema de gestión de seguridad de la información, auditoría de SGSI, mantenimiento ISO 27001",
+      en: ["Awareness", "Risk", "Data protection"],
+      es: ["Concientización", "Riesgo", "Protección de datos"],
     },
   },
   {
-    id: "cybersecurity-consulting",
+    id: "security-literacy",
     icon: LockKeyhole,
-    eyebrow: {
-      en: "Practical advisory",
-      es: "Asesoría práctica",
-    },
     title: {
-      en: "Cybersecurity Consulting",
-      es: "Consultoría y asesoría de seguridad",
-    },
-    summary: {
-      en: "Practical advisory from experts with 7+ years of regional Latin America experience and 1,000+ cumulative support and advisory requests across their careers.",
-      es: "Asesoría práctica de expertos con más de 7 años de experiencia regional en Latinoamérica y más de 1,000 solicitudes acumuladas de soporte y asesoría a lo largo de sus carreras.",
-    },
-    mobileSummary: {
-      en: "Expert advisory backed by 7+ years in Latin America and 1,000+ cumulative support requests.",
-      es: "Asesoría experta con más de 7 años en Latinoamérica y 1,000+ solicitudes acumuladas.",
-    },
-    detailTitle: {
-      en: "Cybersecurity consulting and security advisory services",
-      es: "Consultoría de ciberseguridad y asesoría estratégica de seguridad",
-    },
-    detail: {
-      en: "Practical advisory from experts with 7+ years of regional Latin America experience and 1,000+ cumulative support and advisory requests across their careers.",
-      es: "Asesoría práctica de expertos con más de 7 años de experiencia regional en Latinoamérica y más de 1,000 solicitudes acumuladas de soporte y asesoría a lo largo de sus carreras.",
-    },
-    mobileDetail: {
-      en: "Regional advisory experience applied to posture, risk, applications, networks, and security habits.",
-      es: "Experiencia regional aplicada a postura, riesgo, aplicaciones, redes y hábitos de seguridad.",
-    },
-    ctaLabel: {
-      en: "Request consulting",
-      es: "Solicitar asesoría",
-    },
-    featured: true,
-    badge: {
-      en: "Featured",
-      es: "Recomendado",
-    },
-    subServices: {
-      en: [
-        "General advisory",
-        "Security training",
-        "Network security",
-        "Application security",
-        "Security posture diagnostic",
-      ],
-      es: [
-        "Asesoría general",
-        "Formación",
-        "Seguridad de redes",
-        "Seguridad de aplicaciones",
-        "Diagnóstico de postura de seguridad",
-      ],
-    },
-    highlights: {
-      en: ["Risk-based roadmaps", "Network and application security guidance", "Training that changes daily behavior"],
-      es: ["Rutas de mejora basadas en riesgo", "Guía de seguridad de redes y aplicaciones", "Formación que cambia hábitos diarios"],
+      en: "Security basics",
+      es: "Seguridad básica",
     },
     keywords: {
-      en: "cybersecurity consulting, security advisory, security training, network security, application security, security posture diagnostic",
-      es: "consultoría de ciberseguridad, asesoría de seguridad, formación en seguridad, seguridad de redes, seguridad de aplicaciones, diagnóstico de postura de seguridad",
+      en: ["Phishing", "Passwords", "MFA", "Backups"],
+      es: ["Phishing", "Contraseñas", "MFA", "Respaldos"],
     },
   },
   {
-    id: "mssp-operational-monitoring",
+    id: "framework-translation",
     icon: Activity,
-    eyebrow: {
-      en: "Managed security operations",
-      es: "Operaciones de seguridad gestionadas",
-    },
     title: {
-      en: "MSSP Operational Monitoring",
-      es: "Monitoreo y análisis operacional MSSP",
-    },
-    summary: {
-      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring. Detect suspicious activity, respond to incidents and harden security.",
-      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo. Detecta actividad sospechosa, responde a incidentes y endurece la seguridad.",
-    },
-    mobileSummary: {
-      en: "Managed monitoring aligned to NIST CSF, IRT, and RMF.",
-      es: "Monitoreo gestionado alineado a NIST CSF, IRT y RMF.",
-    },
-    detailTitle: {
-      en: "Managed Security Service Provider monitoring and operational support",
-      es: "Monitoreo MSSP y soporte operacional de seguridad gestionada",
-    },
-    detail: {
-      en: "Managed security operations aligned to NIST CSF, IRT, and RMF for continuous monitoring. Detect suspicious activity, respond to incidents and harden security.",
-      es: "Operaciones de seguridad gestionadas alineadas a NIST CSF, IRT y RMF para monitoreo continuo. Detecta actividad sospechosa, responde a incidentes y endurece la seguridad.",
-    },
-    mobileDetail: {
-      en: "Monitoring, incident handling, vulnerabilities, updates, hardening, and continuous visibility in one operational service area.",
-      es: "Monitoreo, incidentes, vulnerabilidades, actualizaciones, endurecimiento y visibilidad continua en una sola área operacional.",
-    },
-    ctaLabel: {
-      en: "Coming soon",
-      es: "Próximamente",
-    },
-    availability: "coming-soon",
-    badge: {
-      en: "Coming soon",
-      es: "Próximamente",
-    },
-    subServices: {
-      en: [
-        "Incident handling",
-        "IT support",
-        "Vulnerability scanning",
-        "Updates and hardening",
-        "Continuous monitoring",
-      ],
-      es: [
-        "Manejo de incidentes",
-        "Soporte de TI",
-        "Escaneo de vulnerabilidades",
-        "Actualizaciones y endurecimiento",
-        "Monitoreo continuo",
-      ],
-    },
-    highlights: {
-      en: ["Security event triage", "Operational visibility", "Actionable remediation support"],
-      es: ["Priorización de eventos de seguridad", "Visibilidad operacional", "Soporte de remediación accionable"],
+      en: "Public frameworks",
+      es: "Marcos públicos",
     },
     keywords: {
-      en: "MSSP, managed security monitoring, incident handling, vulnerability scanning, continuous monitoring, IT support, hardening",
-      es: "MSSP, monitoreo gestionado de seguridad, manejo de incidentes, escaneo de vulnerabilidades, monitoreo continuo, soporte de TI, hardening",
+      en: ["Guidance", "Literacy", "Resilience"],
+      es: ["Orientación", "Alfabetización", "Resiliencia"],
     },
   },
 ];
@@ -482,6 +319,7 @@ const certLogos: CredentialLogo[] = credentialMetadata.flatMap((credential) => {
 });
 
 interface ThreatStat {
+  id?: "ransomware";
   value: string;
   animatedValue?: number;
   format?: "compact" | "percent";
@@ -553,6 +391,7 @@ const threatStats: ThreatStat[] = [
     year: "2024",
   },
   {
+    id: "ransomware",
     value: "1.1M+",
     animatedValue: 1100000,
     format: "compact",
@@ -748,8 +587,8 @@ const Navbar: React.FC<NavbarProps> = ({
   const navItems: Array<{ section: SectionId; label: string }> = [
     { section: "home", label: isEn ? "Home" : "Inicio" },
     { section: "threats", label: isEn ? "Emerging threats" : "Amenazas actuales" },
-    { section: "services", label: isEn ? "Services" : "Servicios" },
-    { section: "approach", label: isEn ? "Why trust us" : "Por qué confiar" },
+    { section: "services", label: isEn ? "Research" : "Investigación" },
+    { section: "approach", label: isEn ? "Background" : "Trayectoria" },
     { section: "faq", label: "FAQ" },
     { section: "contact", label: isEn ? "Contact" : "Contacto" },
   ];
@@ -916,7 +755,7 @@ const Navbar: React.FC<NavbarProps> = ({
               }}
               className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
             >
-              {isEn ? "Services" : "Servicios"}
+              {isEn ? "Research" : "Investigación"}
             </a>
             <a
               href="#approach"
@@ -927,7 +766,7 @@ const Navbar: React.FC<NavbarProps> = ({
               }}
               className="rounded-md px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-neutral-900"
             >
-              {isEn ? "Why trust us" : "Por qué confiar"}
+              {isEn ? "Background" : "Trayectoria"}
             </a>
             <a
               href="#faq"
@@ -984,8 +823,8 @@ interface MobileSectionIndicatorProps {
 
 const sectionLabels: Record<SectionId, { en: string; es: string }> = {
   home: { en: "Home", es: "Inicio" },
-  services: { en: "Services", es: "Servicios" },
-  approach: { en: "Why trust us", es: "Por qué confiar" },
+  services: { en: "Research", es: "Investigación" },
+  approach: { en: "Background", es: "Trayectoria" },
   threats: { en: "Emerging threats", es: "Amenazas actuales" },
   faq: { en: "FAQ", es: "Preguntas frecuentes" },
   contact: { en: "Contact", es: "Contacto" },
@@ -1241,6 +1080,7 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>(() => getHashSection());
   const [mobileActiveSection, setMobileActiveSection] = useState<SectionId>("home");
+  const [focusedFaq, setFocusedFaq] = useState<{ id: FaqId; request: number } | null>(null);
   const programmaticTargetRef = useRef<SectionId | null>(null);
   const programmaticTimerRef = useRef<number | null>(null);
   const programmaticFrameRef = useRef<number | null>(null);
@@ -1415,8 +1255,17 @@ const App: React.FC = () => {
     handleNavigate(section);
   };
 
+  const handleOpenFaq = (faqId: FaqId) => {
+    setFocusedFaq((current) => ({ id: faqId, request: (current?.request ?? 0) + 1 }));
+    handleNavigate("faq");
+  };
+
   const toggleLanguage = () =>
     setLanguage((lang) => (lang === "en" ? "es" : "en"));
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   return (
     <div className="relative isolate flex min-h-screen flex-col overflow-x-hidden bg-[#f7f8f5] text-neutral-950 transition-colors duration-300 dark:bg-[#050706] dark:text-neutral-50">
@@ -1453,6 +1302,7 @@ const App: React.FC = () => {
             language={language}
             isActive={activeSection === "home"}
             onNavigate={handleNavigate}
+            onOpenFaq={handleOpenFaq}
           />
         </LandingSection>
 
@@ -1461,18 +1311,20 @@ const App: React.FC = () => {
             <MobileThreatSnapshot
               language={language}
               isActive={activeSection === "threats"}
+              onOpenFaq={handleOpenFaq}
             />
           </div>
           <div className="hidden md:block">
             <ThreatsSection
               language={language}
               isActive={activeSection === "threats"}
+              onOpenFaq={handleOpenFaq}
             />
           </div>
         </LandingSection>
 
         <LandingSection id="services">
-          <ServicesSection language={language} onNavigate={handleNavigate} />
+          <ServicesSection language={language} />
         </LandingSection>
 
         <LandingSection id="approach">
@@ -1480,7 +1332,7 @@ const App: React.FC = () => {
         </LandingSection>
 
         <LandingSection id="faq">
-          <FAQSection language={language} onNavigate={handleNavigate} />
+          <FAQSection language={language} focusedFaq={focusedFaq} />
         </LandingSection>
 
         <LandingSection id="contact" className="pb-16">
@@ -1498,38 +1350,24 @@ interface HeroSectionProps {
   language: Language;
   isActive: boolean;
   onNavigate: (section: SectionId) => void;
+  onOpenFaq: (faqId: FaqId) => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigate }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigate, onOpenFaq }) => {
   const isEn = language === "en";
   const consoleStats = regionalSnapshotStats;
   const heroPoints = [
     {
       icon: LockKeyhole,
-      label: isEn
-        ? "Work directly with senior engineers who understand business risk and security operations."
-        : "Trabaja directamente con ingenieros senior que entienden riesgo de negocio y operaciones de seguridad.",
-      mobileLines: isEn
-        ? ["Work directly with senior engineers", "who understand business risk and security operations."]
-        : ["Trabaja directamente con ingenieros senior", "que entienden riesgo de negocio y seguridad."],
+      label: isEn ? "Independent research" : "Investigación independiente",
     },
     {
       icon: Building2,
-      label: isEn
-        ? "Get cybersecurity decisions sized for SMB budgets, teams, and operational reality."
-        : "Recibe decisiones de ciberseguridad ajustadas a presupuestos, equipos y realidad operativa de pymes.",
-      mobileLines: isEn
-        ? ["Get cybersecurity decisions sized for", "SMB budgets, teams, and operational reality."]
-        : ["Recibe decisiones ajustadas a presupuestos", "equipos y realidad operativa de pymes."],
+      label: isEn ? "SME awareness" : "Concientización para pymes",
     },
     {
       icon: Network,
-      label: isEn
-        ? "Lean on engineers with 7+ years across Latin America and deep enterprise infrastructure exposure."
-        : "Apóyate en ingenieros con más de 7 años en Latinoamérica y amplia exposición a infraestructura empresarial.",
-      mobileLines: isEn
-        ? ["Lean on engineers with 7+ years across Latin America", "and deep enterprise infrastructure exposure."]
-        : ["Apóyate en ingenieros con más de 7 años", "y experiencia en infraestructura empresarial."],
+      label: isEn ? "Practical cyber hygiene" : "Higiene cibernética práctica",
     },
   ];
 
@@ -1537,22 +1375,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
     <div className="grid w-full justify-items-center gap-8 text-center lg:grid-cols-[minmax(0,1.12fr)_420px] lg:items-center lg:justify-items-stretch lg:text-left xl:gap-12">
       <div className="mx-auto max-w-4xl lg:mx-0">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">
-          {isEn ? "Cybersecurity consulting in Panama" : "Consultoría de ciberseguridad en Panamá"}
+          {isEn ? "Cybersecurity research · Panama" : "Investigación en ciberseguridad · Panamá"}
         </p>
 
         <h1 className="mx-auto mt-5 max-w-[11ch] text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:mx-0 lg:text-7xl xl:text-[5rem]">
-          {isEn ? "Security is all we do." : "Seguridad sin distracciones."}
+          {isEn ? "Security, made clearer." : "Seguridad, más clara."}
         </h1>
 
         <ul className="mx-auto mt-7 max-w-3xl space-y-4 text-left text-sm leading-relaxed text-neutral-700 dark:text-neutral-200 lg:mx-0 lg:text-base">
-          {heroPoints.map(({ icon: Icon, label, mobileLines }) => (
+          {heroPoints.map(({ icon: Icon, label }) => (
             <li key={label} className="flex gap-3">
               <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-              <span className="hidden md:inline">{label}</span>
-              <span className="min-w-0 text-[clamp(0.68rem,3.2vw,0.875rem)] leading-relaxed md:hidden">
-                <span className="block whitespace-nowrap">{mobileLines[0]}</span>
-                <span className="block whitespace-nowrap">{mobileLines[1]}</span>
-              </span>
+              <span>{label}</span>
             </li>
           ))}
         </ul>
@@ -1566,7 +1400,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
             }}
             className="lg:px-6 lg:py-3"
           >
-            {isEn ? "Talk about your environment" : "Hablar de tu entorno"}
+            {isEn ? "Contact" : "Contacto"}
             <ArrowDown className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
           </AnchorButton>
           <AnchorButton
@@ -1578,7 +1412,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
             }}
             className="lg:px-6 lg:py-3"
           >
-            {isEn ? "Review services" : "Revisar servicios"}
+            {isEn ? "Research" : "Investigación"}
           </AnchorButton>
         </div>
       </div>
@@ -1609,9 +1443,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
                 )}
               </div>
               <div>
-                <p className="text-xs font-medium leading-snug text-neutral-800 dark:text-neutral-100">
-                  {isEn ? stat.label.en : stat.label.es}
-                </p>
+                {stat.id === "ransomware" ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpenFaq("ransomware")}
+                    className="text-left text-xs font-medium leading-snug text-neutral-800 underline decoration-emerald-600/40 underline-offset-2 dark:text-neutral-100"
+                  >
+                    {isEn ? stat.label.en : stat.label.es}
+                  </button>
+                ) : (
+                  <p className="text-xs font-medium leading-snug text-neutral-800 dark:text-neutral-100">
+                    {isEn ? stat.label.en : stat.label.es}
+                  </p>
+                )}
               </div>
             </div>
           ))}
@@ -1634,6 +1478,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language, isActive, onNavigat
   );
 };
 
+/* Legacy service-card implementation retained temporarily for diff clarity.
 const ServiceBundleCard: React.FC<{
   service: ProductService;
   language: Language;
@@ -1712,13 +1557,13 @@ const ServiceBundleCard: React.FC<{
           onClick={() => setOptionsOpen(true)}
           className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-neutral-300 bg-white/80 px-4 text-xs font-semibold text-neutral-900 shadow-sm transition-all duration-300 hover:border-emerald-600 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 md:hidden dark:border-neutral-700 dark:bg-neutral-950/70 dark:text-neutral-100 dark:hover:border-emerald-300 dark:hover:bg-neutral-900"
         >
-          {isEn ? "Service Options" : "Opciones de servicio"}
+          {isEn ? "Research topics" : "Temas de investigación"}
         </button>
       </div>
 
       <div className="mt-6 hidden flex-1 border-t border-neutral-200 pt-5 md:block dark:border-neutral-800">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
-          {language === "en" ? "Service options" : "Opciones de servicio"}
+          {language === "en" ? "Research topics" : "Temas de investigación"}
         </p>
         <ul className="space-y-3">
           {service.subServices[language].map((subService) => (
@@ -1749,7 +1594,7 @@ const ServiceBundleCard: React.FC<{
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
-                      {isEn ? "Service options" : "Opciones de servicio"}
+                      {isEn ? "Research topics" : "Temas de investigación"}
                     </p>
                     <h3
                       id={`service-options-title-${service.id}`}
@@ -1761,7 +1606,7 @@ const ServiceBundleCard: React.FC<{
                   <button
                     type="button"
                     onClick={() => setOptionsOpen(false)}
-                    aria-label={isEn ? "Close service options" : "Cerrar opciones de servicio"}
+                    aria-label={isEn ? "Close research topics" : "Cerrar temas de investigación"}
                     className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950 dark:border-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-50"
                   >
                     <X className="h-4 w-4" />
@@ -1806,37 +1651,46 @@ const ServiceBundleCard: React.FC<{
   );
 };
 
-const ServicesSection: React.FC<SectionProps & {
-  onNavigate: (section: SectionId) => void;
-}> = ({ language, onNavigate }) => {
+*/
+
+const ServicesSection: React.FC<SectionProps> = ({ language }) => {
   const isEn = language === "en";
 
   return (
     <div className="w-full py-4 sm:py-6">
       <div className="mx-auto mb-6 w-[calc(100vw-3rem)] max-w-md md:mx-0 md:w-auto md:max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
-          {isEn ? "Cybersecurity services" : "Servicios de ciberseguridad"}
+          {isEn ? "Research" : "Investigación"}
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          {isEn
-            ? "Security services built for real operations"
-            : "Servicios de seguridad para tu operación"}
+          {isEn ? "Current focus" : "Enfoque actual"}
         </h2>
-        <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-          {isEn
-            ? "Explore focused service areas designed around governance, operations, and advisory support."
-            : "Explora áreas de servicio enfocadas en gobierno, operación y asesoría."}
+        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+          {isEn ? "Public · Educational · Non-commercial" : "Público · Educativo · No comercial"}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        {productServices.map((service) => (
-          <ServiceBundleCard
-            key={service.id}
-            service={service}
-            language={language}
-            onNavigate={onNavigate}
-          />
+        {researchTopics.map((topic) => (
+          <article
+            key={topic.id}
+            className="rounded-xl border border-neutral-200/90 bg-white/90 p-5 shadow-sm backdrop-blur-sm dark:border-neutral-800/90 dark:bg-neutral-950/80"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+              <topic.icon className="h-4 w-4" />
+            </span>
+            <h3 className="mt-4 text-xl font-semibold tracking-tight">{topic.title[language]}</h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {topic.keywords[language].map((keyword) => (
+                <span
+                  key={keyword}
+                  className="rounded-full border border-neutral-200 px-2.5 py-1 text-xs font-medium text-neutral-600 dark:border-neutral-800 dark:text-neutral-300"
+                >
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </article>
         ))}
       </div>
     </div>
@@ -1853,15 +1707,8 @@ const ApproachSection: React.FC<SectionProps> = ({ language }) => {
           {isEn ? "Credentials" : "Credenciales"}
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          {isEn
-            ? "Explore our portfolio of industry certifications and credentials"
-            : "Explora nuestro portafolio de certificaciones y credenciales de la industria"}
+          {isEn ? "Why trust us" : "Por qué confiar"}
         </h2>
-        <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-          {isEn
-            ? "The portfolio reflects infrastructure, networking, storage, security, and enterprise support experience across real customer environments."
-            : "El portafolio refleja experiencia en infraestructura, redes, almacenamiento, seguridad y soporte empresarial en entornos reales de clientes."}
-        </p>
       </div>
 
       <CertCarousel language={language} />
@@ -2123,7 +1970,6 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
 
         <div className="credential-scrollbar grid max-h-[31rem] gap-3 overflow-y-auto pr-3 sm:grid-cols-2">
           {certLogos.map((logo, logoIndex) => {
-            const logoDetail = isEn ? logo.description.en : logo.description.es;
             const isActive = logoIndex === index;
 
             return (
@@ -2150,9 +1996,6 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
                   <span className="line-clamp-2 min-w-0 text-sm font-semibold leading-snug text-neutral-950 dark:text-neutral-50">
                     {logo.title}
                   </span>
-                  <span className="mt-2 line-clamp-3 block min-w-0 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
-                    {logoDetail}
-                  </span>
                 </span>
               </button>
             );
@@ -2165,58 +2008,34 @@ const CertCarousel: React.FC<SectionProps> = ({ language }) => {
 
 
 
-const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) => {
+interface ThreatSectionProps extends ActiveSectionProps {
+  onOpenFaq: (faqId: FaqId) => void;
+}
+
+const ThreatsSection: React.FC<ThreatSectionProps> = ({ language, isActive, onOpenFaq }) => {
   const isEn = language === "en";
-  const takeaways = isEn
-    ? [
-        "Panama appears in regional threat telemetry.",
-        "Growth can outpace security discipline.",
-        "The real risk is downtime, fraud, data loss, and lost trust.",
-      ]
-    : [
-        "Panamá aparece en telemetría regional de amenazas.",
-        "El crecimiento puede superar la disciplina de seguridad.",
-        "El riesgo real es caída, fraude, pérdida de datos y pérdida de confianza.",
-      ];
 
   return (
     <div className="py-4 sm:py-6">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.35fr)] lg:items-start">
-        <div>
+      <div>
+        <div className="mb-7 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
             {isEn ? "Emerging threats" : "Amenazas actuales"}
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             {isEn
-              ? "Panama and Latin America are already in the threat data"
-              : "Panamá y Latinoamérica ya aparecen en los datos de amenazas"}
+              ? "Regional threat data"
+              : "Datos regionales de amenazas"}
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-            {isEn
-              ? "We use regional reporting as context, then turn it into practical security decisions for your company. The point is not fear; it is prioritization."
-              : "Usamos reportes regionales como contexto y los convertimos en decisiones prácticas de seguridad para tu empresa. El objetivo no es miedo; es priorización."}
-          </p>
-
-          <div className="mt-6 space-y-3">
-            {takeaways.map((item) => (
-              <div key={item} className="flex gap-3 rounded-lg border border-neutral-200 bg-white/70 p-3 text-xs leading-relaxed text-neutral-700 shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-950/70 dark:text-neutral-300">
-                <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-700 dark:text-emerald-300" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {threatStats.map((stat) => (
-            <a
+            <article
               key={`${stat.value}-${stat.year}`}
-              href={stat.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="group rounded-xl border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-500 ease-out hover:border-emerald-400/60 hover:bg-white hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-neutral-800 dark:bg-neutral-950/80 dark:hover:bg-neutral-950"
+              className="rounded-xl border border-neutral-200 bg-white/85 shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-950/80"
             >
-              <div className="flex min-h-[15rem] flex-col p-5 text-sm">
+              <div className="flex min-h-[11rem] flex-col p-4 text-sm">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="font-mono text-3xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
@@ -2233,25 +2052,26 @@ const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) =>
                         stat.value
                       )}
                     </div>
-                    <p className="mt-2 text-sm font-semibold leading-snug text-neutral-900 dark:text-neutral-100">
-                      {isEn ? stat.label.en : stat.label.es}
-                    </p>
+                    {stat.id === "ransomware" ? (
+                      <button type="button" onClick={() => onOpenFaq("ransomware")} className="mt-2 text-left text-sm font-semibold leading-snug text-neutral-900 underline decoration-emerald-600/40 underline-offset-2 dark:text-neutral-100">
+                        {isEn ? stat.label.en : stat.label.es}
+                      </button>
+                    ) : (
+                      <p className="mt-2 text-sm font-semibold leading-snug text-neutral-900 dark:text-neutral-100">{isEn ? stat.label.en : stat.label.es}</p>
+                    )}
                   </div>
                   <span className="rounded-md border border-neutral-200 px-2 py-1 font-mono text-[10px] text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
                     {stat.year}
                   </span>
                 </div>
-                <p className="mt-4 flex-1 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300">
-                  {isEn ? stat.context.en : stat.context.es}
-                </p>
-                <div className="mt-5 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-800">
+                <a href={stat.sourceUrl} target="_blank" rel="noreferrer" className="mt-auto flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-800">
                   <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                     {stat.sourceName}
                   </span>
                   <ExternalLink className="h-3.5 w-3.5 text-emerald-800 transition-transform duration-300 ease-out group-hover:translate-x-1 dark:text-emerald-300" />
-                </div>
+                </a>
               </div>
-            </a>
+            </article>
           ))}
         </div>
       </div>
@@ -2259,7 +2079,7 @@ const ThreatsSection: React.FC<ActiveSectionProps> = ({ language, isActive }) =>
   );
 };
 
-const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive }) => {
+const MobileThreatSnapshot: React.FC<ThreatSectionProps> = ({ language, isActive, onOpenFaq }) => {
   const isEn = language === "en";
 
   return (
@@ -2278,12 +2098,9 @@ const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive
 
       <div className="grid grid-cols-2 gap-3">
         {regionalSnapshotStats.map((stat) => (
-          <a
+          <article
             key={`${stat.value}-${stat.year}`}
-            href={stat.sourceUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="group flex min-h-[9.25rem] flex-col justify-between rounded-lg border border-neutral-200 bg-white/85 p-3 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/60 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-neutral-800 dark:bg-neutral-950/80 dark:hover:bg-neutral-950"
+            className="flex min-h-[9.25rem] flex-col justify-between rounded-lg border border-neutral-200 bg-white/85 p-3 shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-950/80"
           >
             <div>
               <div className="font-mono text-xl font-semibold text-emerald-700 dark:text-emerald-300">
@@ -2301,17 +2118,21 @@ const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive
                   stat.value
                 )}
               </div>
-              <p className="mt-2 text-[11px] font-semibold leading-snug text-neutral-900 dark:text-neutral-100">
-                {isEn ? stat.label.en : stat.label.es}
-              </p>
+              {stat.id === "ransomware" ? (
+                <button type="button" onClick={() => onOpenFaq("ransomware")} className="mt-2 text-left text-[11px] font-semibold leading-snug text-neutral-900 underline decoration-emerald-600/40 underline-offset-2 dark:text-neutral-100">
+                  {isEn ? stat.label.en : stat.label.es}
+                </button>
+              ) : (
+                <p className="mt-2 text-[11px] font-semibold leading-snug text-neutral-900 dark:text-neutral-100">{isEn ? stat.label.en : stat.label.es}</p>
+              )}
             </div>
-            <div className="mt-3 flex items-center justify-between gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+            <a href={stat.sourceUrl} target="_blank" rel="noreferrer" className="mt-3 flex items-center justify-between gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-800">
               <span className="truncate text-[10px] font-semibold text-emerald-800 dark:text-emerald-300">
                 {stat.sourceName}
               </span>
               <ExternalLink className="h-3 w-3 flex-shrink-0 text-emerald-800 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-emerald-300" />
-            </div>
-          </a>
+            </a>
+          </article>
         ))}
       </div>
     </div>
@@ -2319,147 +2140,37 @@ const MobileThreatSnapshot: React.FC<ActiveSectionProps> = ({ language, isActive
 };
 
 
-const FAQSection: React.FC<SectionProps & {
-  onNavigate: (section: SectionId) => void;
-}> = ({ language, onNavigate }) => {
+const FAQSection: React.FC<SectionProps & { focusedFaq: { id: FaqId; request: number } | null }> = ({ language, focusedFaq }) => {
   const isEn = language === "en";
   const [openItem, setOpenItem] = React.useState<number | null>(null);
 
   const faqItems = isEn
     ? [
-        {
-          question: "How much does a cybersecurity service cost?",
-          answer: [
-            "Practical security steps that stop many basic threats can be cheaper than people think. A strong foundation is achievable with small budgets when the priorities and advisors are right.",
-            "A full program depends on the scope, company size, systems involved, urgency, and whether the work is one-time or ongoing.",
-            "A short discovery conversation is usually the best way to recommend a practical starting point.",
-          ],
-        },
-        {
-          question: "Who do you usually help?",
-          answer: [
-            "We work with small and medium businesses, with special attention to protecting business owners' budgets while improving security.",
-            "Common clients include accounting and tax firms, legal and compliance practices, professional services, health and wellness clinics, small retail, and local businesses.",
-          ],
-        },
-        {
-          question: "Where should we start if we do not have a cybersecurity program?",
-          answer: [
-            "Start by understanding what systems you use, what data you handle, who has access, and which risks could hurt the business first.",
-            "Our first step is helping you discover where you are, then turning that into a practical roadmap without overwhelming your team.",
-          ],
-        },
-        {
-          question: "Do you replace our IT provider?",
-          answer: [
-            "We can own or support security-heavy IT tasks, but we do not replace a regular helpdesk or day-to-day IT support team.",
-            "We work alongside your IT team or provider to heavy lift, advise, improve visibility, harden systems, and reduce risk.",
-          ],
-        },
-        {
-          question: "Ley 81 and GDPR: what are they, and can you help?",
-          answer: [
-            "Ley 81 in Panama and the GDPR in Europe are data protection rules that matter when a business handles personal data.",
-            "We help with the security side of those obligations by identifying gaps and implementing strong standards, including ISMS practices aligned with ISO 27000, so the business is better prepared for demanding compliance expectations.",
-            "For legal interpretation, we recommend qualified legal counsel.",
-          ],
-        },
-        {
-          question: "What is an ISMS, and why does ISO 27001 matter?",
-          answer: [
-            "An ISMS is the structured way a company manages information security: risks, policies, responsibilities, controls, evidence, and improvement following international standards like ISO 27001.",
-            "We can help you prepare, maintain, or improve it by translating these concepts into simpler terms: who does what, how it is done, and how to follow international best practices without unnecessary hurdles.",
-          ],
-        },
-        {
-          question: "Do you offer one-time consulting or ongoing support?",
-          answer: [
-            "Yes. Some clients need a focused review, audit preparation, or help with a specific risk. Others need ongoing monitoring, vulnerability management, hardening, and security improvement.",
-            "We scope the work around the need and budget. We adapt the engagement to the company, not the other way around.",
-          ],
-        },
-        {
-          question: "Can you help with vulnerability scanning and security monitoring?",
-          answer: [
-            "Yes. We help organizations see vulnerabilities, exposed systems, security weaknesses, and operational risks more clearly.",
-            "Depending on scope, we can support scanning, findings review, remediation guidance, hardening recommendations, and monitoring.",
-          ],
-        },
-        {
-          question: "Do you guarantee that my company will not be hacked?",
-          answer: [
-            "No honest provider can guarantee that. Cybersecurity requires shifting the question from \"Will I be hacked?\" to \"How do we operate when it happens?\"",
-            "We work from a Zero Trust and assume-breach mindset: protect systems, data, and access even if someone is already inside the environment.",
-          ],
-        },
+        { id: "about" as const, question: "What is SafeGuard CCS?", answer: ["An independent cybersecurity research and education initiative based in Panama.", "We translate public security knowledge for emerging businesses."] },
+        { id: "services" as const, question: "Do you offer services?", answer: ["No paid consulting, monitoring, or implementation.", "This domain is for nonpaid research and education."] },
+        { id: "audience" as const, question: "Who is it for?", answer: ["SMEs, founders, and leadership teams seeking clearer security knowledge."] },
+        { id: "topics" as const, question: "What do you study?", answer: ["Phishing, passwords, MFA, backups, data protection, and cyber hygiene."] },
+        { id: "frameworks" as const, question: "How do you use frameworks?", answer: ["We translate public cybersecurity frameworks and data protection concepts into plain language.", "Content is educational—not legal, compliance, or professional security advice."] },
+        { id: "data-sources" as const, question: "How do we capture data?", answer: ["We review public regional reporting from organizations such as FortiGuard Labs and Kaspersky.", "The figures provide context. SafeGuard CCS does not collect original threat telemetry."] },
+        { id: "ransomware" as const, question: "What is ransomware?", answer: ["Malicious software that locks or encrypts files or systems and demands payment to restore access."] },
+        { id: "contact" as const, question: "Can I contact SafeGuard CCS?", answer: ["Yes—for research, feedback, sources, or collaboration."] },
       ]
     : [
-        {
-          question: "Cuanto cuesta un servicio de ciberseguridad?",
-          answer: [
-            "Los pasos practicos de seguridad que detienen muchas amenazas basicas pueden ser mas economicos de lo que la gente piensa. Una base solida es alcanzable con presupuestos pequenos cuando las prioridades y los asesores son correctos.",
-            "Un programa completo depende del alcance, tamano de la empresa, sistemas involucrados, urgencia y si el trabajo es puntual o continuo.",
-            "Una conversacion corta de descubrimiento suele ser la mejor forma de recomendar un punto de partida practico.",
-          ],
-        },
-        {
-          question: "A que tipo de empresas ayudan?",
-          answer: [
-            "Trabajamos con empresas pequenas y medianas, con especial atencion a proteger el presupuesto del dueno mientras mejora la seguridad.",
-            "Clientes comunes incluyen firmas contables y fiscales, practicas legales y de cumplimiento, servicios profesionales, clinicas de salud y bienestar, pequenos comercios y negocios locales.",
-          ],
-        },
-        {
-          question: "Por donde empezamos si no tenemos un programa de ciberseguridad?",
-          answer: [
-            "Empieza entendiendo que sistemas usas, que datos manejas, quien tiene acceso y que riesgos pueden afectar primero al negocio.",
-            "Nuestro primer paso es ayudarte a descubrir donde estas y convertir eso en una hoja de ruta practica sin abrumar a tu equipo.",
-          ],
-        },
-        {
-          question: "Reemplazan a nuestro proveedor de TI?",
-          answer: [
-            "Podemos asumir o apoyar tareas de TI con alto componente de seguridad, pero no reemplazamos un helpdesk regular ni el soporte diario de TI.",
-            "Trabajamos junto a tu equipo o proveedor actual para hacer trabajo pesado, asesorar, mejorar visibilidad, endurecer sistemas y reducir riesgo.",
-          ],
-        },
-        {
-          question: "Ley 81 y GDPR: que son y podemos ayudar?",
-          answer: [
-            "La Ley 81 en Panama y el GDPR en Europa son normas de proteccion de datos que importan cuando una empresa maneja datos personales.",
-            "Ayudamos con el lado de seguridad de esas obligaciones identificando brechas e implementando estandares fuertes, incluyendo practicas de SGSI alineadas con ISO 27000, para que el negocio este mejor preparado ante exigencias de cumplimiento.",
-            "Para interpretacion legal, recomendamos asesoria legal calificada.",
-          ],
-        },
-        {
-          question: "Que es un SGSI y por que importa ISO 27001?",
-          answer: [
-            "Un SGSI es la forma estructurada de gestionar seguridad de la informacion: riesgos, politicas, responsabilidades, controles, evidencias y mejora siguiendo estandares internacionales como ISO 27001.",
-            "Podemos ayudarte a prepararlo, mantenerlo o mejorarlo traduciendo estos conceptos a terminos simples: quien hace que, como se hace y como seguir buenas practicas internacionales sin trabas innecesarias.",
-          ],
-        },
-        {
-          question: "Ofrecen consultoria puntual o soporte continuo?",
-          answer: [
-            "Si. Algunos clientes necesitan una revision puntual, preparacion para auditoria o apoyo con un riesgo especifico. Otros necesitan monitoreo, gestion de vulnerabilidades, hardening y mejora continua.",
-            "Definimos el alcance segun la necesidad y el presupuesto. Adaptamos el servicio a la empresa, no al reves.",
-          ],
-        },
-        {
-          question: "Pueden ayudar con escaneo de vulnerabilidades y monitoreo?",
-          answer: [
-            "Si. Ayudamos a ver vulnerabilidades, sistemas expuestos, debilidades de seguridad y riesgos operativos con mayor claridad.",
-            "Segun el alcance, podemos apoyar con escaneo, revision de hallazgos, guia de remediacion, recomendaciones de hardening y monitoreo.",
-          ],
-        },
-        {
-          question: "Garantizan que mi empresa no sera hackeada?",
-          answer: [
-            "Ningun proveedor honesto puede garantizar eso. La ciberseguridad requiere cambiar la pregunta de \"Me van a hackear?\" a \"Como operamos cuando pase?\"",
-            "Trabajamos con una mentalidad de Zero Trust y asumir brecha: proteger sistemas, datos y accesos incluso si alguien ya esta dentro del entorno.",
-          ],
-        },
+        { id: "about" as const, question: "¿Qué es SafeGuard CCS?", answer: ["Una iniciativa independiente de investigación y educación en ciberseguridad con sede en Panamá.", "Traducimos conocimiento público de seguridad para negocios emergentes."] },
+        { id: "services" as const, question: "¿Ofrecen servicios?", answer: ["No ofrecemos consultoría, monitoreo ni implementación remunerados.", "Este dominio es para investigación y educación no remuneradas."] },
+        { id: "audience" as const, question: "¿Para quién es?", answer: ["Pymes, fundadores y equipos directivos que buscan conocimiento claro de seguridad."] },
+        { id: "topics" as const, question: "¿Qué estudian?", answer: ["Phishing, contraseñas, MFA, respaldos, protección de datos e higiene cibernética."] },
+        { id: "frameworks" as const, question: "¿Cómo usan los marcos?", answer: ["Traducimos marcos públicos de ciberseguridad y protección de datos a lenguaje sencillo.", "El contenido es educativo; no es asesoría legal, de cumplimiento ni de seguridad profesional."] },
+        { id: "data-sources" as const, question: "¿Cómo capturamos los datos?", answer: ["Revisamos reportes regionales públicos de organizaciones como FortiGuard Labs y Kaspersky.", "Las cifras aportan contexto. SafeGuard CCS no recopila telemetría propia de amenazas."] },
+        { id: "ransomware" as const, question: "¿Qué es ransomware?", answer: ["Software malicioso que bloquea o cifra archivos o sistemas y exige un pago para restaurar el acceso."] },
+        { id: "contact" as const, question: "¿Puedo contactar a SafeGuard CCS?", answer: ["Sí: para investigación, comentarios, fuentes o colaboración."] },
       ];
+
+  React.useEffect(() => {
+    if (!focusedFaq) return;
+    const nextIndex = faqItems.findIndex((item) => item.id === focusedFaq.id);
+    if (nextIndex >= 0) setOpenItem(nextIndex);
+  }, [focusedFaq?.request, language]);
 
   return (
     <div className="py-4 sm:py-6">
@@ -2471,11 +2182,6 @@ const FAQSection: React.FC<SectionProps & {
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             {isEn ? "Frequently Asked Questions" : "Preguntas frecuentes"}
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-            {isEn
-              ? "Short answers to common questions. For anything specific, contact us and we will point you in the right direction."
-              : "Respuestas cortas a preguntas comunes. Para algo especifico, contactanos y te orientamos en la direccion correcta."}
-          </p>
         </div>
 
         <div className="min-w-0 space-y-3">
@@ -2485,7 +2191,8 @@ const FAQSection: React.FC<SectionProps & {
 
             return (
               <div
-                key={item.question}
+                key={item.id}
+                id={`faq-${item.id}`}
                 className="overflow-hidden rounded-xl border border-neutral-200/90 bg-white/90 shadow-[0_12px_30px_rgba(15,23,42,0.07)] backdrop-blur-sm dark:border-neutral-800/90 dark:bg-neutral-950/80 dark:shadow-[0_12px_30px_rgba(0,0,0,0.22)]"
               >
                 <button
@@ -2525,27 +2232,6 @@ const FAQSection: React.FC<SectionProps & {
           })}
         </div>
 
-        <div className="rounded-xl border border-neutral-200 bg-white/80 p-5 text-center shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-950/70">
-          <h3 className="text-lg font-semibold tracking-tight">
-            {isEn ? "Other questions?" : "Otras preguntas?"}
-          </h3>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-            {isEn
-              ? "Send us a short note and we will address your questions promptly."
-              : "Envianos una nota breve y atenderemos tus preguntas con prontitud."}
-          </p>
-          <AnchorButton
-            href="#contact"
-            onClick={(event) => {
-              event.preventDefault();
-              onNavigate("contact");
-            }}
-            className="mt-4"
-          >
-            {isEn ? "Contact SafeGuard CCS" : "Contactar a SafeGuard CCS"}
-            <ArrowDown className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-y-0.5" />
-          </AnchorButton>
-        </div>
       </div>
     </div>
   );
@@ -2557,8 +2243,6 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [company, setCompany] = React.useState("");
-  const [employees, setEmployees] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>("idle");
   const [contactMode, setContactMode] = React.useState<ContactMode>("methods");
@@ -2567,7 +2251,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
   const messageWordCount = getWordCount(message);
 
   const mailLink = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-    isEn ? "SafeGuard CCS security consultation" : "Consulta de seguridad SafeGuard CCS"
+    isEn ? "SafeGuard CCS research inquiry" : "Consulta de investigación SafeGuard CCS"
   )}`;
 
   React.useEffect(() => {
@@ -2600,8 +2284,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       label: "WhatsApp",
       title: "WhatsApp",
       description: isEn
-        ? "Quick question / immediate direction"
-        : "Pregunta rápida / dirección inmediata",
+        ? "Research · Education"
+        : "Investigación · Educación",
       href: WHATSAPP_LINK,
     },
     {
@@ -2610,8 +2294,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       label: isEn ? "Email" : "Correo",
       title: isEn ? "Send email" : "Correo",
       description: isEn
-        ? "Details, content or documents"
-        : "Detalles, contexto o documentos",
+        ? "Details · Sources"
+        : "Detalles · Fuentes",
       href: mailLink,
     },
     {
@@ -2620,8 +2304,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       label: isEn ? "Form" : "Formulario",
       title: isEn ? "Contact form" : "Formulario",
       description: isEn
-        ? "If you want us to reach back"
-        : "Para que te contactemos",
+        ? "Send a note"
+        : "Enviar una nota",
       href: "#contact-form",
     },
   ];
@@ -2631,8 +2315,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
     setSubmitStatus("sending");
 
     const subject = isEn
-      ? `SafeGuard CCS – Inquiry from ${name || "Potential client"}`
-      : `SafeGuard CCS – Consulta de ${name || "Cliente potencial"}`;
+      ? `SafeGuard CCS – Research inquiry from ${name || "Website visitor"}`
+      : `SafeGuard CCS – Consulta de investigación de ${name || "Visitante del sitio"}`;
 
     const formData = new FormData(e.currentTarget);
     if (formData.get("botcheck")) {
@@ -2660,8 +2344,6 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
       setSubmitStatus("success");
       setName("");
       setEmail("");
-      setCompany("");
-      setEmployees("");
       setMessage("");
       setSuccessPopupOpen(true);
     } catch {
@@ -2687,10 +2369,11 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
               {isEn ? "Contact" : "Contacto"}
             </p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              {isEn
-                ? "Everyone deserves security that respects the budget"
-                : "Todos merecen seguridad que respete el presupuesto"}
+              {isEn ? "Other questions?" : "¿Otras preguntas?"}
             </h2>
+            <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
+              {isEn ? "Connect with our research initiative. Send a short note." : "Conecta con nuestra iniciativa. Envía una nota breve."}
+            </p>
           </div>
 
         </motion.div>
@@ -2711,7 +2394,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 className="min-w-0 space-y-3"
               >
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 md:mb-0 dark:text-neutral-400">
-              {isEn ? "Choose how to reach us" : "Elige cómo contactarnos"}
+              {isEn ? "Contact options" : "Opciones de contacto"}
             </p>
             <div className="grid grid-cols-1 gap-3">
               {contactMethods.map((method) => (
@@ -2768,10 +2451,10 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
             className="mb-4 inline-flex items-center gap-2 text-xs font-semibold text-neutral-600 transition hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-neutral-50"
           >
             <ArrowRight className="h-3.5 w-3.5 rotate-180" />
-            {isEn ? "Back to contact options" : "Volver a opciones de contacto"}
+            {isEn ? "Back" : "Volver"}
           </button>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            {isEn ? "Tell us about your environment" : "Cuéntanos sobre tu entorno"}
+            {isEn ? "Send a note" : "Envía una nota"}
           </h2>
           <Card interactive={false} className="mt-5 overflow-hidden text-left">
             <CardInner className="min-w-0 space-y-4 text-xs text-neutral-700 dark:text-neutral-200">
@@ -2816,40 +2499,11 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-[11px] font-medium">
-                    {isEn ? "Company" : "Empresa"}
-                  </label>
-                  <input
-                    type="text"
-                    name="company"
-                    placeholder={isEn ? "Company S.A." : "Empresa S.A."}
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-[11px] font-medium">
-                    {isEn ? "Number of employees" : "Número de empleados"}
-                  </label>
-                  <input
-                    type="text"
-                    name="employees"
-                    placeholder={isEn ? "E.g. 1-50" : "Ej. 1-50"}
-                    value={employees}
-                    onChange={(e) => setEmployees(e.target.value)}
-                    className="w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-xs outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/15 dark:border-neutral-700 dark:bg-neutral-950/70 dark:focus:border-emerald-300"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="mb-1 block text-[11px] font-medium">
                   {isEn
-                    ? "What do you need help with?"
-                    : "¿En qué necesitas ayuda?"}
+                    ? "Note"
+                    : "Nota"}
                 </label>
                 <textarea
                   rows={4}
@@ -2857,8 +2511,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
 	                  required
                   placeholder={
                     isEn
-                      ? "Share a short description and we’ll reply with whether we’re a good fit and what a first engagement could look like."
-                      : "Comparte una breve descripción y responderemos si somos un buen ajuste y cómo podría verse un primer servicio."
+                      ? "Question, source, or idea"
+                      : "Pregunta, fuente o idea"
                   }
 	                  value={message}
                   onChange={handleMessageChange}
@@ -2894,8 +2548,8 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
                         ? "Something went wrong. Please try again."
                         : "Algo salió mal. Intenta nuevamente."
                       : isEn
-                        ? "Typical response: fast, with a 24-72 hour commitment."
-                        : "Respuesta típica: rápida, con compromiso de 24-72 horas."}
+                        ? "Reply within 72 hours."
+                        : "Respuesta en 72 horas."}
                 </span>
               </div>
             </form>
@@ -3038,7 +2692,7 @@ const ContactSection: React.FC<SectionProps> = ({ language }) => {
 
 // WhatsApp link constant must be defined before using it
 const WHATSAPP_LINK =
-  "https://wa.me/50769722528?text=Hi%20SafeGuard%20CCS%2C%20I%27d%20like%20to%20talk%20about%20my%20company%27s%20security.";
+  "https://wa.me/50765125606?text=Hi%20SafeGuard%20CCS%2C%20I%27d%20like%20to%20connect%20about%20your%20cybersecurity%20research.";
 
 interface WhatsAppButtonProps {
   language: Language;
@@ -3057,8 +2711,8 @@ const Footer: React.FC<SectionProps> = ({ language }) => {
           <span>© {new Date().getFullYear()} SafeGuard CCS.</span>
           <p>
             {isEn
-              ? "Cybersecurity consulting for small and mid-size companies."
-              : "Consultoría de ciberseguridad para pequeñas y medianas empresas."}
+              ? "Independent cybersecurity research and education in Panama."
+              : "Investigación y educación independiente en ciberseguridad en Panamá."}
           </p>
         </div>
 
